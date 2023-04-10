@@ -1,0 +1,15 @@
+{
+  "name": "fullstack-boilerplate-nodejs-nextjs",
+  "version": "1.0.0",
+  "description": "fullstack-boilerplate-nodejs-nextjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nahid Iftekhar",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  }
+}

@@ -1,0 +1,46 @@
+$font-family: Arial, Helvetica, sans-serif;
+$font-size: 10px;
+$theme-color1: #7f17bb;
+$theme-color2: #0860ae;
+$theme-color3: #EF1DA3;
+$theme-color4: #827ef3;
+$theme-color5: #e57ef3;
+$box-bg: #f8faff;
+$grey-color: #8fa8be;
+$grey-color1: #ececec;
+$grey-color2: #cecece;
+$paragraph-color: #000000;
+$brand-color: #d61939;
+$white-color: #ffffff;
+$black-color: #0e314c;
+$gradient-background-1: conic-gradient(
+    at 125% 50%,
+    #b78cf7,
+    #ff7c94,
+    #ffcf0d,
+    #ff7c94,
+    #b78cf7
+  );
+  $gradient-background-2: conic-gradient(
+    at 125% 50%,
+    #8638fb,
+    #006eff,
+    #0860ae,
+    #0466c9,
+    #6a60fb
+  );
+$body-background: conic-gradient(
+  at 125% 50%,
+  #eae0f8,
+  #fec4ce,
+  #f9e48c,
+  #fcdee4,
+  #ddcbf9
+);
+$gradient-color: linear-gradient(38deg, rgba(154,0,0,1) 0%, rgba(240,85,90,1) 32%, rgba(255,185,96,1) 100%);
+$transition: 0.5s;
+$gradient-color1: linear-gradient(to right, #568A04, #B1D82B);
+$gradient-color4: linear-gradient(to right, #0d442a, #568A04);
+$gradient-color2: linear-gradient(to right, #FC3E3E, #B401A2);
+$gradient-color3: linear-gradient(to right, #1940aa, #0955d9);
+

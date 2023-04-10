@@ -1,0 +1,29 @@
+{
+  "name": "smart-taps-front-end",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next build && next export",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@loadable/component": "^5.15.3",
+    "axios": "^1.3.3",
+    "bootstrap": "^5.2.3",
+    "js-file-download": "^0.4.12",
+    "next": "13.1.6",
+    "react": "18.2.0",
+    "react-bootstrap": "^2.7.2",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.7.1",
+    "react-spinners": "^0.13.8"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "sass": "^1.58.3",
+    "eslint-config-next": "^13.1.6"
+  }
+}

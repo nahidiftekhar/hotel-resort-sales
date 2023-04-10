@@ -1,0 +1,132 @@
+<div class="profile-container">
+  <div class="row m-0">
+    <div class="col-sm-5 p-0 d-flex justify-content-center">
+      <img src="{{imageFile}}" class="profile-image" />
+    </div>
+    <div class="col-sm-7 p-0 d-flex align-items-center">
+      <div class="px-3">
+
+        <div class="row mb-5">
+          <div class="col-sm-12 p-0 mb-2">
+            <h4>{{basicInfo.name}}</h4>
+          </div>
+
+          <div class="col-sm-6 p-0 professional-title">
+          {{!-- <div class="col-sm-6 p-0 d-flex flex-column justify-content-start align-items-start"> --}}
+            <h6 class="mt-2 mb-0">
+              {{basicInfo.title}}
+            </h6>
+            <h6 class="mt-2 mb-0">
+              {{basicInfo.organization}}
+            </h6>
+          </div>
+
+          <div
+            class="col-sm-6 p-0 d-flex justify-content-center align-items-start"
+          >
+          {{#if vcardLink}}
+            <a
+              href="https://{{vcardLink}}"
+              class="btn btn-sm mt-3 py-2 {{#eq backgroundColor '#1e91cf'}}btn-blue-theme{{/eq}} {{#eq backgroundColor '#1e1e1e'}}btn-dark-theme{{/eq}}"
+              {{!-- {{#eq backgroundColor '#1e91cf'}}class="btn btn-primary btn-sm mt-3 py-2"{{/eq}} --}}
+              {{!-- class="btn btn-primary btn-simple btn-sm mt-3 py-2" --}}
+              {{!-- style="background-color: {{backgroundColor}};" --}}
+            >
+              Save Contact
+            </a>
+          {{/if}}
+
+          </div>
+        </div>
+        
+        <p class="text-justify">{{basicInfo.aboutme}}</p>
+        <h6 class="smaller my-3">{{basicInfo.address}}</h6>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row m-0 mt-3">
+    {{#each textAreas}}
+      <div class="col-lg-6 p-0">
+        <div class="text-box mt-3">
+          <h6>{{this.label}}</h6>
+          <p>{{this.link}}</p>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  <h5 class="mt-3 px-1">My Links</h5>
+  <div class="row m-0 d-flex justify-content-around mb-5">
+    {{#each links}}
+      {{#eq this.is_action 0}}
+        <div class="col-md-6 col-lg-4 p-0 d-flex justify-content-center">
+          <a
+            href="http://{{this.link}}"
+            target="_blank"
+            class="a-div d-flex px-2 my-2"
+          >
+            <button
+              class="btn btn-heavy btn-sm flex-grow-1 {{#eq ../backgroundColor '#1e91cf'}}btn-blue-theme{{/eq}}{{#eq ../backgroundColor '#1e1e1e'}}btn-dark-theme{{/eq}}"
+            >
+              {{this.label}}
+            </button>
+          </a>
+        </div>
+      {{/eq}}
+
+      {{#eq this.is_action 1}}
+        <div class="col-md-6 col-lg-4 p-0 d-flex justify-content-center">
+          <a
+            href="https://{{this.link}}"
+            target="_blank"
+            class="a-div d-flex px-2 my-2"
+          >
+            <button
+              class="btn btn-heavy btn-sm flex-grow-1 {{#eq ../backgroundColor '#1e91cf'}}btn-blue-theme{{/eq}} {{#eq ../backgroundColor '#1e1e1e'}}btn-dark-theme{{/eq}}"
+              {{!-- class="btn btn-simple btn-primary btn-heavy btn-sm flex-grow-1" --}}
+            >
+              {{this.label}}
+            </button>
+          </a>
+        </div>
+      {{/eq}}
+
+    {{/each}}
+  </div>
+
+  <div class="contact-box">
+
+    <a href="tel: {{contactInfo.contactphone}}" class="no-underline">
+      <button class="btn btn-contact btn-phone">
+        <i class="fa fa-phone fa-lg" aria-hidden="true"></i>
+      </button>
+    </a>
+
+    <a
+      href="https://wa.me/{{contactInfo.contactwhatsapp}}"
+      class="no-underline"
+    >
+      <button class="btn btn-contact btn-whatsapp">
+        <i class="fa fa-whatsapp fa-lg" aria-hidden="true"></i>
+      </button>
+    </a>
+
+    <a href="mailto:{{contactInfo.contactemail}}" class="no-underline">
+      <button class="btn btn-contact btn-email">
+        <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
+      </button>
+    </a>
+
+    {{#if contactInfo.contactfb}}
+    <a href="http://{{contactInfo.contactfb}}" target="_blank" class="no-underline">
+      <button class="btn btn-contact btn-map">
+        <i class="fa fa-map-marker fa-lg" aria-hidden="true"></i>
+      </button>
+    </a>
+    {{/if}}
+
+  </div>
+
+</div>

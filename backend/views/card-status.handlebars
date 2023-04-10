@@ -1,0 +1,39 @@
+<div class="something-wrong">
+  <h3 class="my-3">Welcome to SMART TAPS Cards!</h3>
+  {{#eq cardCnt 0}}
+    <div class="error-message">We didn't find that card</div>
+    <p>If you need support, please mail us
+      <a href="mailto: support@smarttaps.com">support@smarttaps.com</a></p>
+  {{/eq}}
+
+  {{#eq cardCnt 1}}
+
+
+
+    {{! If no user ID }}
+    {{#eq userId 1}}
+      <p>This card is not registered yet. If you own this card, please click
+        <a href="{{baseUrl}}/activate-card?q={{cardLink}}">here</a> to register.</p>
+    {{/eq}}
+
+    {{#neq userId 1}}
+
+    {{! If blocked }}
+    {{#eq isBlocked true}}
+      <p>This card is currently blocked.</p>
+      <p>If you need support, please mail us
+        <a href="mailto: support@smarttaps.com">support@smarttaps.com</a></p>
+    {{/eq}}
+
+    {{#eq isBlocked false}}
+    {{! If not active }}
+    {{#eq isActive false}}
+      <p>This card is currently deactivated. If you own this card, please visit
+        your admin page for activation and related configurations.</p>
+    {{/eq}}
+    {{/eq}}
+
+    {{/neq}}
+
+  {{/eq}}
+</div>

@@ -1,0 +1,520 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:800&display=swap');
+
+/*=================Default CSS===================*/
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html, body {
+    background-color: #1e91cf;
+    /* font-family: 'Lato', sans-serif; */
+}
+
+body {
+    font: 1em/1.618 Inter, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #224;
+    margin: 0;
+    /* background:
+      url("/static/images/design/abstract-267056_1920.png")
+      center / cover fixed; */
+}
+
+  h4 {
+    font-family: 'Arial Black', Candara, sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    letter-spacing: 0.2ch;
+  }
+
+  h5 {
+    font-family: Candara, sans-serif;
+    font-weight: 600;
+  }
+
+  h6 {
+    font-family: Candara, sans-serif;
+    font-weight: 400;
+    color: #777;
+    font-size: 18px;
+  }
+
+  h7 {
+    font-family: Candara, sans-serif;
+    font-weight: 400;
+    color: #777;
+    font-size: 16px;
+  }
+
+  p {
+    font-family: Candara, sans-serif;
+    font-size: 16px;
+  }
+
+  .text-justify {
+    text-align: justify !important;
+  }
+
+  .error-message {
+    color: #ff0000;
+    font-size: 1em;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .btn-simple {
+    color: #fff;
+    font-weight: 600;
+    background-color: #1e91cf;
+    border-color: #0677b4;
+  }
+
+  .btn-simple:hover {
+    color: #fff;
+    background-color: #007abc;
+    border-color: #007abc;
+  }
+
+  .btn-blue-theme {
+    color: #fff;
+    font-weight: 600;
+    background-color: #1e91cf;
+    border-color: #1e91cf;
+  }
+
+  .btn-blue-theme:hover {
+    color: #fff;
+    background-color: #007abc;
+    border-color: #007abc;
+  }
+
+  .btn-dark-theme {
+    color: #fff;
+    font-weight: 600;
+    background-color: #1e1e1e;
+    border-color: #000000;
+  }
+
+  .btn-dark-theme:hover {
+    color: #fff;
+    background-color: #4f4f4f;
+  }
+
+  .btn-theme {
+    color: #fff;
+    font-weight: 600;
+    background-color: #1e91cf;
+    border-color: #0677b4;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #0b5ed7;
+    --bs-btn-hover-border-color: #0a58ca;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #0a58ca;
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #1e91cf;
+    --bs-btn-disabled-border-color: #1e91cf;
+  }
+
+  .btn-theme:hover {
+    background-color: #0e5b85;
+  }
+
+  .page-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.caption-div {
+    margin: 20px 10px;
+    font-weight: 600;
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.link-tree {
+    min-height: 90vh;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:flex-start;
+    margin: 5px;
+    border-radius: 10px;
+    background-color: #01518b;
+    padding: 10px 5px;
+    /* border: thick double #3c3c3c; */
+}
+
+.linktree-image {
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+    border: 10px solid #ffffff
+}
+
+
+.btn:link, .btn:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 15px;
+    display: inline-block;
+    /* border-radius: 50%; */
+    border-radius: 100px;
+    transition: all 0.2s;
+    /* position: absolute; */
+}
+.btn:hover {
+    /* transform: translateY(-3px); */
+    /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); */
+}
+/* .btn::after {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    border-radius: 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: all 0.4s;
+}
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+} */
+.btn-white {
+    background-color: #fff;
+    color: #777;
+    width: 90%;
+}
+.btn-green {
+    background-color: #00974e;
+    color: #ececec;
+    font-size: 40px;
+    height: 70px;
+    width: 70px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-green::after {
+    height: 70px;
+    width: 70px;
+    background-color: #fff;
+}
+.btn-white::after {
+    background-color: #fff;
+}
+/* .btn:hover::after {
+    transform: scaleX(1.4) scaleY(1.6);
+    opacity: 0;
+} */
+.btn-animated {
+    animation: moveInBottom 5s ease-out;
+    animation-fill-mode: backwards;
+}
+@keyframes moveInBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+   }
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+   }
+}
+
+.btn-icon {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 12px 16px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* Darker background on mouse-over */
+  .btn-icon:hover {
+    background-color: RoyalBlue;
+  }
+
+  .btn-79,
+  .btn-79 *,
+  .btn-79 :after,
+  .btn-79 :before,
+  .btn-79:after,
+  .btn-79:before {
+    border: 0 solid;
+    box-sizing: border-box;
+  }
+  .btn-79 {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: button;
+    background-color: #000;
+    background-image: none;
+    color: #fff;
+    cursor: pointer;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
+      Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    font-size: 100%;
+    font-weight: 900;
+    line-height: 1.5;
+    margin: 0;
+    -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
+    padding: 0;
+  }
+  .btn-79:disabled {
+    cursor: default;
+  }
+  .btn-79:-moz-focusring {
+    outline: auto;
+  }
+  .btn-79 svg {
+    display: block;
+    vertical-align: middle;
+  }
+  .btn-79 [hidden] {
+    display: none;
+  }
+  .btn-79 {
+    --height: 80px;
+    background: none;
+    border-radius: 999px;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    height: var(--height);
+    -webkit-mask-image: none;
+    padding: 0 3rem;
+    position: relative;
+    text-transform: uppercase;
+  }
+  .btn-79 span {
+    font-weight: 900;
+    mix-blend-mode: difference;
+  }
+  .btn-79:before {
+    background: #fff;
+    border-radius: 20px;
+    content: "";
+    background-image: url("/static/images/design/phone-call.png");
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 5px 50%;
+    height: calc(var(--height) / 1.7);
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.2s;
+    width: calc(var(--height) / 1.7);
+  }
+  .btn-79:hover:before {
+    left: 0;
+    width: 100%;
+  }
+  
+/*==========Profile Styling==========*/
+.profile-container {
+    margin: 20px 0;
+    padding: 50px 20px 20px 20px;
+    /* height: 500vh; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 1);
+    /* background-color: rgba(255, 255, 255, 0.65); */
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(15px);
+  }
+
+  .profile-container .smaller {
+    font-size: 14px;
+    color: #aeaeae;
+    font-weight: 400;
+  }
+ 
+  .profile-container h5{
+    background-color: #dfdfdf;
+    border-radius: 5px;
+    padding: 5px 20px;
+    text-align: center;
+  }
+
+  .profile-container h4{
+    font-size: 1.5rem;    
+  }
+
+  .profile-container .professional-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+  }
+
+  .profile-image {
+    height: 300px;
+    width: 300px;
+    border-radius: 50%;
+    border: 10px solid #ffffff
+}
+
+.a-div {
+    width: 100%;
+    text-decoration: none;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.btn-heavy {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: Candara, sans-serif;
+}
+
+.text-box {
+  padding: 10px;
+  text-align: justify;
+}
+
+.link-box {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.contact-box {
+  position: -webkit-sticky;  /* <----- required (for WebKit) */
+  position: sticky;
+  bottom: 2px; 
+  /* border: 2px solid red; */
+  background: #000000ca;
+  border-radius: 25px;
+  padding: 10px;
+  margin: 1px;
+  max-width: 600px;
+  min-width: 300px;
+  align-self: center;
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-around;
+}
+
+.btn-contact {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-phone {
+  background-color: #00643c;
+  color: #ffffff;
+}
+
+.btn-whatsapp {
+  background-color: #25D366;
+  color: #ffffff;
+}
+
+.btn-map {
+  background-color: #f28c18;
+  color: #ffffff;
+}
+
+.btn-email {
+  background-color: #32a9c7;
+  color: #ffffff;
+}
+
+.something-wrong {
+  /* margin: 20px 0; */
+  /* padding: 50px 20px 20px 20px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  min-height: 50vh;
+
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 1);
+  /* background-color: rgba(255, 255, 255, 0.65); */
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(15px);
+}
+
+.something-wrong h1 {
+  color: #5a5a5a;
+  font-weight: 800;
+}
+
+.something-wrong p {
+  color: #012e6a;
+  font-weight: 400;
+  font-size: 20px;
+  margin-bottom: 0px;
+}
+
+
+@media only screen and (max-width: 992px) {
+  .profile-image {
+    height: 200px;
+    width: 200px;
+  }
+
+}
+
+@media only screen and (max-width: 576px) {
+  .profile-container h7, .profile-container h6, .profile-container h4 {
+    text-align: center;
+  }
+
+  .profile-container {
+    margin: 5px;
+    /* border-radius: 0; */
+  }
+
+  .profile-container .professional-title {
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  .text-box h7, .text-box h6, .text-box h4 {
+    text-align: left;
+  }
+
+}
+
+/* fix for contact box for very low end mobile */
+@media only screen and (max-width: 300px) {
+  .contact-box {
+    min-width: 250px;
+  }
+
+}

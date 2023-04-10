@@ -1,0 +1,23 @@
+<div class="page-container">
+  <div class="link-tree">
+    <div class="caption-div">
+      <img src="{{imageFile}}" class="linktree-image" />
+      <h2 class="my-3">{{displayName}}</h2>
+    </div>
+
+    <div class="row m-0">
+      {{#each links}}
+        <div class="col-md-12 m-0 p-0 d-flex justify-content-center">
+          <a
+            href="http://{{this.link}}"
+            target="_blank"
+            class="btn btn-white btn-animate my-2"
+          >
+            {{this.label}}
+          </a>
+        </div>
+      {{/each}}
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="container d-flex flex-column align-items-center">
+{{#eq render 1 }}
+<h4 class="mt-5 text-center">Your email verification is successful. Please use card link for configurations.</h4>
+{{/eq}}
+
+{{#eq render 2}}
+  <div class="bg-white py-5">
+    <h4 class="my-5 text-center" style="color:rgb(255, 0, 0);">Your token is not valid. Please try again from Smart Taps application. </h4>
+    <h4 class="text-center">If you have already complete email verification previously, please log in to your account at <a href="https://app.smarttaps.co">app.smarttaps.co</a></h4>
+  </div>
+{{/eq}}
