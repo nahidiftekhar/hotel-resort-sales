@@ -6,6 +6,6 @@
 /backend/node_modules
 
 # configurations
-# /configs
-# /frontend/configs
-# /backend/configs
+/configs
+/frontend/configs
+/backend/configs
