@@ -5,3 +5,6 @@
 /frontend/node_modules
 /backend/node_modules
 
+# keys
+/backend/configs/id_rsa_priv.pem
+/backend/configs/id_rsa_pub.pem
