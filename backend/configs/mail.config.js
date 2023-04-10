@@ -1,5 +1,5 @@
 const mailConfig = {
-    EMAIL_USERNAME: 'FULL-EMAIL-ID', //info@codemarshal.com
+    EMAIL_USERNAME: 'ss', //info@codemarshal.com
     EMAIL_PASSWORD: 'EMAIL-PASSOWRD',
     EMAIL_PORT: '465', //may depend on mail server
     EMAIL_HOST: 'MAIL-HOST-MNAME',//'server107.web-hosting.com',
