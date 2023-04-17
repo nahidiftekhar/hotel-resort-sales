@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-router.use('/user-management', require('./user-routes'))
-router.use('/db-management', require('./db-routes'))
+router.use('/db-management', require('./db-controllers'))
+router.use('/user-management', require('./user-controllers'))
 
 module.exports = router;

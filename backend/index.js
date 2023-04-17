@@ -53,7 +53,7 @@ app.set("views", path.join(__dirname, "views"));
 
 //Route definitions
 app.get("/", function (req, res) {
-  res.send({ status: "success" });
+  res.send({ status: "todaroki backend running" });
 });
 
 //Serve static images

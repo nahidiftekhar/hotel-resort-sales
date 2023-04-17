@@ -8,3 +8,6 @@
 # keys
 /backend/configs/id_rsa_priv.pem
 /backend/configs/id_rsa_pub.pem
+
+
+/frontend/.next

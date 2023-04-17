@@ -1,7 +1,7 @@
 {
   "name": "smarttaps-be",
   "version": "1.0.0",
-  "description": "Backend services for SmartTaps web application",
+  "description": "Backend services for Hotel Management web application",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",

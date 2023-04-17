@@ -1,7 +1,7 @@
 {
-  "name": "fullstack-boilerplate-nodejs-nextjs",
+  "name": "hotel-management",
   "version": "1.0.0",
-  "description": "fullstack-boilerplate-nodejs-nextjs",
+  "description": "Hotel management system built for FNF",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" ",
