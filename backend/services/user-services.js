@@ -3,7 +3,7 @@ const passport = require("passport");
 const crypto = require("crypto");
 
 const { credentials, usertypes } = require("../database/models");
-const db = require("./utils/db-users");
+const db = require("./db-services/db-users");
 const sendMail = require("./utils/send-email");
 const { secretConfig } = require("../configs/secrets.config");
 const saltRounds = secretConfig.SALT_ROUNDS;

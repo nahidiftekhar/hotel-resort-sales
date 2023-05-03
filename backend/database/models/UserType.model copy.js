@@ -1,8 +1,7 @@
-"use strict";
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  var UserTypes = sequelize.define(
+  const UserTypes = sequelize.define(
     `usertypes`,
     {
       user_type: {
@@ -13,10 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: false }
   );
 
-    // Class Method
-    UserTypes.associate = function (models) {
-      UserTypes.hasOne(models.credentials, {foreignKey: 'user_type_id'});
-    };
-  
+  // Class Method
+  UserTypes.associate = function (models) {
+    UserTypes.hasMany(models.credentials, { foreignKey: 'user_type_id' });
+    UserTypes.hasMany(models.discountslabs, { foreignKey: 'user_type_id' });
+  };
+
   return UserTypes;
 };
