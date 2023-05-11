@@ -13,6 +13,9 @@ async function addNewGuest(req, res, next) {
     idType,
     idNumber,
     notes,
+    idFront,
+    idBack,
+    profileImage,
   } = req.body;
   const dbResult = await dbStandard.addSingleRecordDB(guests, {
     name: name,
@@ -24,7 +27,47 @@ async function addNewGuest(req, res, next) {
     id_type: idType,
     id_number: idNumber,
     guest_notes: notes,
+    id_image_front: idFront,
+    id_image_back: idBack,
+    photo_image_url: profileImage,
   });
+  return res.json(dbResult);
+}
+
+async function editGuest(req, res, next) {
+  const {
+    id,
+    name,
+    phone,
+    email,
+    address,
+    nationality,
+    dob,
+    idType,
+    idNumber,
+    notes,
+    idFront,
+    idBack,
+    profileImage,
+  } = req.body;
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    guests,
+    { id: id },
+    {
+      name: name,
+      phone: phone,
+      email: email,
+      address: address,
+      nationality: nationality || 'Bangladeshi',
+      date_of_birth: dob,
+      id_type: idType,
+      id_number: idNumber,
+      guest_notes: notes,
+      id_image_front: idFront,
+      id_image_back: idBack,
+      photo_image_url: profileImage,
+    }
+  );
   return res.json(dbResult);
 }
 
@@ -41,6 +84,7 @@ async function searchGuests(req, res, next) {
 
 module.exports = {
   addNewGuest,
+  editGuest,
   listAllGuests,
   searchGuests,
 };

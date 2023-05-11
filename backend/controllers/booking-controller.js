@@ -2,16 +2,19 @@ const router = require('express').Router();
 const bookingServices = require('../services/booking-services');
 
 // Create new reservation/booking
-router.post('/create-reservation', bookingServices.addNewBooking);
+router.post('/create-booking', bookingServices.addNewBooking);
+
+// List max discount
+router.get('/max-discount', bookingServices.fetchMaxDiscountSlab);
+
+// List all bookings with date more than today
+router.get('/list-all-booking', bookingServices.listAllBookingAfterToday);
 
 // Create a discount entry
 router.post('/create-discount', bookingServices.addDiscountEntry);
 
 // List all approval pending discount requests
-router.post(
-  '/list-discount-requests',
-  bookingServices.fetchAllDiscountRequests
-);
+router.get('/list-discount-requests', bookingServices.fetchAllDiscountRequests);
 
 // Approve a discount request
 router.post('/approve-discount', bookingServices.approveDiscount);

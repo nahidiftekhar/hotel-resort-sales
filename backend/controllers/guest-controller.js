@@ -1,13 +1,16 @@
-const router = require("express").Router();
-const guestServices = require("../services/guest-services")
+const router = require('express').Router();
+const guestServices = require('../services/guest-services');
 
-//List all guests
-router.get("/", guestServices.listAllGuests);
+// List all guests
+router.get('/list-all', guestServices.listAllGuests);
 
-//Add a single guest
-router.post("/add-guest", guestServices.addNewGuest);
+// Add a single guest
+router.post('/add-guest', guestServices.addNewGuest);
 
-//Search guest based on whatever
-router.get("/search-guest/:searchString", guestServices.searchGuests)
+// Edit a single guest data
+router.post('/edit-guest', guestServices.editGuest);
+
+// Search guest based on whatever
+router.get('/search-guest/:searchString', guestServices.searchGuests);
 
 module.exports = router;

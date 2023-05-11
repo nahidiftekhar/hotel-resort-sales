@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import React, { useEffect, useState } from 'react';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 function TopNavbar() {
   const [hideNav, setHideNav] = useState(false);
   const [userType, setUserType] = useState(0);
   useEffect(() => {
-    setHideNav(window.location.pathname === "/login");
-    setUserType(localStorage.getItem("CMUT"))
+    setHideNav(window.location.pathname === '/login');
+    setUserType(localStorage.getItem('CMUT'));
   }, []);
   return (
     <Navbar collapseOnSelect expand="lg" bg="light" sticky="top">
@@ -16,12 +16,11 @@ function TopNavbar() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         {hideNav ? (
-          ""
-        ) : userType==='1' ? (
+          ''
+        ) : userType === '1' ? (
           <Navbar.Collapse
             id="responsive-navbar-nav"
-            className="justify-content-end"
-          >
+            className="justify-content-end">
             <Nav>
               <Nav.Link className="mx-3" href="/admin/create-card">
                 Create Card
@@ -34,24 +33,29 @@ function TopNavbar() {
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
-          ) : (
+        ) : (
           <Navbar.Collapse
             id="responsive-navbar-nav"
-            className="justify-content-end"
-          >
+            className="justify-content-end">
             <Nav>
               <Nav.Link className="mx-3" href="/">
                 Home
               </Nav.Link>
               <Nav.Link className="mx-3" href="/activate-card">
-                Add Card
+                Booking
+              </Nav.Link>
+              <Nav.Link className="mx-3" href="/activate-card">
+                Rooms
               </Nav.Link>
               <Nav.Link className="mx-3" href="/logout">
-                Logout
+                Products
+              </Nav.Link>
+              <Nav.Link className="mx-3" href="/guests">
+                Guests
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
-        )}{" "}
+        )}{' '}
       </Container>
     </Navbar>
   );

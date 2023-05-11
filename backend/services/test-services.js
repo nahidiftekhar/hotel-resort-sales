@@ -4,6 +4,7 @@ const {
   usertypes,
   alacartecategories,
   alacarteitems,
+  bookings,
   discountslabs,
   menus,
   packagecategories,
@@ -15,10 +16,11 @@ const {
   servicecategories,
   serviceitems,
   serviceproviders,
+  guests,
 } = require('../database/models');
 
 async function testDb(req, res, next) {
-  const dbResult = await dbStandardServices.selectAllDb(prixfixecategories);
+  const dbResult = await dbStandardServices.selectAllDb(bookings);
   return res.json(dbResult);
 }
 

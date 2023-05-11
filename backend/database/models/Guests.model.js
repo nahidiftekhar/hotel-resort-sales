@@ -39,7 +39,11 @@ module.exports = (sequelize, DataTypes) => {
     guest_notes: {
       type: Sequelize.TEXT,
     },
-    id_image_url: {
+    id_image_front: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    id_image_back: {
       type: Sequelize.STRING,
       allowNull: true,
     },

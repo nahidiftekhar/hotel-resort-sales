@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+
 const app = express();
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
@@ -64,11 +65,12 @@ app.use('/static', express.static('public'));
 
 // Upload profile image file
 app.post('/upload', (req, res) => {
-  const newpath = `${__dirname}/public/`;
+  const newpath = `${__dirname}/public`;
   const { file } = req.files;
   const filename = req.body.fileName;
+  const saveLocation = req.body.saveLocation;
 
-  file.mv(`${newpath}${filename}`, (err) => {
+  file.mv(`${newpath}/${saveLocation}/${filename}`, (err) => {
     if (err) {
       console.log(`err: ${err}`);
       res.status(500).send({ message: 'File upload failed', code: 200 });

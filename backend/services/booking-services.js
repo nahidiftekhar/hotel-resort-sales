@@ -4,19 +4,42 @@ const {
   bookings,
   discounts,
   discountslabs,
+  guests,
   packages,
   prixfixeitems,
   alacarteitems,
   rooms,
   serviceitems,
-  Sequelize,
+  usertypes,
 } = require('../database/models');
+
+const { Op, Sequelize } = require('sequelize');
 
 async function fetchAllDiscountRequests(req, res, next) {
   const dbResult = await dbStandard.findAllFilterDb(discounts, {
     approval_status: 'pendingApproval',
   });
   return res.json(dbResult);
+}
+
+async function fetchMaxDiscountSlab(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(discountslabs);
+  const maxDiscountSlab = dbResult.reduce((max, item) => {
+    return item.discount_percentage > max ? item.discount_percentage : max;
+  }, 0);
+  return res.json(maxDiscountSlab);
+}
+
+async function listAllBookingAfterToday(req, res, next) {
+  const result = await dbStandard.joinTwoTablesFilterDb(
+    bookings,
+    guests,
+    discounts,
+    {
+      [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }, { id: 4 }],
+    }
+  );
+  return res.json(result);
 }
 
 async function addNewBooking(req, res, next) {
@@ -111,6 +134,7 @@ async function approveDiscount(req, res, next) {
     notes,
     approverId,
     approvalStatus,
+    discountedAmount,
   } = req.body;
 
   const modifyDiscount = await dbStandard.modifySingleRecordDb(
@@ -123,6 +147,8 @@ async function approveDiscount(req, res, next) {
       discount_notes: notes,
     }
   );
+  if (!modifyDiscount.success) return res.json({ modifyDiscount });
+
   const modifyBooking = await dbStandard.modifySingleRecordDb(
     bookings,
     { id: bookingId },
@@ -130,7 +156,7 @@ async function approveDiscount(req, res, next) {
       booking_status: approvalStatus
         ? 'advancedPaymentPending'
         : 'negotiationPending',
-      discounted_amount: Sequelize.literal(`amount(1-${approvedPercentage})`),
+      discounted_amount: discountedAmount,
     }
   );
   return res.json({ modifyDiscount, modifyBooking });
@@ -175,4 +201,6 @@ module.exports = {
   approveDiscount,
   confirmAdvancedReceipt,
   cancelBooking,
+  fetchMaxDiscountSlab,
+  listAllBookingAfterToday,
 };

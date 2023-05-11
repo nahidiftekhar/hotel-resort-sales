@@ -4,6 +4,7 @@ const {
   prixfixeitems,
   alacarteitems,
   rooms,
+  roomtypes,
   serviceitems,
 } = require('../database/models');
 
@@ -13,7 +14,7 @@ async function fetchAllPackages(req, res, next) {
 }
 
 async function fetchAllRooms(req, res, next) {
-  const dbResult = await dbStandard.selectAllDb(rooms);
+  const dbResult = await dbStandard.joinAllDb(rooms, roomtypes);
   return res.json(dbResult);
 }
 
@@ -33,29 +34,53 @@ async function fetchAllServices(req, res, next) {
 }
 
 async function addPackage(req, res, next) {
-  const { name, categoryId, description, price, imageUrl } = req.body;
+  const {
+    name,
+    categoryId,
+    description,
+    priceAdult,
+    priceKids,
+    imageUrl,
+    unit,
+    unitKids,
+  } = req.body;
   const dbResult = await dbStandard.addSingleRecordDB(packages, {
     name: name,
     description: description,
-    price: price,
+    price_adult: priceAdult,
+    price_kids: priceKids,
     category_id: categoryId,
     image_url: imageUrl,
+    unit: unit,
+    unit_kids: unitKids,
   });
   return res.json(dbResult);
 }
 
 async function editPackage(req, res, next) {
-  const { name, categoryId, description, price, imageUrl, packageId } =
-    req.body;
+  const {
+    name,
+    categoryId,
+    description,
+    priceAdult,
+    priceKids,
+    imageUrl,
+    packageId,
+    unit,
+    unitKids,
+  } = req.body;
   const dbResult = await dbStandard.modifySingleRecordDb(
     packages,
     { id: packageId },
     {
       name: name,
       description: description,
-      price: price,
+      price_adult: priceAdult,
+      price_kids: priceKids,
       category_id: categoryId,
       image_url: imageUrl,
+      unit: unit,
+      unit_kids: unitKids,
     }
   );
   return res.json(dbResult);

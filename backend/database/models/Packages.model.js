@@ -10,9 +10,22 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.TEXT,
       allowNull: true,
     },
-    price: {
+    unit: {
+      type: Sequelize.STRING,
+      defaultValue: 'Person, Single day',
+    },
+    unit_kids: {
+      type: Sequelize.STRING,
+      defaultValue: 'Kid, Single day',
+    },
+    price_adult: {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,
+    },
+    price_kids: {
+      type: Sequelize.DECIMAL(10, 2),
+      allowNull: false,
+      defaultValue: 0,
     },
     image_url: {
       type: Sequelize.STRING,

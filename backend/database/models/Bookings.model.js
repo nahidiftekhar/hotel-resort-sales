@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
       { foreignKey: 'booking_id' },
       { optional: true }
     );
-    Bookings.hasMany(models.discounts, { foreignKey: 'booking_id' });
+    Bookings.hasOne(models.discounts, { foreignKey: 'booking_id' });
   };
 
   return Bookings;

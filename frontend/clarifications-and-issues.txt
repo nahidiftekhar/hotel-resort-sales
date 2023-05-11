@@ -1,0 +1,2 @@
+- Should we add a day field in the booking? (how many days to stay) -- added checkin and out
+- Should there be discount on all items (ie, alacarte or services)? Or only package?

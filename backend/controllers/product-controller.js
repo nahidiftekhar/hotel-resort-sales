@@ -9,8 +9,8 @@ router.get('/fetch-services', productServices.fetchAllServices);
 router.get('/fetch-alacarte', productServices.fetchAllAlacarte);
 
 // Add single package
-router.post('/add-packages', productServices.addPackage);
-router.post('/edit-packages', productServices.editPackage);
+router.post('/add-package', productServices.addPackage);
+router.post('/edit-package', productServices.editPackage);
 
 // Add single room
 router.post('/add-room', productServices.addRoom);
