@@ -31,3 +31,29 @@ export function updateStateArray(index, key, newValue, setItems, items) {
   updatedItems[index][key] = newValue;
   setItems(updatedItems);
 }
+
+// Function to update the value of a single state object
+export function updateStateObject(setState, key, value) {
+  setState((prevState) => ({
+    ...prevState,
+    [key]: value,
+  }));
+}
+
+// Function to update the value of a single state object
+export function updateStateArrayInObject(setState, key, value) {
+  setState((prevState) => ({
+    ...prevState,
+    [key]: value,
+  }));
+}
+
+//Sum of key in array
+export function sumOfKey(arrayName, key) {
+  return Array.isArray(arrayName)
+    ? arrayName.reduce(
+        (accumulator, currentData) => accumulator + (currentData[key] || 0),
+        0
+      )
+    : 0;
+}

@@ -1,2 +1,15 @@
 - Should we add a day field in the booking? (how many days to stay) -- added checkin and out
 - Should there be discount on all items (ie, alacarte or services)? Or only package?
+- What happens if discount is not approved?
+- What type of notifications are sent after booking?
+- What is the process of adding new products?
+
+- Adjustment
+
+
+- Guest data: 
+    name, phone, mail for sales team
+    Rest will be created by front desk during checkin
+
+- Discount can be amount
+- Add one custom option. 

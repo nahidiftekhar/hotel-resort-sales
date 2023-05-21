@@ -41,13 +41,13 @@ function TopNavbar() {
               <Nav.Link className="mx-3" href="/">
                 Home
               </Nav.Link>
-              <Nav.Link className="mx-3" href="/activate-card">
+              <Nav.Link className="mx-3" href="/booking">
                 Booking
               </Nav.Link>
-              <Nav.Link className="mx-3" href="/activate-card">
+              <Nav.Link className="mx-3" href="/rooms">
                 Rooms
               </Nav.Link>
-              <Nav.Link className="mx-3" href="/logout">
+              <Nav.Link className="mx-3" href="/products">
                 Products
               </Nav.Link>
               <Nav.Link className="mx-3" href="/guests">

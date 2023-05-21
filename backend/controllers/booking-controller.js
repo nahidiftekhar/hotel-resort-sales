@@ -4,6 +4,12 @@ const bookingServices = require('../services/booking-services');
 // Create new reservation/booking
 router.post('/create-booking', bookingServices.addNewBooking);
 
+//Get a single booking record by id
+router.get(
+  '/get-booking-record/:bookingId',
+  bookingServices.fetchSingleBooking
+);
+
 // List max discount
 router.get('/max-discount', bookingServices.fetchMaxDiscountSlab);
 

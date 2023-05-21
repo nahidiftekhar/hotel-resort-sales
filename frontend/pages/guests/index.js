@@ -3,11 +3,13 @@ import { PropagateLoader } from 'react-spinners';
 import DataTable, { FilterComponent } from 'react-data-table-component';
 import { Container, Button, Form } from 'react-bootstrap';
 import ReactiveButton from 'reactive-button';
+import { useRouter } from 'next/router';
 
 import { listAllGuestsApi } from '@/api/guest-api';
 import { Icon } from '@/components/_commom/Icon';
 import AddGuest from '@/components/guests/add-guest';
 import EditGuest from '@/components/guests/edit-guest';
+import { writeToStorage } from '@/components/_functions/storage-variable-management';
 
 function GuestHome() {
   const [refresh, setRefresh] = useState(true);
@@ -17,6 +19,8 @@ function GuestHome() {
   const [showAddGuestModal, setShowAddGuestModal] = useState(false);
   const [showModGuestModal, setShowModGuestModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     const getListOfGuests = async () => {
@@ -31,6 +35,12 @@ function GuestHome() {
   }, [refresh]);
 
   const addGuestModalOpener = () => setShowAddGuestModal(true);
+
+  const handleAddBookingForGuest = (guestId) => {
+    const res = writeToStorage(String(guestId), 'GUEST_KEY');
+    if (res) router.push('/booking/add-booking');
+    else return false;
+  };
 
   const headerResponsive = [
     {
@@ -55,12 +65,6 @@ function GuestHome() {
       wrap: true,
       sortable: true,
     },
-    // {
-    //   name: 'Address',
-    //   selector: (row) => row.address,
-    //   wrap: true,
-    //   sortable: true,
-    // },
     {
       name: 'Identity Card',
       selector: (row) => `${row.id_type}- ${row.id_number}`,
@@ -69,23 +73,22 @@ function GuestHome() {
     },
     {
       name: 'Actions',
-      cell: (filteredData) => (
+      cell: (row) => (
         <div>
-          <a href={`/edit-guest?id=${filteredData.id}`}>
-            <Button
-              size="sm"
-              variant="success"
-              className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center">
-              <Icon nameIcon="FaPlus" propsIcon={{ size: 12 }} />
-            </Button>
-          </a>
+          <Button
+            size="sm"
+            variant="success"
+            className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center"
+            onClick={() => handleAddBookingForGuest(row.id)}>
+            <Icon nameIcon="FaPlus" propsIcon={{ size: 12 }} />
+          </Button>
           <Button
             size="sm"
             variant="secondary"
             className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center"
             onClick={() => {
               setShowModGuestModal(true);
-              setModGuestData(filteredData);
+              setModGuestData(row);
             }}>
             <Icon nameIcon="FaEdit" propsIcon={{ size: 12 }} />
           </Button>

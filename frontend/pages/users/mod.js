@@ -24,7 +24,6 @@ const encodedUserId = CryptoJS.AES.encrypt(
 
 function UsersHome() {
   useEffect(() => {
-    writeToStorage(guestId, 'GUEST_KEY');
     writeToStorage(userId, 'USER_KEY');
   }, []);
 

@@ -8,6 +8,13 @@ export const listAllBookingApi = async () => {
   return apiResult.data;
 };
 
+export const getSingleBookingApi = async (bookingId) => {
+  const apiResult = await axios.get(
+    `${beConfig.host}/booking-management/get-booking-record/${bookingId}`
+  );
+  return apiResult.data;
+};
+
 export const createBookingApi = async (visitData, productData) => {
   const {
     packageDetails,
@@ -88,6 +95,20 @@ export const approveDiscountApi = async (discountData) => {
 
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/approve-discount`,
+    objectToSubmit
+  );
+  return apiResult.data;
+};
+
+export const confirmAdvancedApi = async (advancedData) => {
+  const objectToSubmit = {
+    bookingId: advancedData.bookingId,
+    advancedAmount: advancedData.advancedAmount,
+    advancedNotes: advancedData.advancedNotes,
+  };
+
+  const apiResult = await axios.post(
+    `${beConfig.host}/booking-management/confirm-advanced`,
     objectToSubmit
   );
   return apiResult.data;

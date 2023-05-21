@@ -7,9 +7,12 @@ import { Icon } from '@/components/_commom/Icon';
 import { listAllPackagesApi } from '@/api/products-api';
 import { updateStateArray } from '@/components/_functions/common-functions';
 
-function PackageSection({ setBookingData, bookingData, daysCount }) {
+function EditPackage({ setBookingData, bookingData, daysCount }) {
   const [packageData, setPackageData] = useState([]);
   const [packageList, setPackageList] = useState([]);
+
+  console.log('bookingData: ' + JSON.stringify(bookingData));
+  console.log('daysCount: ' + JSON.stringify(daysCount));
 
   useEffect(() => {
     const fetchPackageList = async () => {
@@ -19,14 +22,16 @@ function PackageSection({ setBookingData, bookingData, daysCount }) {
           return { ...obj, value: index, label: obj.name };
         })
       );
-      setPackageData([]);
+      // setPackageData([]);
+      if (bookingData?.components?.packageDetails?.length)
+        setPackageData(bookingData?.components?.packageDetails);
       setBookingData((currentData) => ({
         ...currentData,
         totalPackageCost: 0,
       }));
     };
     fetchPackageList();
-  }, [daysCount]);
+  }, [daysCount, setBookingData]);
 
   const handleDeleteItem = (index) => {
     setPackageData(
@@ -351,4 +356,4 @@ function PackageSection({ setBookingData, bookingData, daysCount }) {
   );
 }
 
-export default PackageSection;
+export default EditPackage;

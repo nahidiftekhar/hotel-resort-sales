@@ -30,8 +30,11 @@ body {
   // background: #eaeaea !important;
   min-height: 100vh;
 
-  img {
+  img,
+  svg,
+  video {
     max-width: 100%;
+    display: block;
   }
 
   a {
@@ -127,11 +130,33 @@ body {
     color: v.$white-color;
   }
 
+  .circular-button-wrapper {
+    .reactive-btn-wrapper {
+      height: auto;
+    }
+    .reactive-btn:not(.no-animation):hover:not(:disabled):not(.disabled) {
+      padding: 5px 8px;
+      margin-top: 0;
+    }
+    .circular-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      height: fit-content;
+      padding: 5px;
+    }
+  }
+
   .min-vh-70 {
     min-height: 70vh;
   }
   .min-vh-50 {
     min-height: 50vh;
+  }
+
+  .mw-800 {
+    max-width: 800px !important;
   }
 
   .max-vw-50 {
@@ -149,6 +174,17 @@ body {
   }
   .max-w-50 {
     max-width: 50%;
+  }
+  .w-100px {
+    width: 100px !important;
+  }
+
+  .w-75px {
+    width: 75px !important;
+  }
+
+  .border-grey {
+    border-color: v.$grey-color2 !important;
   }
 }
 
@@ -515,7 +551,7 @@ body {
 
 /*=============Booking Form===================*/
 .custom-form {
-  max-width: 800px;
+  // max-width: 800px;
   label {
     font-weight: bold;
     display: flex;
@@ -541,7 +577,7 @@ body {
   input[type='number']:disabled,
   textarea:disabled,
   select :disabled {
-    background: #dddddd;
+    background-color: #efefef;
   }
 
   select {
@@ -747,4 +783,28 @@ body {
   .css-1dimb5e-singleValue {
     color: v.$grey-color;
   }
+
+  .q-error {
+    .ql-container.ql-snow {
+      border: 3px solid #c00;
+    }
+
+    .ql-toolbar.ql-snow {
+      border: 3px solid #c00;
+    }
+  }
 }
+
+.arrow-hidden {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+/*===============Quill Component================*/

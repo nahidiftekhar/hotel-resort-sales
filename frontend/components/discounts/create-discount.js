@@ -76,6 +76,16 @@ function CreateDiscount({ show, setShow, bookingData, setBookingData }) {
                 );
             }
           })()}
+          <div className="mx-2 mt-3 d-flex justify-content-center">
+            <ReactiveButton
+              size="small"
+              outline
+              color="yellow"
+              buttonState="idle"
+              idleText={<div className="fw-bold">Close</div>}
+              onClick={() => setShow(false)}
+            />
+          </div>
         </Modal.Body>
       ) : (
         <Modal.Body>

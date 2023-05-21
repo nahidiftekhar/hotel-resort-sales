@@ -8,6 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     checkout_date: {
       type: Sequelize.DATEONLY,
     },
+    components: {
+      type: Sequelize.JSON,
+    },
+    price_components: {
+      type: Sequelize.JSON,
+    },
     payment_method: {
       type: Sequelize.STRING,
       defaultValue: 'TBD',
@@ -24,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.DECIMAL(15, 4),
       allowNull: false,
     },
+    discounted_amount: {
+      type: Sequelize.DECIMAL(15, 4),
+      allowNull: false,
+    },
     advanced_amount: {
       type: Sequelize.DECIMAL(15, 4),
       defaultValue: 0,
@@ -31,16 +41,9 @@ module.exports = (sequelize, DataTypes) => {
     advanced_notes: {
       type: Sequelize.TEXT,
     },
-    discounted_amount: {
-      type: Sequelize.DECIMAL(15, 4),
-      allowNull: false,
-    },
     currency: {
       type: Sequelize.STRING,
       defaultValue: 'BDT',
-    },
-    components: {
-      type: Sequelize.JSON,
     },
     payment_status: {
       type: Sequelize.STRING,

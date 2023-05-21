@@ -42,6 +42,24 @@ async function listAllBookingAfterToday(req, res, next) {
   return res.json(result);
 }
 
+async function fetchSingleBooking(req, res, next) {
+  const { bookingId } = req.params;
+  const singleBookingData = await dbStandard.findOneFilterDb(bookings, {
+    id: bookingId,
+  });
+
+  const guestId = singleBookingData.guest_id;
+  const guestData = await dbStandard.findOneFilterDb(guests, {
+    id: guestId,
+  });
+
+  const discountData = await dbStandard.findOneFilterDb(discounts, {
+    booking_id: bookingId,
+  });
+
+  return res.json({ bookingData: singleBookingData, guestData, discountData });
+}
+
 async function addNewBooking(req, res, next) {
   const {
     guestId,
@@ -198,6 +216,7 @@ module.exports = {
   addNewBooking,
   addDiscountEntry,
   fetchAllDiscountRequests,
+  fetchSingleBooking,
   approveDiscount,
   confirmAdvancedReceipt,
   cancelBooking,

@@ -269,15 +269,15 @@ const prixfixeMenus = [
   },
 ];
 
-prixfixeMenus.map(({ name, description }) =>
-  TableToPopulate.prixfixeitems.create({
-    name: name,
-    description: description,
-    price: faker.datatype.float({ min: 100, max: 3500 }),
-    image_url: faker.image.food(640, 480, true),
-    category_id: faker.helpers.arrayElement([1, 2, 3, 4, 5]),
-  })
-);
+// prixfixeMenus.map(({ name, description }) =>
+//   TableToPopulate.prixfixeitems.create({
+//     name: name,
+//     description: description,
+//     price: faker.datatype.float({ min: 100, max: 3500 }),
+//     image_url: faker.image.food(640, 480, true),
+//     category_id: faker.helpers.arrayElement([1, 2, 3, 4, 5]),
+//   })
+// );
 
 // packageTypes.map((type) =>
 //   TableToPopulate.packagecategories.create({
@@ -322,28 +322,27 @@ prixfixeMenus.map(({ name, description }) =>
 
 async function populateTable() {
   for (let i = 0; i < 99; i++) {
-    TableToPopulate.alacarteitems.create({
-      name:
-        faker.helpers.arrayElement(menuPrimary) +
-        ' ' +
-        faker.helpers.arrayElement(menuConjunction) +
-        ' ' +
-        faker.helpers.arrayElement(menuAdjective) +
-        ' ' +
-        faker.helpers.arrayElement(menuSecondary),
-
-      description:
-        faker.helpers.arrayElement(menuAdjective) +
-        ' ' +
-        faker.helpers.arrayElement(menuDescription),
-      price: faker.datatype.float({ min: 100, max: 3500 }),
-      image_url: faker.image.food(640, 480, true),
-      category_id: faker.helpers.arrayElement([1, 2, 3, 4, 5, 6, 7]),
+    TableToPopulate.guests.create({
+      name: faker.name.fullName(),
+      phone: faker.phone.number(),
+      email: faker.internet.email(),
+      address: faker.address.streetAddress(true),
+      nationality: faker.address.country(),
+      date_of_birth: faker.date.between({
+        from: '1970-01-01T00:00:00.000Z',
+        to: '2005-01-01T00:00:00.000Z',
+      }),
+      id_type: faker.helpers.arrayElement([
+        'NID',
+        'Passport',
+        'Driving License',
+      ]),
+      id_number: faker.random.numeric(9),
     });
   }
 }
 
-// populateTable();
+populateTable();
 
 console.log('Done populating. please check database.');
 

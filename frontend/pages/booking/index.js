@@ -16,6 +16,7 @@ import { downloadExcel } from '@/components/_functions/downloadExcel';
 
 import { listAllBookingApi } from '@/api/booking-api';
 import DiscountApproval from '@/components/discounts/discount-approval';
+import AdvancedCreations from '@/components/advanced/create-advanced';
 
 function BookingHome() {
   const [allBookings, setAllBookings] = useState([]);
@@ -24,6 +25,7 @@ function BookingHome() {
   const [isLoading, setIsLoading] = useState(true);
   const [referesh, setReferesh] = useState(false);
   const [showDiscountApporoval, setShowDiscountApporoval] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
     const fetchAllBooking = async () => {
@@ -45,6 +47,13 @@ function BookingHome() {
     setShowDiscountApporoval(true);
   };
 
+  const handleCreateAdvanced = async (rowData) => {
+    setDiscountData({
+      ...rowData,
+    });
+    setShowAdvanced(true);
+  };
+
   const headerResponsive = [
     {
       name: 'ID',
@@ -56,13 +65,13 @@ function BookingHome() {
       selector: (row) => row.checkin_date,
       sortable: true,
       wrap: true,
-      width: '150px',
+      // width: '150px',
     },
     {
       name: 'Check-out',
       selector: (row) => row.checkout_date,
       sortable: true,
-      width: '150px',
+      // width: '150px',
     },
     {
       name: 'Guest',
@@ -82,6 +91,7 @@ function BookingHome() {
         </div>
       ),
       wrap: true,
+      grow: 2,
     },
     {
       name: 'Booking Details',
@@ -89,7 +99,7 @@ function BookingHome() {
       selector: (row) => (
         <div>
           {row.components.packageDetails?.length && <strong>Package:</strong>}
-          {row.components.packageDetails.map((singlePackage, index) => (
+          {row.components.packageDetails?.map((singlePackage, index) => (
             <OverlayTrigger
               key={index}
               trigger="click"
@@ -191,6 +201,7 @@ function BookingHome() {
         </div>
       ),
       wrap: true,
+      grow: 3,
     },
     {
       name: 'Price (BDT)',
@@ -220,13 +231,20 @@ function BookingHome() {
             After discount:{' '}
             <strong>{Number(row.discounted_amount).toFixed(2)}</strong> BDT
           </p>
+
+          <p className="my-1">
+            Advanced amount:{' '}
+            <strong>{Number(row.advanced_amount).toFixed(2)}</strong> BDT
+          </p>
         </div>
       ),
       wrap: true,
       sortable: true,
+      grow: 3,
     },
     {
       name: 'Actions',
+      grow: 2,
       cell: (row) => (
         <div>
           {row.discount &&
@@ -239,24 +257,39 @@ function BookingHome() {
                 <Icon nameIcon="FaPercentage" propsIcon={{ size: 12 }} />
               </Button>
             )}{' '}
-          <a href={`/edit-guest?id=${row.id}`}>
+          {row.discount?.approval_status !== 'pendingApproval' && (
             <Button
               size="sm"
-              variant="success"
-              className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center">
-              <Icon nameIcon="FaPlus" propsIcon={{ size: 12 }} />
+              variant="info"
+              className="mx-1 py-0 px-md-1 px-1 d-inline-flex align-items-center"
+              onClick={() => handleCreateAdvanced(row)}>
+              <Icon
+                nameIcon="HiCurrencyBangladeshi"
+                propsIcon={{
+                  size: 20,
+                  color: '#fff',
+                  onMouseOver: ({ target }) => (target.style.color = '#eee'),
+                  onMouseOut: ({ target }) => (target.style.color = '#fff'),
+                }}
+              />
+            </Button>
+          )}
+          <a href={`booking/show-booking?id=${row.id}`}>
+            <Button
+              size="sm"
+              variant="dark"
+              className="mx-1 py-0 px-md-1 px-1 d-inline-flex align-items-center">
+              <Icon
+                nameIcon="FaEye"
+                propsIcon={{
+                  size: 20,
+                  color: '#fff',
+                  onMouseOver: ({ target }) => (target.style.color = '#eee'),
+                  onMouseOut: ({ target }) => (target.style.color = '#fff'),
+                }}
+              />
             </Button>
           </a>
-          <Button
-            size="sm"
-            variant="secondary"
-            className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center"
-            onClick={() => {
-              setShowModGuestModal(true);
-              setModGuestData(row);
-            }}>
-            <Icon nameIcon="FaEdit" propsIcon={{ size: 12 }} />
-          </Button>
         </div>
       ),
     },
@@ -333,6 +366,13 @@ function BookingHome() {
         show={showDiscountApporoval}
         setShow={setShowDiscountApporoval}
         discountData={discountData}
+        setReferesh={setReferesh}
+      />
+
+      <AdvancedCreations
+        show={showAdvanced}
+        setShow={setShowAdvanced}
+        bookingData={discountData}
         setReferesh={setReferesh}
       />
     </div>

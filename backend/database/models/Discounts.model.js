@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
+    rack_price: {
+      type: Sequelize.DECIMAL(15, 4),
+      allowNull: false,
+    },
     total_discount: {
       type: Sequelize.DECIMAL(15, 4),
       allowNull: false,
@@ -17,6 +21,13 @@ module.exports = (sequelize, DataTypes) => {
     discount_notes: {
       type: Sequelize.TEXT,
       allowNull: true,
+    },
+    approval_notes: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    price_components: {
+      type: Sequelize.JSON,
     },
   });
 

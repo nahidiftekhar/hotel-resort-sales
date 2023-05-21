@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import ReactiveButton from 'reactive-button';
 import { Row, Col } from 'react-bootstrap';
 import * as Yup from 'yup';
-import CryptoJS from 'crypto-js';
 
 import {
   CustomTextInput,
@@ -13,9 +13,10 @@ import {
 } from '@/components/_commom/form-elements';
 
 import ProductSelection from './product-selection';
-import { createBookingApi } from '@/api/booking-api';
-import { generalConfigs } from '@/configs/config';
 import CreateDiscount from '../discounts/create-discount';
+import { createBookingApi } from '@/api/booking-api';
+import { readFromStorage } from '@/components/_functions/storage-variable-management';
+import { PropagateLoader } from 'react-spinners';
 
 const validationRules = Yup.object({
   checkInDate: Yup.date()
@@ -57,18 +58,13 @@ function BookingFrom() {
     (bookingData.totalAlacarteCost || 0) +
     (bookingData.totalServiceCost || 0);
 
+  const router = useRouter();
+
   useEffect(() => {
-    const userId = CryptoJS.AES.decrypt(
-      localStorage.getItem('userDetail'),
-      generalConfigs.ENCRYPTION_SECRET
-    ).toString(CryptoJS.enc.Utf8);
-
-    const guestId = CryptoJS.AES.decrypt(
-      localStorage.getItem('guestDetail'),
-      generalConfigs.ENCRYPTION_SECRET
-    ).toString(CryptoJS.enc.Utf8);
-
+    const userId = readFromStorage('USER_KEY');
+    const guestId = readFromStorage('GUEST_KEY');
     setBookingData((currentData) => ({ ...currentData, guestId, userId }));
+    if (guestId <= 0) router.push('/guests');
   }, []);
 
   const handleSubmit = async (values) => {
@@ -81,8 +77,11 @@ function BookingFrom() {
     }
   };
 
+  if (!bookingData.guestId)
+    return <PropagateLoader color="#0860ae" size={10} />;
+
   return (
-    <div className="custom-form pt-3">
+    <div className="custom-form mw-800 pt-3">
       <h2 className="text-center">Add Booking</h2>
       <Formik
         initialValues={{
@@ -165,14 +164,20 @@ function BookingFrom() {
                     color="blue"
                   />
                 ) : (
-                  <ReactiveButton
-                    buttonState="idle"
-                    size="small"
-                    outline
-                    idleText={<span className="fw-bold">Modify Booking</span>}
-                    color="blue"
-                    onClick={() => setBookingEdit(true)}
-                  />
+                  ''
+                  // !(
+                  //   bookingData.discountStatus === 'selfApproved' ||
+                  //   bookingData.discountStatus === 'pendingApproval'
+                  // ) && (
+                  //   <ReactiveButton
+                  //     buttonState="idle"
+                  //     size="small"
+                  //     outline
+                  //     idleText={<span className="fw-bold">Modify Booking</span>}
+                  //     color="blue"
+                  //     onClick={() => setBookingEdit(true)}
+                  //   />
+                  // )
                 )}
               </div>
             </Form>
@@ -211,7 +216,7 @@ function BookingFrom() {
                   outline
                   color="blue"
                   buttonState="idle"
-                  idleText={<div className="fw-bold">Modify</div>}
+                  idleText={<div className="fw-bold">View Status</div>}
                   onClick={() => setShowDiscountModal(true)}
                   className="py-0"
                 />
@@ -229,20 +234,22 @@ function BookingFrom() {
           </div>
         </div>
       ) : (
-        <div className="border rounded p-1 pb-3 my-2">
-          <h4>Discount</h4>
-          <div className="d-flex justify-content-between">
-            No discount applied.{' '}
-            <ReactiveButton
-              size="small"
-              outline
-              color="blue"
-              buttonState="idle"
-              idleText={<div className="fw-bold">Add discount</div>}
-              onClick={() => setShowDiscountModal(true)}
-            />
+        bookingAdded && (
+          <div className="border rounded p-1 pb-3 my-2">
+            <h4>Discount</h4>
+            <div className="d-flex justify-content-between">
+              No discount applied.{' '}
+              <ReactiveButton
+                size="small"
+                outline
+                color="blue"
+                buttonState="idle"
+                idleText={<div className="fw-bold">Add discount</div>}
+                onClick={() => setShowDiscountModal(true)}
+              />
+            </div>
           </div>
-        </div>
+        )
       )}
 
       <CreateDiscount

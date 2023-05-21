@@ -1,10 +1,18 @@
-import { approveDiscountApi } from '@/api/booking-api';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import ReactiveButton from 'reactive-button';
 
+import { approveDiscountApi } from '@/api/booking-api';
+import { readFromStorage } from '@/components/_functions/storage-variable-management';
+
 function DiscountApproval({ show, setShow, discountData, setReferesh }) {
   const [notes, setNotes] = useState('');
+  const [userId, setUserId] = useState(0);
+
+  useEffect(() => {
+    setUserId(readFromStorage('USER_KEY'));
+  }, []);
+
   const handleSubmit = async (approvalStatus) => {
     const apiResult = await approveDiscountApi({
       ...discountData,
@@ -50,44 +58,61 @@ function DiscountApproval({ show, setShow, discountData, setReferesh }) {
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
-        <div className="d-flex justify-content-end mt-3">
-          <div className="mx-2">
-            <ReactiveButton
-              buttonState="idle"
-              idleText="Close"
-              color="yellow"
-              size="tiny"
-              outline
-              rounded
-              onClick={() => setShow(false)}
-              className=""
-            />
-          </div>
+        {discountData.approver_id === userId ? (
+          <div className="d-flex justify-content-end mt-3">
+            <div className="mx-2">
+              <ReactiveButton
+                buttonState="idle"
+                idleText="Close"
+                color="yellow"
+                size="tiny"
+                outline
+                rounded
+                onClick={() => setShow(false)}
+                className=""
+              />
+            </div>
 
-          <div className="mx-2">
-            <ReactiveButton
-              buttonState="idle"
-              idleText="Approve"
-              color="green"
-              size="tiny"
-              outline
-              rounded
-              onClick={() => handleSubmit(true)}
-            />
-          </div>
+            <div className="mx-2">
+              <ReactiveButton
+                buttonState="idle"
+                idleText="Approve"
+                color="green"
+                size="tiny"
+                outline
+                rounded
+                onClick={() => handleSubmit(true)}
+              />
+            </div>
 
-          <div className="mx-2">
-            <ReactiveButton
-              buttonState="idle"
-              idleText="Reject"
-              color="red"
-              size="tiny"
-              outline
-              rounded
-              onClick={() => handleSubmit(false)}
-            />
+            <div className="mx-2">
+              <ReactiveButton
+                buttonState="idle"
+                idleText="Reject"
+                color="red"
+                size="tiny"
+                outline
+                rounded
+                onClick={() => handleSubmit(false)}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="d-flex justify-content-end mt-3">
+            <div className="mx-2">
+              <ReactiveButton
+                buttonState="idle"
+                idleText="Close"
+                color="yellow"
+                size="tiny"
+                outline
+                rounded
+                onClick={() => setShow(false)}
+                className=""
+              />
+            </div>
+          </div>
+        )}
       </Modal.Body>
     </Modal>
   );

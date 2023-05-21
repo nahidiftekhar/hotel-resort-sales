@@ -14,7 +14,7 @@ export const CustomTextInput = ({ label, ...props }) => {
       {meta.touched && meta.error ? (
         <div className="error-message">{meta.error}</div>
       ) : (
-        <div className="error-message">&nbsp;</div>
+        ''
       )}
     </>
   );

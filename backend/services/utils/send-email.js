@@ -1,5 +1,5 @@
-const nodemailer = require("nodemailer");
-const mailConfig = require("../../configs/mail.config");
+const nodemailer = require('nodemailer');
+const mailConfig = require('../../configs/mail.config');
 
 async function sendSingleEmail(emailId, messageBody, mailSubject) {
   console.log('Trying mail...');
@@ -18,7 +18,7 @@ async function sendSingleEmail(emailId, messageBody, mailSubject) {
     if (error) {
       console.log(error);
     } else {
-      console.log("Server is ready to take new messages");
+      console.log('Server is ready to take new messages');
     }
   });
 
@@ -28,34 +28,24 @@ async function sendSingleEmail(emailId, messageBody, mailSubject) {
     // replyTo: emailId,
     subject: mailSubject,
     text: mailConfig.mailConfig.DEFAULT_TEXT,
-    attachments: [{
-      filename: 'logo.png',
-      path: __dirname +'/logo.png',
-      cid: 'logo'
-  }],
     html: messageBody,
   };
 
   transporter.sendMail(mailOptions, function (err, info) {
     if (err) {
       console.log(err);
-      return ({
+      return {
         status: 0,
         message: err,
-      })
-      // res.json({yo: 'error'});
-      // res.sendStatus(500);
+      };
     } else {
       console.log('Message sent successfully' + info.response);
-      // res.status(200).json({"msg": "mesage  has been sent"})
-      return ({
+      return {
         status: 1,
-        message: "Mail sent successfully",
-      });
+        message: 'Mail sent successfully',
+      };
     }
   });
-
-  // return res;
 }
 
 module.exports = {

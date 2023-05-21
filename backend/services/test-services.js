@@ -20,7 +20,7 @@ const {
 } = require('../database/models');
 
 async function testDb(req, res, next) {
-  const dbResult = await dbStandardServices.selectAllDb(bookings);
+  const dbResult = await dbStandardServices.selectAllDb(guests);
   return res.json(dbResult);
 }
 
