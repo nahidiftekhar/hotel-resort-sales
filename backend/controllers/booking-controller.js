@@ -2,7 +2,10 @@ const router = require('express').Router();
 const bookingServices = require('../services/booking-services');
 
 // Create new reservation/booking
-router.post('/create-booking', bookingServices.addNewBooking);
+router.post('/create-booking', bookingServices.addBooking);
+
+// Create new reservation/booking
+router.post('/edit-booking', bookingServices.editBooking);
 
 //Get a single booking record by id
 router.get(
@@ -21,6 +24,12 @@ router.post('/create-discount', bookingServices.addDiscountEntry);
 
 // List all approval pending discount requests
 router.get('/list-discount-requests', bookingServices.fetchAllDiscountRequests);
+
+// List all approval pending discount requests by approver ID
+router.get(
+  '/pending-discount-requests/:approverId',
+  bookingServices.fetchDiscountRequestsById
+);
 
 // Approve a discount request
 router.post('/approve-discount', bookingServices.approveDiscount);

@@ -13,10 +13,12 @@ function PriceInformation({ bookingDetails, discountDetails }) {
       </Col>
       <Col xs={6} md={3} className="">
         {BDTFormat.format(
-          Object.values(bookingDetails?.price_components).reduce(
-            (accumulator, { rackPrice }) => accumulator + rackPrice,
-            0
-          ) || 0
+          bookingDetails?.price_components
+            ? Object.values(bookingDetails?.price_components).reduce(
+                (accumulator, { rackPrice }) => accumulator + Number(rackPrice),
+                0
+              ) || 0
+            : 0
         )}
       </Col>
 
@@ -25,18 +27,20 @@ function PriceInformation({ bookingDetails, discountDetails }) {
       </Col>
       <Col xs={6} md={3} className="">
         {BDTFormat.format(
-          Object.values(bookingDetails?.price_components).reduce(
-            (accumulator, { discount }) => accumulator + discount,
-            0
-          ) || 0
+          (bookingDetails?.price_components
+            ? Object.values(bookingDetails?.price_components).reduce(
+                (accumulator, { rackPrice }) => accumulator + Number(rackPrice),
+                0
+              ) || 0
+            : 0) -
+            (bookingDetails?.price_components
+              ? Object.values(bookingDetails?.price_components).reduce(
+                  (accumulator, { priceAfterDiscount }) =>
+                    accumulator + Number(priceAfterDiscount),
+                  0
+                ) || 0
+              : 0)
         )}
-      </Col>
-
-      <Col xs={6} md={9} className="text-muted text-md-end">
-        Discount Status
-      </Col>
-      <Col xs={6} md={3} className="">
-        {camelCaseToCapitalizedString(discountDetails?.approval_status || '-')}
       </Col>
 
       <Col xs={6} md={9} className="text-muted text-md-end">
@@ -44,12 +48,21 @@ function PriceInformation({ bookingDetails, discountDetails }) {
       </Col>
       <Col xs={6} md={3} className="">
         {BDTFormat.format(
-          Object.values(bookingDetails?.price_components).reduce(
-            (accumulator, { priceAfterDiscount }) =>
-              accumulator + priceAfterDiscount,
-            0
-          ) || 0
+          bookingDetails?.price_components
+            ? Object.values(bookingDetails?.price_components).reduce(
+                (accumulator, { priceAfterDiscount }) =>
+                  accumulator + Number(priceAfterDiscount),
+                0
+              ) || 0
+            : 0
         )}
+      </Col>
+
+      <Col xs={6} md={9} className="text-muted text-md-end">
+        Booking Status
+      </Col>
+      <Col xs={6} md={3} className="">
+        {camelCaseToCapitalizedString(bookingDetails?.booking_status || '-')}
       </Col>
     </Row>
   );

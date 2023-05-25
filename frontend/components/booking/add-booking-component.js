@@ -2,6 +2,10 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import EditPackage from './edit-package';
 import EditPrixfixe from './edit-prixfixe';
+import { camelCaseToCapitalizedString } from '../_functions/string-format';
+import EditAlacarte from './edit-alacarte';
+import EditRoom from './edit-room';
+import EditService from './edit-service';
 
 function AddBookingComponent({
   show,
@@ -19,10 +23,11 @@ function AddBookingComponent({
       keyboard={false}
       size="xl">
       <Modal.Header closeButton>
-        <Modal.Title>Add component</Modal.Title>
+        <Modal.Title>
+          Add {camelCaseToCapitalizedString(componentType)}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        Component Type: {componentType}
         {(() => {
           switch (componentType) {
             case 'package':
@@ -30,7 +35,7 @@ function AddBookingComponent({
                 <EditPackage
                   bookingData={bookingData}
                   setBookingData={setBookingData}
-                  daysCount={daysCount}
+                  setShow={setShow}
                 />
               );
 
@@ -39,8 +44,38 @@ function AddBookingComponent({
                 <EditPrixfixe
                   setBookingData={setBookingData}
                   bookingData={bookingData}
+                  setShow={setShow}
                 />
               );
+
+            case 'alacarte':
+              return (
+                <EditAlacarte
+                  setBookingData={setBookingData}
+                  bookingData={bookingData}
+                  setShow={setShow}
+                />
+              );
+
+            case 'room':
+              return (
+                <EditRoom
+                  setBookingData={setBookingData}
+                  bookingData={bookingData}
+                  setShow={setShow}
+                  daysCount={daysCount}
+                />
+              );
+
+            case 'service':
+              return (
+                <EditService
+                  setBookingData={setBookingData}
+                  bookingData={bookingData}
+                  setShow={setShow}
+                />
+              );
+
             default:
               return <div className="error-message">Something went wrong</div>;
           }

@@ -30,15 +30,14 @@ function ViewRooms({ selectedProducts, priceDetails }) {
           <Col xs={6}>{BDTFormat.format(priceDetails.rackPrice)}</Col>
 
           <Col xs={6}>Discount Amount</Col>
-          <Col xs={6}>{BDTFormat.format(priceDetails.discount)}</Col>
+          <Col xs={6}>
+            {BDTFormat.format(
+              priceDetails.rackPrice - priceDetails.priceAfterDiscount
+            )}
+          </Col>
 
           <Col xs={6}>Discount Percentage</Col>
-          <Col xs={6}>
-            {((priceDetails.discount * 100) / priceDetails.rackPrice).toFixed(
-              2
-            )}
-            %
-          </Col>
+          <Col xs={6}>{priceDetails.discount}%</Col>
 
           {priceDetails.discount > 0 && <Col xs={6}>Discount Notes</Col>}
           {priceDetails.discount > 0 && (

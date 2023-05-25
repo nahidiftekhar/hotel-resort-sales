@@ -57,3 +57,10 @@ export function sumOfKey(arrayName, key) {
       )
     : 0;
 }
+
+//Round up to defined number of digits
+export function roundUptoFixedDigits(numberToRound, decimalPlaces) {
+  if (!isNaN(numberToRound) && !isNaN(decimalPlaces))
+    return (Math.ceil(numberToRound * 100) / 100).toFixed(decimalPlaces);
+  else return false;
+}

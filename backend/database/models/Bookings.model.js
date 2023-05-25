@@ -18,14 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.STRING,
       defaultValue: 'TBD',
     },
-    adult_count: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
-    kids_count: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
     amount: {
       type: Sequelize.DECIMAL(15, 4),
       allowNull: false,

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { beConfig } from '@/configs/backend';
+import { organizationConfigs } from '@/configs/organizationConfig';
 
 export const listAllBookingApi = async () => {
   const apiResult = await axios.get(
@@ -15,6 +16,7 @@ export const getSingleBookingApi = async (bookingId) => {
   return apiResult.data;
 };
 
+// Not used anymore
 export const createBookingApi = async (visitData, productData) => {
   const {
     packageDetails,
@@ -56,6 +58,61 @@ export const createBookingApi = async (visitData, productData) => {
   return apiResult.data;
 };
 
+export const modifyBookingApi = async (bookingData, discountData) => {
+  bookingData.amount = Object.values(bookingData?.price_components).reduce(
+    (accumulator, { rackPrice }) => accumulator + Number(rackPrice),
+    0
+  );
+
+  bookingData.discounted_amount = Object.values(
+    bookingData?.price_components
+  ).reduce(
+    (accumulator, { priceAfterDiscount }) =>
+      accumulator + Number(priceAfterDiscount),
+    0
+  );
+  bookingData.requester_id = discountData?.requester_id;
+  bookingData.discount_id = discountData?.id;
+  bookingData.approver_id = discountData?.approver_id;
+  bookingData.discount_notes = Object.values(bookingData?.price_components)
+    .map((obj) => obj.discountNotes)
+    .join('\n');
+
+  const apiResult = await axios.post(
+    `${beConfig.host}/booking-management/edit-booking`,
+    bookingData
+  );
+  return apiResult.data;
+};
+
+export const addBookingApi = async (bookingData, checkInDate, checkOutDate) => {
+  bookingData.checkOutDate = checkOutDate.setHours(0, 0, 0, 0);
+  bookingData.checkInDate = checkInDate.setHours(0, 0, 0, 0);
+  bookingData.amount = Object.values(bookingData?.price_components).reduce(
+    (accumulator, { rackPrice }) => accumulator + Number(rackPrice),
+    0
+  );
+
+  bookingData.discounted_amount = Object.values(
+    bookingData?.price_components
+  ).reduce(
+    (accumulator, { priceAfterDiscount }) =>
+      accumulator + Number(priceAfterDiscount),
+    0
+  );
+  bookingData.requester_id = bookingData.user_id;
+  bookingData.approver_id = organizationConfigs.APPROVER_ID;
+  bookingData.discount_notes = Object.values(bookingData?.price_components)
+    .map((obj) => obj.discountNotes)
+    .join('\n');
+
+  const apiResult = await axios.post(
+    `${beConfig.host}/booking-management/create-booking`,
+    bookingData
+  );
+  return apiResult.data;
+};
+
 export const getMaxDiscountSlab = async () => {
   const apiResult = await axios.get(
     `${beConfig.host}/booking-management/max-discount`
@@ -79,20 +136,28 @@ export const createDiscountApi = async (discountData) => {
   return apiResult.data;
 };
 
-export const approveDiscountApi = async (discountData) => {
+export const approveDiscountApi = async (
+  discountData,
+  approvalStatus,
+  approverComment,
+  approverId
+) => {
   const objectToSubmit = {
     discountId: discountData.id,
     bookingId: discountData.booking_id,
-    approvedPercentage: discountData.percentage_value,
+    approvedDiscount: discountData.total_discount,
+    approvedPercentage:
+      (discountData.total_discount * 100) / discountData.rack_price,
     notes:
       (discountData.discount_notes || '') +
       '\nApproverNotes: ' +
-      discountData.notes,
-    approverId: discountData.approver_id,
-    approvalStatus: discountData.approvalStatus,
-    discountedAmount: discountData.discountedAmount,
+      approverComment,
+    approverNotes: approverComment,
+    approverId: approverId,
+    approvalStatus: approvalStatus,
+    discountedAmount:
+      Number(discountData.rack_price) - Number(discountData.total_discount),
   };
-
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/approve-discount`,
     objectToSubmit
@@ -110,6 +175,26 @@ export const confirmAdvancedApi = async (advancedData) => {
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/confirm-advanced`,
     objectToSubmit
+  );
+  return apiResult.data;
+};
+
+export const cancelBookingApi = async (bookingId, notes) => {
+  const objectToSubmit = {
+    bookingId: bookingId,
+    notes: notes,
+  };
+
+  const apiResult = await axios.post(
+    `${beConfig.host}/booking-management/cancel-booking`,
+    objectToSubmit
+  );
+  return apiResult.data;
+};
+
+export const pendingApprovalRequestsApi = async (approverId) => {
+  const apiResult = await axios.get(
+    `${beConfig.host}/booking-management/pending-discount-requests/${approverId}`
   );
   return apiResult.data;
 };

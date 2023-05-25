@@ -5,6 +5,7 @@ const {
   discounts,
   discountslabs,
   guests,
+  credentials,
   packages,
   prixfixeitems,
   alacarteitems,
@@ -14,10 +15,19 @@ const {
 } = require('../database/models');
 
 const { Op, Sequelize } = require('sequelize');
+const { sendSingleEmail } = require('./utils/send-email');
 
 async function fetchAllDiscountRequests(req, res, next) {
   const dbResult = await dbStandard.findAllFilterDb(discounts, {
     approval_status: 'pendingApproval',
+  });
+  return res.json(dbResult);
+}
+
+async function fetchDiscountRequestsById(req, res, next) {
+  const dbResult = await dbStandard.joinFilterDb(discounts, bookings, {
+    approval_status: 'pendingApproval',
+    approver_id: req.params.approverId,
   });
   return res.json(dbResult);
 }
@@ -58,6 +68,191 @@ async function fetchSingleBooking(req, res, next) {
   });
 
   return res.json({ bookingData: singleBookingData, guestData, discountData });
+}
+
+async function addBooking(req, res, next) {
+  const {
+    guest_id,
+    user_id,
+    checkInDate,
+    checkOutDate,
+    amount,
+    discounted_amount,
+    currency,
+    components,
+    price_components,
+    booking_notes,
+    requester_id,
+    approver_id,
+    discount_notes,
+  } = req.body;
+
+  const highestDiscount = await dbStandard.findOneFilterDb(discountslabs, {
+    user_type_id: 1,
+  });
+  const DiscountLoa = await checkDiscountLoa(requester_id);
+
+  // 0: over MD's discount limit. 1: within MD's limit, over personal limit. 2: within personal discount limit
+  const discountStatus =
+    highestDiscount.discount_percentage <
+    ((amount - discounted_amount) * 100) / amount
+      ? 0
+      : DiscountLoa >= ((amount - discounted_amount) * 100) / amount
+      ? 2
+      : 1;
+
+  if (discountStatus === 0) return res.json(discountStatus);
+
+  const dbBooking = await dbStandard.addSingleRecordDB(bookings, {
+    user_id: user_id,
+    guest_id: guest_id,
+    checkin_date: checkInDate,
+    checkout_date: checkOutDate,
+    amount: amount,
+    discounted_amount: discounted_amount,
+    currency: currency ? currency : 'BDT',
+    components: components,
+    price_components: price_components,
+    booking_status:
+      discountStatus === 2
+        ? 'advancedPaymentPending'
+        : 'discountApprovalPending',
+    booking_notes: booking_notes,
+    advanced_notes: new Date() + 'Booking created',
+  });
+
+  const dbDiscount = dbBooking.success
+    ? await dbStandard.addSingleRecordDB(discounts, {
+        booking_id: dbBooking.dbResult.id,
+        requester_id: requester_id,
+        approver_id: approver_id,
+        percentage_value: ((amount - discounted_amount) * 100) / amount,
+        rack_price: amount,
+        total_discount: amount - discounted_amount,
+        approval_status:
+          discountStatus === 2 ? 'selfApproved' : 'pendingApproval',
+        discount_notes: discount_notes,
+        price_components: price_components,
+      })
+    : { success: false };
+
+  if (dbDiscount.success && discountStatus === 1) {
+    const mailSubject = 'System generated email: Discount approval request';
+    const mailBody =
+      'You have received a request for discount approval. Please log in to booking management system for necessary action.';
+    const approverDetail = await dbStandard.joinFilterDb(
+      usertypes,
+      credentials,
+      {
+        id: 1,
+      }
+    );
+    if (approverDetail.length) {
+      approverDetail.map((approver) =>
+        sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
+      );
+    }
+  }
+
+  return res.json({ dbBooking, dbDiscount });
+}
+
+async function editBooking(req, res, next) {
+  const {
+    id,
+    guestId,
+    userId,
+    checkInDate,
+    checkOutDate,
+    amount,
+    discounted_amount,
+    currency,
+    components,
+    price_components,
+    booking_notes,
+    booking_status,
+    requester_id,
+    discount_id,
+    approver_id,
+    discount_notes,
+  } = req.body;
+
+  const highestDiscount = await dbStandard.findOneFilterDb(discountslabs, {
+    user_type_id: 1,
+  });
+  const DiscountLoa = await checkDiscountLoa(requester_id);
+
+  // 0: over MD's discount limit. 1: within MD's limit, over personal limit. 2: within personal discount limit
+  const discountStatus =
+    highestDiscount.discount_percentage <
+    ((amount - discounted_amount) * 100) / amount
+      ? 0
+      : DiscountLoa >= ((amount - discounted_amount) * 100) / amount
+      ? 2
+      : 1;
+
+  if (discountStatus === 0) return res.json(discountStatus);
+
+  const dbBooking = await dbStandard.modifySingleRecordDb(
+    bookings,
+    {
+      id: id,
+    },
+    {
+      user_id: userId,
+      guest_id: guestId,
+      checkin_date: checkInDate,
+      checkout_date: checkOutDate,
+      amount: amount,
+      discounted_amount: discounted_amount,
+      currency: currency ? currency : 'BDT',
+      components: components,
+      price_components: price_components,
+      booking_status: booking_status,
+      booking_notes: booking_notes,
+    }
+  );
+
+  const dbDiscount = dbBooking.success
+    ? await dbStandard.modifySingleRecordDb(
+        discounts,
+        {
+          id: discount_id,
+        },
+        {
+          booking_id: id,
+          requester_id: requester_id,
+          approver_id: approver_id,
+          percentage_value: ((amount - discounted_amount) * 100) / amount,
+          rack_price: amount,
+          total_discount: amount - discounted_amount,
+          approval_status:
+            discountStatus === 2 ? 'selfApproved' : 'pendingApproval',
+          discount_notes: discount_notes,
+          price_components: price_components,
+        }
+      )
+    : { success: false };
+
+  if (dbDiscount.success && discountStatus === 1) {
+    const mailSubject = 'System generated email: Discount approval request';
+    const mailBody =
+      'You have received a request for discount approval. Please log in to booking management system for necessary action.';
+    const approverDetail = await dbStandard.joinFilterDb(
+      usertypes,
+      credentials,
+      {
+        id: 1,
+      }
+    );
+    if (approverDetail.length) {
+      approverDetail.map((approver) =>
+        sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
+      );
+    }
+  }
+
+  return res.json({ dbBooking, dbDiscount });
 }
 
 async function addNewBooking(req, res, next) {
@@ -149,7 +344,9 @@ async function approveDiscount(req, res, next) {
     discountId,
     bookingId,
     approvedPercentage,
+    approvedDiscount,
     notes,
+    approverNotes,
     approverId,
     approvalStatus,
     discountedAmount,
@@ -161,8 +358,10 @@ async function approveDiscount(req, res, next) {
     {
       approver_id: approverId,
       percentage_value: approvedPercentage,
+      total_discount: approvedDiscount,
       approval_status: approvalStatus ? 'approverApproved' : 'approverRejected',
       discount_notes: notes,
+      approval_notes: approverNotes,
     }
   );
   if (!modifyDiscount.success) return res.json({ modifyDiscount });
@@ -173,7 +372,7 @@ async function approveDiscount(req, res, next) {
     {
       booking_status: approvalStatus
         ? 'advancedPaymentPending'
-        : 'negotiationPending',
+        : 'discountRejected',
       discounted_amount: discountedAmount,
     }
   );
@@ -182,6 +381,7 @@ async function approveDiscount(req, res, next) {
 
 async function confirmAdvancedReceipt(req, res, next) {
   const { bookingId, advancedAmount, advancedNotes } = req.body;
+  console.log('advancedNotes: ' + JSON.stringify(advancedNotes));
   const modifyBooking = await dbStandard.modifySingleRecordDb(
     bookings,
     { id: bookingId },
@@ -201,12 +401,7 @@ async function cancelBooking(req, res, next) {
     { id: bookingId },
     {
       booking_status: 'canceled',
-      booking_notes: Sequelize.fn(
-        'CONCAT',
-        Sequelize.col('notes'),
-        '\n',
-        notes
-      ),
+      booking_notes: notes,
     }
   );
   return res.json(modifyBooking);
@@ -214,8 +409,11 @@ async function cancelBooking(req, res, next) {
 
 module.exports = {
   addNewBooking,
+  editBooking,
+  addBooking,
   addDiscountEntry,
   fetchAllDiscountRequests,
+  fetchDiscountRequestsById,
   fetchSingleBooking,
   approveDiscount,
   confirmAdvancedReceipt,

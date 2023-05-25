@@ -5,7 +5,7 @@ import ReactiveButton from 'reactive-button';
 
 import { Icon } from '@/components/_commom/Icon';
 
-import { listAllPrixfixeApi } from '@/api/products-api';
+import { listAllRoomsApi } from '@/api/products-api';
 import {
   roundUptoFixedDigits,
   sumOfKey,
@@ -15,29 +15,32 @@ import {
 import { BDTFormat } from '@/components/_functions/number-format';
 import { getMaxDiscountSlab } from '@/api/booking-api';
 
-function EditPrixfixe({ setBookingData, bookingData, setShow }) {
+function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
   const [productList, setProductList] = useState([]);
-  const [prixfixeItems, setPrixfixeItems] = useState(
-    bookingData?.components?.prixfixeDetails?.length
-      ? bookingData?.components?.prixfixeDetails
+  const [roomItems, setRoomItems] = useState(
+    bookingData?.components?.roomDetails?.length
+      ? bookingData?.components?.roomDetails
       : []
   );
-  const [prixfixePrice, setPrixfixePrice] = useState(
-    bookingData?.price_components?.prixfixePrice
-      ? bookingData?.price_components?.prixfixePrice
+  const [roomPrice, setRoomPrice] = useState(
+    bookingData?.price_components?.roomPrice
+      ? bookingData?.price_components?.roomPrice
       : []
   );
 
   useEffect(() => {
     const fetchPackageList = async () => {
-      const allProductList = await listAllPrixfixeApi();
+      const allProductList = await listAllRoomsApi();
       const filteredExistingItems = allProductList.filter(
-        (item) =>
-          !prixfixeItems.some((existingItem) => existingItem.id === item.id)
+        (item) => !roomItems.some((existingItem) => existingItem.id === item.id)
       );
       setProductList(
         filteredExistingItems.map((obj, index) => {
-          return { ...obj, value: index, label: obj.name };
+          return {
+            ...obj,
+            value: index,
+            label: obj.roomtype.room_type_name + '-' + obj.room_name,
+          };
         })
       );
     };
@@ -45,89 +48,88 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
   }, []);
 
   const handleDeleteItem = (index) => {
-    setPrixfixeItems(
-      prixfixeItems.filter((item, currentIndex) => currentIndex !== index)
+    setRoomItems(
+      roomItems.filter((item, currentIndex) => currentIndex !== index)
     );
 
     updateStateObject(
-      setPrixfixePrice,
+      setRoomPrice,
       'rackPrice',
       sumOfKey(
-        prixfixeItems.filter((item, currentIndex) => currentIndex !== index),
-        'prixfixe_cost'
+        roomItems.filter((item, currentIndex) => currentIndex !== index),
+        'room_cost'
       )
     );
 
     updateStateObject(
-      setPrixfixePrice,
+      setRoomPrice,
       'priceAfterDiscount',
       Math.floor(
         sumOfKey(
-          prixfixeItems.filter((item, currentIndex) => currentIndex !== index),
-          'prixfixe_cost'
+          roomItems.filter((item, currentIndex) => currentIndex !== index),
+          'room_cost'
         )
       ) || 0
     );
     setProductList([
       ...productList,
-      ...prixfixeItems.filter((item, currentIndex) => currentIndex === index),
+      ...roomItems.filter((item, currentIndex) => currentIndex === index),
     ]);
   };
 
   const handleItemCountChange = (e, index) => {
     updateStateArray(
       index,
-      'prixfixe_count',
+      'room_count',
       e.target.value,
-      setPrixfixeItems,
-      prixfixeItems
+      setRoomItems,
+      roomItems
     );
     updateStateArray(
       index,
-      'prixfixe_cost',
-      Math.max(e.target.value * prixfixeItems[index].price, 0),
-      setPrixfixeItems,
-      prixfixeItems
+      'room_cost',
+      Math.max(e.target.value * roomItems[index].roomtype.price * daysCount, 0),
+      setRoomItems,
+      roomItems
     );
     updateStateObject(
-      setPrixfixePrice,
+      setRoomPrice,
       'rackPrice',
-      sumOfKey(prixfixeItems, 'prixfixe_cost')
+      sumOfKey(roomItems, 'room_cost')
     );
     updateStateObject(
-      setPrixfixePrice,
+      setRoomPrice,
       'discount',
       roundUptoFixedDigits(
-        ((sumOfKey(prixfixeItems, 'prixfixe_cost') -
-          Math.floor(sumOfKey(prixfixeItems, 'prixfixe_cost'))) *
+        ((sumOfKey(roomItems, 'room_cost') -
+          Math.floor(sumOfKey(roomItems, 'room_cost'))) *
           100) /
-          sumOfKey(prixfixeItems, 'prixfixe_cost'),
+          sumOfKey(roomItems, 'room_cost'),
         2
       ) || 0
     );
     updateStateObject(
-      setPrixfixePrice,
+      setRoomPrice,
       'priceAfterDiscount',
-      Math.floor(sumOfKey(prixfixeItems, 'prixfixe_cost')) || 0
+      Math.floor(sumOfKey(roomItems, 'room_cost')) || 0
     );
-    updateStateObject(setPrixfixePrice, 'discountNotes', '-');
+    updateStateObject(setRoomPrice, 'discountNotes', '-');
   };
 
   const handleDiscountChange = (e) => {
-    updateStateObject(setPrixfixePrice, 'priceAfterDiscount', e.target.value);
+    updateStateObject(setRoomPrice, 'priceAfterDiscount', e.target.value);
     updateStateObject(
-      setPrixfixePrice,
+      setRoomPrice,
       'discount',
       roundUptoFixedDigits(
-        ((prixfixePrice.rackPrice - e.target.value) * 100) /
-          prixfixePrice.rackPrice,
+        ((roomPrice.rackPrice - e.target.value) * 100) / roomPrice.rackPrice,
         2
       )
     );
   };
 
   const handleSelect = (value) => {
-    setPrixfixeItems((currentData) => [...currentData, value]);
+    setRoomItems((currentData) => [...currentData, value]);
     setProductList(productList.filter((item) => item.id !== value.id));
   };
 
@@ -135,8 +137,8 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
     //If discount over threshold
     const maxDiscountSlab = await getMaxDiscountSlab();
     if (
-      ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) * 100) /
-        prixfixePrice.rackPrice >
+      ((roomPrice.rackPrice - roomPrice.priceAfterDiscount) * 100) /
+        roomPrice.rackPrice >
       maxDiscountSlab
     ) {
       alert(`Discount is above maximum allowed percentage`);
@@ -146,16 +148,15 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
       ...currentData,
       components: {
         ...currentData.components,
-        prixfixeDetails: prixfixeItems,
+        roomDetails: roomItems,
       },
       price_components: {
         ...currentData.price_components,
-        prixfixePrice: {
-          ...prixfixePrice,
+        roomPrice: {
+          ...roomPrice,
           discount: roundUptoFixedDigits(
-            ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) *
-              100) /
-              prixfixePrice.rackPrice,
+            ((roomPrice.rackPrice - roomPrice.priceAfterDiscount) * 100) /
+              roomPrice.rackPrice,
             2
           ),
         },
@@ -169,7 +170,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
     <div>
       {/* Dropdown element for all items */}
       <div className="py-2">
-        <label>Select prix fixe menu</label>
+        <label>Select room</label>
         <Select
           options={productList}
           onChange={(value) => handleSelect(value)}
@@ -177,23 +178,27 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
       </div>
 
       {/* New version */}
-      {prixfixeItems.map(
-        ({ name, price, prixfixe_count, prixfixe_cost }, index) => (
+      {roomItems.map(
+        (
+          { name, price, roomtype, room_name, room_count, room_cost },
+          index
+        ) => (
           <Row
             key={index}
             className="custom-form arrow-hidden  mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
             <Col md={5} xs={6}>
-              {name}
+              {/* {name} */}
+              {roomtype.room_type_name + '-' + room_name}
               {/* Input for mobile screen */}
               <div className="d-block d-sm-none">
                 <input
                   type="number"
                   className="py-0 text-end w-75px"
                   name={`itemCount_${index}`}
-                  value={prixfixe_count}
+                  value={room_count}
                   onChange={(e) => handleItemCountChange(e, index)}
                 />
-                <span className="font-small ms-1">Portions</span>
+                <span className="font-small ms-1">Number of Rooms</span>
               </div>
             </Col>
             {/* Input for laptop */}
@@ -203,13 +208,13 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
                 className="py-0 text-end w-100px"
                 min={0}
                 name={`itemCount_${index}`}
-                value={prixfixe_count}
+                value={room_count}
                 onChange={(e) => handleItemCountChange(e, index)}
               />
-              <span className="font-small mx-3">Portions</span>
+              <span className="font-small mx-3">Number of Rooms</span>
             </Col>
             <Col md={3} xs={5} className="text-end">
-              {BDTFormat.format(prixfixe_cost || 0)}
+              {BDTFormat.format(room_cost || 0)}
             </Col>
             <Col md={1} xs={1}>
               <div className="circular-button-wrapper">
@@ -247,9 +252,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             <input
               name="packageCost"
               type="text"
-              value={BDTFormat.format(
-                sumOfKey(prixfixeItems, 'prixfixe_cost') || 0
-              )}
+              value={BDTFormat.format(sumOfKey(roomItems, 'room_cost') || 0)}
               disabled
               className="font-small my-0 py-1 fw-bold text-end rounded-0"
             />
@@ -268,11 +271,9 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             <input
               name="discountedPrice"
               type="number"
-              max={Math.round(sumOfKey(prixfixeItems, 'prixfixe_cost')) || 0}
-              min={
-                Math.round(sumOfKey(prixfixeItems, 'prixfixe_cost') * 0.5) || 0
-              }
-              value={Math.floor(prixfixePrice.priceAfterDiscount) || 0}
+              max={Math.round(sumOfKey(roomItems, 'room_cost')) || 0}
+              min={Math.round(sumOfKey(roomItems, 'room_cost') * 0.5) || 0}
+              value={Math.floor(roomPrice.priceAfterDiscount) || 0}
               onChange={(e) => {
                 handleDiscountChange(e);
               }}
@@ -284,9 +285,8 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             xs={1}
             className="label-text p-0 d-flex align-items-center">
             {roundUptoFixedDigits(
-              ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) *
-                100) /
-                prixfixePrice.rackPrice,
+              ((roomPrice.rackPrice - roomPrice.priceAfterDiscount) * 100) /
+                roomPrice.rackPrice,
               2
             )}
             %
@@ -302,10 +302,10 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
           </Col>
           <Col md={5} xs={8} className="">
             <textarea
-              value={prixfixePrice.discountNotes}
+              value={roomPrice.discountNotes}
               onChange={(e) => {
                 updateStateObject(
-                  setPrixfixePrice,
+                  setRoomPrice,
                   'discountNotes',
                   e.target.value
                 );
@@ -329,4 +329,4 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
   );
 }
 
-export default EditPrixfixe;
+export default EditRoom;

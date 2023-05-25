@@ -1,16 +1,16 @@
-const bcrypt = require("bcrypt");
-const passport = require("passport");
-const crypto = require("crypto");
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const crypto = require('crypto');
 
-const { credentials, usertypes } = require("../database/models");
-const db = require("./db-services/db-users");
-const sendMail = require("./utils/send-email");
-const { secretConfig } = require("../configs/secrets.config");
+const { credentials, usertypes } = require('../database/models');
+const db = require('./db-services/db-users');
+const sendMail = require('./utils/send-email');
+const { secretConfig } = require('../configs/secrets.config');
 const saltRounds = secretConfig.SALT_ROUNDS;
 const {
   issueAccessToken,
   issueRefreshToken,
-} = require("./utils/jwt-functions");
+} = require('./utils/jwt-functions');
 
 async function testDb(req, res, next) {
   const dbResult = await db.testQuery(credentials);
@@ -25,8 +25,8 @@ async function addUserPlainText(req, res, next) {
     return res.json({
       successStatus: false,
       message: existingRecord.is_deactive
-        ? "This account has not been verified, please check email to verify and activate account"
-        : "Email exists for same type user.",
+        ? 'This account has not been verified, please check email to verify and activate account'
+        : 'Email exists for same type user.',
       type: userType,
       emailPending: existingRecord.is_deactive,
     });
@@ -50,34 +50,33 @@ async function changePassword(req, res, next) {
     return res.json({
       successStatus: false,
       type: 0,
-      reason: "credential mismatch",
+      reason: 'credential mismatch',
     });
 
-    if (!newPassword)
+  if (!newPassword)
     return res.json({
       successStatus: false,
       type: 0,
-      reason: "New password cannot be empty",
+      reason: 'New password cannot be empty',
     });
 
-    bcrypt.compare(oldPassword, existingRecord.password, function (err, result) {
+  bcrypt.compare(oldPassword, existingRecord.password, function (err, result) {
     if (result) {
       bcrypt.hash(newPassword, saltRounds, async function (err, hash) {
         try {
           const dbResult = await db.changePassword(hash, userName);
           if (dbResult)
-            
             return res.json({
               successStatus: true,
               type: existingRecord.user_type_id,
               reason:
-                "Password change successful. Please log in with new password.",
+                'Password change successful. Please log in with new password.',
             });
         } catch (error) {
           return res.json({
             successStatus: false,
             type: existingRecord.user_type_id,
-            reason: "Password change failed.",
+            reason: 'Password change failed.',
           });
         }
       });
@@ -85,7 +84,7 @@ async function changePassword(req, res, next) {
       return res.json({
         successStatus: false,
         type: existingRecord.user_type_id,
-        reason: "Username/password mismatch.",
+        reason: 'Username/password mismatch.',
       });
   });
 }
@@ -98,7 +97,7 @@ async function loginUser(req, res, next) {
       successStatus: false,
       type: 0,
       forcePassChange: false,
-      reason: "username/password was not found",
+      reason: 'username/password was not found',
     });
   if (dbResult.is_deactive)
     return res.json({
@@ -106,14 +105,14 @@ async function loginUser(req, res, next) {
       type: 0,
       forcePassChange: false,
       reason:
-        "This account has not been verified, please check email to verify and activate account",
+        'This account has not been verified, please check email to verify and activate account',
     });
   if (dbResult.pass_change_required)
     return res.json({
       successStatus: false,
       type: 0,
       forcePassChange: true,
-      reason: "Password change is mandatory",
+      reason: 'Password change is mandatory',
     });
   let refreshToken = null;
   const passwordHashDb = dbResult.password;
@@ -132,15 +131,15 @@ async function loginUser(req, res, next) {
         ),
         {
           httpOnly: true,
-          sameSite: "None",
+          sameSite: 'None',
           secure: true, //reset to true in https
           maxAge: secretConfig.ACCESS_TOKEN_EXPIRY,
         }
       );
     }
     const reasonText = result
-      ? "User Authenticated"
-      : "Your entered email/password was not found";
+      ? 'User Authenticated'
+      : 'Your entered email/password was not found';
     return res.json({
       successStatus: result,
       type: userTypeDb,
@@ -162,39 +161,38 @@ async function validateEmail(req, res, next) {
     req.params.token,
     req.params.userId
   );
-  if (dbResult) res.render("email-verified", { render: 1 });
-  else res.render("email-verified", { render: 2 });
+  if (dbResult) res.render('email-verified', { render: 1 });
+  else res.render('email-verified', { render: 2 });
 }
 
 async function resendValidation(req, res, next) {
   const dbResult = await db.getTokenbyEmail(req.params.email);
-  if (dbResult) console.log("dbResult: " + JSON.stringify(dbResult));
 
   const messageBody =
     "<img style='width:250px;' src='cid:logo' /> <br />Hello,<br /><br />Please verify your email address using the code below to complete account setup.<br />" +
     "<a href='" +
-    "https://" +
+    'https://' +
     req.headers.host +
-    "/user-management/verify-email/" +
+    '/user-management/verify-email/' +
     dbResult.token +
-    "/" +
+    '/' +
     dbResult.user_id +
     "'>https://" +
     req.headers.host +
-    "/user-management/verify-email/" +
+    '/user-management/verify-email/' +
     dbResult.token +
-    "/" +
+    '/' +
     dbResult.user_id +
-    "</a>" +
-    "<br /><br />Thank You<br />Smart Taps" +
+    '</a>' +
+    '<br /><br />Thank You<br />Smart Taps' +
     "<br /><br />If you are having issues with your account, please contact support at <a href='mailto:support@smarttaps.co'>support@smarttaps.co</a> or visit <a href='www.smarttaps.co'>www.smarttaps.co</a> for more information.";
 
-  const mailSubject = "Welcome to Smarttaps - Email Verifcation";
+  const mailSubject = 'Welcome to Smarttaps - Email Verifcation';
   await sendMail.sendSingleEmail(req.params.email, messageBody, mailSubject);
 
   return res.json({
     successStatus: false,
-    message: "Verification mail sent. Please check mail including spam folder.",
+    message: 'Verification mail sent. Please check mail including spam folder.',
     type: 0,
     emailPending: true,
   });
@@ -202,10 +200,10 @@ async function resendValidation(req, res, next) {
 
 function authorizeAccess(req, res, next) {
   passport.authenticate(
-    "jwt",
+    'jwt',
     { session: false },
     function (err, accessGranted, info) {
-      let message = "Page access granted";
+      let message = 'Page access granted';
       let forceLogout = false;
       let success = true;
       if (err) {
@@ -213,7 +211,7 @@ function authorizeAccess(req, res, next) {
       }
       if (accessGranted.status === 2) {
         res.clearCookie(secretConfig.ACCESS_TOKEN);
-        message = "Token expired";
+        message = 'Token expired';
         forceLogout = true;
         success = false;
       }
@@ -221,13 +219,13 @@ function authorizeAccess(req, res, next) {
         res.clearCookie(secretConfig.ACCESS_TOKEN);
         res.cookie(secretConfig.ACCESS_TOKEN, info, {
           httpOnly: true,
-          sameSite: "None",
+          sameSite: 'None',
           secure: true, //reset to true in https
           maxAge: secretConfig.REFRESH_TOKEN_EXPIRY,
         });
       }
       if (accessGranted.status === 4) {
-        message = "Page access denied";
+        message = 'Page access denied';
         success = false;
       }
       accessGranted
@@ -238,7 +236,7 @@ function authorizeAccess(req, res, next) {
           })
         : res.send({
             success: false,
-            message: "authentication failed",
+            message: 'authentication failed',
             forceLogout: true,
           });
     }
@@ -250,35 +248,35 @@ async function forgotPassword(req, res, next) {
   if (!userFound) {
     return res.json({
       successStatus: 0,
-      message: "No user found for the email ID",
+      message: 'No user found for the email ID',
     });
   }
 
   //Add token to DB
-  const token = crypto.randomBytes(20).toString("hex");
+  const token = crypto.randomBytes(20).toString('hex');
   await db.addPasswordToken(userFound.user_id, token);
 
   //Send email
   const messageBody =
     "<img style='width:250px;' src='cid:logo' /> <br />Hello,<br /><br />A request is received to reset the password for your account on Smarttaps App. <br />To confirm and reset the password, please click on the link below:<br />" +
     "<a href='" +
-    "https://" +
+    'https://' +
     req.headers.host +
-    "/user-management/reset/" +
+    '/user-management/reset/' +
     token +
-    "/" +
+    '/' +
     userFound.user_id +
     "'>https://" +
     req.headers.host +
-    "/user-management/reset/" +
+    '/user-management/reset/' +
     token +
-    "/" +
+    '/' +
     userFound.user_id +
-    "</a>" +
-    "<br /><br /> If you did not request this, please ignore this email and your password will remain unchanged. <br /><br />Thank You<br />Smart Taps" +
+    '</a>' +
+    '<br /><br /> If you did not request this, please ignore this email and your password will remain unchanged. <br /><br />Thank You<br />Smart Taps' +
     "<br /><br />If you are having issues with your account, please contact support at <a href='mailto:support@smarttaps.co'>support@smarttaps.co</a> or visit <a href='www.smarttaps.co'>www.smarttaps.co</a> for more information.";
 
-  const mailSubject = "Welcome to Smarttaps - Password Reset";
+  const mailSubject = 'Welcome to Smarttaps - Password Reset';
   await sendMail.sendSingleEmail(req.body.email_id, messageBody, mailSubject);
   return res.json({
     successStatus: 1,
@@ -291,8 +289,8 @@ async function checkPwToken(req, res, next) {
     req.params.userId
   );
   if (dbResult)
-    res.render("change-password", { user: dbResult.user_id, render: 1 });
-  else res.render("change-password", { render: 2 });
+    res.render('change-password', { user: dbResult.user_id, render: 1 });
+  else res.render('change-password', { render: 2 });
 }
 
 async function setPassword(req, res, next) {
@@ -300,9 +298,9 @@ async function setPassword(req, res, next) {
   bcrypt.hash(new_password, saltRounds, async function (err, hash) {
     try {
       const dbResult = await db.updatePassword(hash, user_id);
-      res.render("change-password", { render: dbResult ? 3 : 4 });
+      res.render('change-password', { render: dbResult ? 3 : 4 });
     } catch (error) {
-      res.render("change-password", { render: 4 });
+      res.render('change-password', { render: 4 });
     }
   });
 }
@@ -312,5 +310,5 @@ module.exports = {
   addUserPlainText,
   changePassword,
   loginUser,
-  logoutUser
+  logoutUser,
 };

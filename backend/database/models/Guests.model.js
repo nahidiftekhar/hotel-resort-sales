@@ -55,6 +55,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Class Method
   Guests.associate = function (models) {
+    Guests.hasMany(models.visits, { foreignKey: 'guest_id' });
     Guests.hasMany(models.payments, { foreignKey: 'guest_id' });
     Guests.hasMany(models.invoices, { foreignKey: 'guest_id' });
     Guests.hasMany(models.bookings, { foreignKey: 'guest_id' });

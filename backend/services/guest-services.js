@@ -82,9 +82,18 @@ async function searchGuests(req, res, next) {
   return res.json(dbResult);
 }
 
+async function fetchSingleGuestById(req, res, next) {
+  const guestId = req.params.guestId;
+  const guestData = await dbStandard.findOneFilterDb(guests, {
+    id: guestId,
+  });
+  return res.json(guestData);
+}
+
 module.exports = {
   addNewGuest,
   editGuest,
   listAllGuests,
   searchGuests,
+  fetchSingleGuestById,
 };

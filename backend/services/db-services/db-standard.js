@@ -88,7 +88,7 @@ async function joinAllDb(tableName1, tableName2) {
   }
 }
 
-async function joinSingleFilterDb(tableName1, tableName2, filterCondition) {
+async function joinFilterDb(tableName1, tableName2, filterCondition) {
   try {
     const result = await tableName1.findAll({
       // raw: true,
@@ -143,6 +143,6 @@ module.exports = {
   addMultipleRecorsdDB,
   modifySingleRecordDb,
   joinAllDb,
-  joinSingleFilterDb,
+  joinFilterDb,
   joinTwoTablesFilterDb,
 };

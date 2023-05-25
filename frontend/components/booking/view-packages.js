@@ -23,10 +23,10 @@ function ViewPackages({ selectedPackages, priceDetails }) {
             )}
             <div className="font-small">
               <span className="me-2">
-                {(singlePackage.adult_cost || 0) +
-                  (singlePackage.kids_cost || 0)}
+                {/* {(singlePackage.adult_cost || 0) +
+                  (singlePackage.kids_cost || 0)} */}
+                {BDTFormat.format(singlePackage.package_cost)}
               </span>
-              <span className="text-muted">BDT</span>
             </div>
           </div>
         ))}
@@ -37,14 +37,14 @@ function ViewPackages({ selectedPackages, priceDetails }) {
           <Col xs={6}>Rack Rate</Col>
           <Col xs={6}>{BDTFormat.format(priceDetails.rackPrice)}</Col>
           <Col xs={6}>Discount Amount</Col>
-          <Col xs={6}>{BDTFormat.format(priceDetails.discount)}</Col>
-          <Col xs={6}>Discount Percentage</Col>
           <Col xs={6}>
-            {((priceDetails.discount * 100) / priceDetails.rackPrice).toFixed(
-              2
+            {BDTFormat.format(
+              priceDetails.rackPrice - priceDetails.priceAfterDiscount
             )}
-            %
           </Col>
+
+          <Col xs={6}>Discount Percentage</Col>
+          <Col xs={6}>{priceDetails.discount}%</Col>
           {priceDetails.discount > 0 && <Col xs={6}>Discount Notes</Col>}
           {priceDetails.discount > 0 && (
             <Col xs={6}>{priceDetails.discountNotes}</Col>

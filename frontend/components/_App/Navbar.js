@@ -44,14 +44,17 @@ function TopNavbar() {
               <Nav.Link className="mx-3" href="/booking">
                 Booking
               </Nav.Link>
-              <Nav.Link className="mx-3" href="/rooms">
-                Rooms
-              </Nav.Link>
               <Nav.Link className="mx-3" href="/products">
                 Products
               </Nav.Link>
               <Nav.Link className="mx-3" href="/guests">
                 Guests
+              </Nav.Link>
+              <Nav.Link className="mx-3" href="/actions">
+                Actions
+              </Nav.Link>
+              <Nav.Link className="mx-3" href="/hospitality">
+                Hospitality
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>

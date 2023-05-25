@@ -1,10 +1,10 @@
-import ListAllGuests from '@/components/guests/list-all-guests';
+import PendingActions from '@/components/actions/pending-actions';
 import React from 'react';
 
 function GuestHome() {
   return (
     <>
-      <ListAllGuests />
+      <PendingActions />
     </>
   );
 }

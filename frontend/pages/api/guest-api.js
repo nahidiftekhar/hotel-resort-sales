@@ -24,3 +24,10 @@ export const editSingleGuestApi = async (guestData) => {
   );
   return apiResult.data;
 };
+
+export const fetchGuestApi = async (guestId) => {
+  const apiResult = await axios.get(
+    `${beConfig.host}/guest-management/fetch-guest/${guestId}`
+  );
+  return apiResult.data;
+};

@@ -13,4 +13,7 @@ router.post('/edit-guest', guestServices.editGuest);
 // Search guest based on whatever
 router.get('/search-guest/:searchString', guestServices.searchGuests);
 
+// Fetch guest based on ID
+router.get('/fetch-guest/:guestId', guestServices.fetchSingleGuestById);
+
 module.exports = router;

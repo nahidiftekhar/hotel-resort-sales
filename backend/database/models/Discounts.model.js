@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const Discounts = sequelize.define(`discounts`, {
     percentage_value: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.DECIMAL(5, 2),
       allowNull: false,
     },
     rack_price: {

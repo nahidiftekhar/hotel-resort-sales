@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react';
 import DataTable, { FilterComponent } from 'react-data-table-component';
 import {
   Container,
-  Button,
   Form,
   OverlayTrigger,
-  Tooltip,
-  Overlay,
   Popover,
+  Modal,
 } from 'react-bootstrap';
 import { PropagateLoader } from 'react-spinners';
+import ReactiveButton from 'reactive-button';
 
 import { Icon } from '@/components/_commom/Icon';
-import { downloadExcel } from '@/components/_functions/downloadExcel';
-
-import { listAllBookingApi } from '@/api/booking-api';
 import DiscountApproval from '@/components/discounts/discount-approval';
 import AdvancedCreations from '@/components/advanced/create-advanced';
+import ListAllGuests from '@/components/guests/list-all-guests';
+
+import { listAllBookingApi } from '@/api/booking-api';
+import { camelCaseToCapitalizedString } from '@/components/_functions/string-format';
+import BookingView from '@/components/booking/booking-view';
 
 function BookingHome() {
   const [allBookings, setAllBookings] = useState([]);
@@ -26,6 +27,9 @@ function BookingHome() {
   const [referesh, setReferesh] = useState(false);
   const [showDiscountApporoval, setShowDiscountApporoval] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
+  const [currentBookingId, setCurrentBookingId] = useState(0);
 
   useEffect(() => {
     const fetchAllBooking = async () => {
@@ -208,6 +212,11 @@ function BookingHome() {
       selector: (row) => (
         <div>
           <p className="my-1">
+            Status:{' '}
+            <strong>{camelCaseToCapitalizedString(row.booking_status)}</strong>{' '}
+          </p>
+
+          <p className="my-1">
             Before discount: <strong>{Number(row.amount).toFixed(2)}</strong>{' '}
             BDT
           </p>
@@ -222,7 +231,7 @@ function BookingHome() {
           </p>
           {row.discount?.approval_status ? (
             <p className="mt-0 m-2 text-muted">
-              {row.discount?.approval_status}
+              {camelCaseToCapitalizedString(row.discount?.approval_status)}
             </p>
           ) : (
             ''
@@ -239,59 +248,89 @@ function BookingHome() {
         </div>
       ),
       wrap: true,
-      sortable: true,
       grow: 3,
     },
     {
       name: 'Actions',
-      grow: 2,
-      cell: (row) => (
-        <div>
-          {row.discount &&
-            row.discount?.approval_status === 'pendingApproval' && (
-              <Button
-                size="sm"
-                variant="dark"
-                className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center"
-                onClick={() => handleApproveDiscount(row)}>
-                <Icon nameIcon="FaPercentage" propsIcon={{ size: 12 }} />
-              </Button>
-            )}{' '}
-          {row.discount?.approval_status !== 'pendingApproval' && (
-            <Button
-              size="sm"
-              variant="info"
-              className="mx-1 py-0 px-md-1 px-1 d-inline-flex align-items-center"
-              onClick={() => handleCreateAdvanced(row)}>
-              <Icon
-                nameIcon="HiCurrencyBangladeshi"
-                propsIcon={{
-                  size: 20,
-                  color: '#fff',
-                  onMouseOver: ({ target }) => (target.style.color = '#eee'),
-                  onMouseOut: ({ target }) => (target.style.color = '#fff'),
+      grow: 1,
+      cell: (row) =>
+        row.booking_status === 'canceled' ? (
+          <div className="reactive-button-wauto">
+            <ReactiveButton
+              buttonState="idle"
+              idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
+              outline
+              color="violet"
+              className="rounded-1 py-1 px-3"
+              onClick={() => {
+                setShowBooking(true);
+                setCurrentBookingId(row.id);
+              }}
+            />
+          </div>
+        ) : (
+          <div className="d-flex flex-column">
+            {row.discount &&
+              row.discount?.approval_status === 'pendingApproval' && (
+                <div className="reactive-button-wauto my-1">
+                  <ReactiveButton
+                    buttonState="idle"
+                    idleText={
+                      <Icon nameIcon="FaPercentage" propsIcon={{ size: 20 }} />
+                    }
+                    outline
+                    color="green"
+                    className="rounded-1 py-1 px-3"
+                    onClick={() => handleApproveDiscount(row)}
+                  />
+                </div>
+              )}
+            {''}
+            {row.booking_status !== 'discountApprovalPending' && (
+              <div className="reactive-button-wauto my-1">
+                <ReactiveButton
+                  buttonState="idle"
+                  idleText={
+                    <Icon
+                      nameIcon="HiCurrencyBangladeshi"
+                      propsIcon={{ size: 20 }}
+                    />
+                  }
+                  outline
+                  color="blue"
+                  className="rounded-1 py-1 px-3"
+                  onClick={() => handleCreateAdvanced(row)}
+                />
+              </div>
+            )}
+
+            <div className="reactive-button-wauto">
+              <ReactiveButton
+                buttonState="idle"
+                idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
+                outline
+                color="violet"
+                className="rounded-1 py-1 px-3"
+                onClick={() => {
+                  setShowBooking(true);
+                  setCurrentBookingId(row.id);
                 }}
               />
-            </Button>
-          )}
-          <a href={`booking/show-booking?id=${row.id}`}>
-            <Button
-              size="sm"
-              variant="dark"
-              className="mx-1 py-0 px-md-1 px-1 d-inline-flex align-items-center">
-              <Icon
-                nameIcon="FaEye"
-                propsIcon={{
-                  size: 20,
-                  color: '#fff',
-                  onMouseOver: ({ target }) => (target.style.color = '#eee'),
-                  onMouseOut: ({ target }) => (target.style.color = '#fff'),
-                }}
-              />
-            </Button>
-          </a>
-        </div>
-      ),
+            </div>
+
+            <a href={`booking/show-booking?id=${row.id}`} className="my-1">
+              <div className="reactive-button-wauto">
+                <ReactiveButton
+                  buttonState="idle"
+                  idleText={<Icon nameIcon="FaEdit" propsIcon={{ size: 20 }} />}
+                  outline
+                  color="dark"
+                  className="rounded-1 py-1 px-3"
+                />
+              </div>
+            </a>
+          </div>
+        ),
     },
   ];
 
@@ -347,7 +386,20 @@ function BookingHome() {
 
   return (
     <div className="my-5">
-      <h3 className="text-center">Booking Management</h3>
+      <div className="d-flex justify-content-between mb-5">
+        <h3 className="text-center">Booking Management</h3>
+        {/* <a href="booking/add-booking"> */}
+        <ReactiveButton
+          buttonState="idle"
+          idleText={<span className="fw-bold fs-6">Add Booking</span>}
+          color="blue"
+          size="small"
+          className="rounded-1 py-1 bg-gradient"
+          onClick={() => setShowGuestModal(true)}
+        />
+        {/* </a> */}
+      </div>
+
       <DataTable
         title="List of upcoming bookings"
         columns={headerResponsive}
@@ -375,6 +427,31 @@ function BookingHome() {
         bookingData={discountData}
         setReferesh={setReferesh}
       />
+
+      {/* View booking details */}
+      <Modal
+        show={showBooking}
+        onHide={() => setShowBooking(false)}
+        backdrop="static"
+        keyboard={false}
+        size="xl">
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <BookingView isNew={false} bookingId={currentBookingId} />
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={showGuestModal}
+        size="xl"
+        onHide={() => setShowGuestModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Select Guest</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ListAllGuests />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

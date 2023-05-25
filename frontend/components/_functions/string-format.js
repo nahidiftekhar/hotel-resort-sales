@@ -7,3 +7,14 @@ export function camelCaseToCapitalizedString(text) {
   );
   return capitalizedText;
 }
+
+export function datetimeStringToDate(datetimeString) {
+  const date = new Date(datetimeString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // Months are zero-based
+  const day = date.getDate();
+  const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day
+    .toString()
+    .padStart(2, '0')}`;
+  return formattedDate;
+}

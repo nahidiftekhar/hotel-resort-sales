@@ -13,11 +13,11 @@ function ViewPrixfixe({ selectedProducts, priceDetails }) {
             <div>{singlePackage.name}</div>
             <div className="font-small">
               <span className="text-muted">Portions</span>
-              <span className="ms-2">{singlePackage.alacarte_count}</span>
+              <span className="ms-2">{singlePackage.prixfixe_count}</span>
             </div>
             <div className="font-small">
               <span className="me-2">
-                {BDTFormat.format(singlePackage.alacarte_cost || 0)}
+                {BDTFormat.format(singlePackage.prixfixe_cost || 0)}
               </span>
             </div>
           </div>
@@ -30,15 +30,14 @@ function ViewPrixfixe({ selectedProducts, priceDetails }) {
           <Col xs={6}>{BDTFormat.format(priceDetails.rackPrice)}</Col>
 
           <Col xs={6}>Discount Amount</Col>
-          <Col xs={6}>{BDTFormat.format(priceDetails.discount)}</Col>
+          <Col xs={6}>
+            {BDTFormat.format(
+              priceDetails.rackPrice - priceDetails.priceAfterDiscount
+            )}
+          </Col>
 
           <Col xs={6}>Discount Percentage</Col>
-          <Col xs={6}>
-            {((priceDetails.discount * 100) / priceDetails.rackPrice).toFixed(
-              2
-            )}
-            %
-          </Col>
+          <Col xs={6}>{priceDetails.discount}%</Col>
 
           {priceDetails.discount > 0 && <Col xs={6}>Discount Notes</Col>}
           {priceDetails.discount > 0 && (

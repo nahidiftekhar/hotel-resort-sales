@@ -5,7 +5,7 @@ import ReactiveButton from 'reactive-button';
 
 import { Icon } from '@/components/_commom/Icon';
 
-import { listAllPrixfixeApi } from '@/api/products-api';
+import { listAllAlacarteApi } from '@/api/products-api';
 import {
   roundUptoFixedDigits,
   sumOfKey,
@@ -15,25 +15,25 @@ import {
 import { BDTFormat } from '@/components/_functions/number-format';
 import { getMaxDiscountSlab } from '@/api/booking-api';
 
-function EditPrixfixe({ setBookingData, bookingData, setShow }) {
+function EditAlacarte({ setBookingData, bookingData, setShow }) {
   const [productList, setProductList] = useState([]);
-  const [prixfixeItems, setPrixfixeItems] = useState(
-    bookingData?.components?.prixfixeDetails?.length
-      ? bookingData?.components?.prixfixeDetails
+  const [alacarteItems, setAlacarteItems] = useState(
+    bookingData?.components?.alacarteDetails?.length
+      ? bookingData?.components?.alacarteDetails
       : []
   );
-  const [prixfixePrice, setPrixfixePrice] = useState(
-    bookingData?.price_components?.prixfixePrice
-      ? bookingData?.price_components?.prixfixePrice
+  const [alacartePrice, setAlacartePrice] = useState(
+    bookingData?.price_components?.alacartePrice
+      ? bookingData?.price_components?.alacartePrice
       : []
   );
 
   useEffect(() => {
     const fetchPackageList = async () => {
-      const allProductList = await listAllPrixfixeApi();
+      const allProductList = await listAllAlacarteApi();
       const filteredExistingItems = allProductList.filter(
         (item) =>
-          !prixfixeItems.some((existingItem) => existingItem.id === item.id)
+          !alacarteItems.some((existingItem) => existingItem.id === item.id)
       );
       setProductList(
         filteredExistingItems.map((obj, index) => {
@@ -45,89 +45,89 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
   }, []);
 
   const handleDeleteItem = (index) => {
-    setPrixfixeItems(
-      prixfixeItems.filter((item, currentIndex) => currentIndex !== index)
+    setAlacarteItems(
+      alacarteItems.filter((item, currentIndex) => currentIndex !== index)
     );
 
     updateStateObject(
-      setPrixfixePrice,
+      setAlacartePrice,
       'rackPrice',
       sumOfKey(
-        prixfixeItems.filter((item, currentIndex) => currentIndex !== index),
-        'prixfixe_cost'
+        alacarteItems.filter((item, currentIndex) => currentIndex !== index),
+        'alacarte_cost'
       )
     );
 
     updateStateObject(
-      setPrixfixePrice,
+      setAlacartePrice,
       'priceAfterDiscount',
       Math.floor(
         sumOfKey(
-          prixfixeItems.filter((item, currentIndex) => currentIndex !== index),
-          'prixfixe_cost'
+          alacarteItems.filter((item, currentIndex) => currentIndex !== index),
+          'alacarte_cost'
         )
       ) || 0
     );
     setProductList([
       ...productList,
-      ...prixfixeItems.filter((item, currentIndex) => currentIndex === index),
+      ...alacarteItems.filter((item, currentIndex) => currentIndex === index),
     ]);
   };
 
   const handleItemCountChange = (e, index) => {
     updateStateArray(
       index,
-      'prixfixe_count',
+      'alacarte_count',
       e.target.value,
-      setPrixfixeItems,
-      prixfixeItems
+      setAlacarteItems,
+      alacarteItems
     );
     updateStateArray(
       index,
-      'prixfixe_cost',
-      Math.max(e.target.value * prixfixeItems[index].price, 0),
-      setPrixfixeItems,
-      prixfixeItems
+      'alacarte_cost',
+      Math.max(e.target.value * alacarteItems[index].price, 0),
+      setAlacarteItems,
+      alacarteItems
     );
     updateStateObject(
-      setPrixfixePrice,
+      setAlacartePrice,
       'rackPrice',
-      sumOfKey(prixfixeItems, 'prixfixe_cost')
+      sumOfKey(alacarteItems, 'alacarte_cost')
     );
     updateStateObject(
-      setPrixfixePrice,
+      setAlacartePrice,
       'discount',
       roundUptoFixedDigits(
-        ((sumOfKey(prixfixeItems, 'prixfixe_cost') -
-          Math.floor(sumOfKey(prixfixeItems, 'prixfixe_cost'))) *
+        ((sumOfKey(alacarteItems, 'alacarte_cost') -
+          Math.floor(sumOfKey(alacarteItems, 'alacarte_cost'))) *
           100) /
-          sumOfKey(prixfixeItems, 'prixfixe_cost'),
+          sumOfKey(alacarteItems, 'alacarte_cost'),
         2
       ) || 0
     );
     updateStateObject(
-      setPrixfixePrice,
+      setAlacartePrice,
       'priceAfterDiscount',
-      Math.floor(sumOfKey(prixfixeItems, 'prixfixe_cost')) || 0
+      Math.floor(sumOfKey(alacarteItems, 'alacarte_cost')) || 0
     );
-    updateStateObject(setPrixfixePrice, 'discountNotes', '-');
+    updateStateObject(setAlacartePrice, 'discountNotes', '-');
   };
 
   const handleDiscountChange = (e) => {
-    updateStateObject(setPrixfixePrice, 'priceAfterDiscount', e.target.value);
+    updateStateObject(setAlacartePrice, 'priceAfterDiscount', e.target.value);
     updateStateObject(
-      setPrixfixePrice,
+      setAlacartePrice,
       'discount',
       roundUptoFixedDigits(
-        ((prixfixePrice.rackPrice - e.target.value) * 100) /
-          prixfixePrice.rackPrice,
+        ((alacartePrice.rackPrice - e.target.value) * 100) /
+          alacartePrice.rackPrice,
         2
       )
     );
   };
 
   const handleSelect = (value) => {
-    setPrixfixeItems((currentData) => [...currentData, value]);
+    setAlacarteItems((currentData) => [...currentData, value]);
     setProductList(productList.filter((item) => item.id !== value.id));
   };
 
@@ -135,8 +135,8 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
     //If discount over threshold
     const maxDiscountSlab = await getMaxDiscountSlab();
     if (
-      ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) * 100) /
-        prixfixePrice.rackPrice >
+      ((alacartePrice.rackPrice - alacartePrice.priceAfterDiscount) * 100) /
+        alacartePrice.rackPrice >
       maxDiscountSlab
     ) {
       alert(`Discount is above maximum allowed percentage`);
@@ -146,16 +146,16 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
       ...currentData,
       components: {
         ...currentData.components,
-        prixfixeDetails: prixfixeItems,
+        alacarteDetails: alacarteItems,
       },
       price_components: {
         ...currentData.price_components,
-        prixfixePrice: {
-          ...prixfixePrice,
+        alacartePrice: {
+          ...alacartePrice,
           discount: roundUptoFixedDigits(
-            ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) *
+            ((alacartePrice.rackPrice - alacartePrice.priceAfterDiscount) *
               100) /
-              prixfixePrice.rackPrice,
+              alacartePrice.rackPrice,
             2
           ),
         },
@@ -169,7 +169,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
     <div>
       {/* Dropdown element for all items */}
       <div className="py-2">
-        <label>Select prix fixe menu</label>
+        <label>Select alacarte menu</label>
         <Select
           options={productList}
           onChange={(value) => handleSelect(value)}
@@ -177,8 +177,8 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
       </div>
 
       {/* New version */}
-      {prixfixeItems.map(
-        ({ name, price, prixfixe_count, prixfixe_cost }, index) => (
+      {alacarteItems.map(
+        ({ name, price, alacarte_count, alacarte_cost }, index) => (
           <Row
             key={index}
             className="custom-form arrow-hidden  mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
@@ -190,7 +190,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
                   type="number"
                   className="py-0 text-end w-75px"
                   name={`itemCount_${index}`}
-                  value={prixfixe_count}
+                  value={alacarte_count}
                   onChange={(e) => handleItemCountChange(e, index)}
                 />
                 <span className="font-small ms-1">Portions</span>
@@ -203,13 +203,13 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
                 className="py-0 text-end w-100px"
                 min={0}
                 name={`itemCount_${index}`}
-                value={prixfixe_count}
+                value={alacarte_count}
                 onChange={(e) => handleItemCountChange(e, index)}
               />
               <span className="font-small mx-3">Portions</span>
             </Col>
             <Col md={3} xs={5} className="text-end">
-              {BDTFormat.format(prixfixe_cost || 0)}
+              {BDTFormat.format(alacarte_cost || 0)}
             </Col>
             <Col md={1} xs={1}>
               <div className="circular-button-wrapper">
@@ -248,7 +248,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
               name="packageCost"
               type="text"
               value={BDTFormat.format(
-                sumOfKey(prixfixeItems, 'prixfixe_cost') || 0
+                sumOfKey(alacarteItems, 'alacarte_cost') || 0
               )}
               disabled
               className="font-small my-0 py-1 fw-bold text-end rounded-0"
@@ -268,11 +268,11 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             <input
               name="discountedPrice"
               type="number"
-              max={Math.round(sumOfKey(prixfixeItems, 'prixfixe_cost')) || 0}
+              max={Math.round(sumOfKey(alacarteItems, 'alacarte_cost')) || 0}
               min={
-                Math.round(sumOfKey(prixfixeItems, 'prixfixe_cost') * 0.5) || 0
+                Math.round(sumOfKey(alacarteItems, 'alacarte_cost') * 0.5) || 0
               }
-              value={Math.floor(prixfixePrice.priceAfterDiscount) || 0}
+              value={Math.floor(alacartePrice.priceAfterDiscount) || 0}
               onChange={(e) => {
                 handleDiscountChange(e);
               }}
@@ -284,9 +284,9 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             xs={1}
             className="label-text p-0 d-flex align-items-center">
             {roundUptoFixedDigits(
-              ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) *
+              ((alacartePrice.rackPrice - alacartePrice.priceAfterDiscount) *
                 100) /
-                prixfixePrice.rackPrice,
+                alacartePrice.rackPrice,
               2
             )}
             %
@@ -302,10 +302,10 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
           </Col>
           <Col md={5} xs={8} className="">
             <textarea
-              value={prixfixePrice.discountNotes}
+              value={alacartePrice.discountNotes}
               onChange={(e) => {
                 updateStateObject(
-                  setPrixfixePrice,
+                  setAlacartePrice,
                   'discountNotes',
                   e.target.value
                 );
@@ -329,4 +329,4 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
   );
 }
 
-export default EditPrixfixe;
+export default EditAlacarte;

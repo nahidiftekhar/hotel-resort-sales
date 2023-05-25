@@ -36,6 +36,7 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
       setShow(false);
     } else return false;
   };
+
   return (
     <Modal
       show={show}
@@ -46,7 +47,7 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
         <Modal.Title>Advanced Payment Records</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="custom-form">
+        <div className="custom-form arrow-hidden">
           <div className="d-flex justify-content-between bg-light rounded px-2 py-1 my-2">
             <p className="my-0">Price after discont (BDT) </p>
             <p className="my-0 fw-bold">
@@ -57,7 +58,7 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
           <input
             type="number"
             name="amount"
-            value={advancedAmount}
+            value={Number(advancedAmount).toFixed(2)}
             min={0}
             max={Number(bookingData.discounted_amount).toFixed(2)}
             onChange={(e) => setAdvancedAmount(e.target.value)}
@@ -95,9 +96,9 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
           <div className="mx-2">
             <ReactiveButton
               buttonState="idle"
-              idleText="Cancel"
+              idleText="Close"
               size="small"
-              color="red"
+              color="yellow"
               outline
               onClick={() => setShow(false)}
             />

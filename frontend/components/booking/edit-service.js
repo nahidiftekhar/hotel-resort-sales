@@ -5,7 +5,7 @@ import ReactiveButton from 'reactive-button';
 
 import { Icon } from '@/components/_commom/Icon';
 
-import { listAllPrixfixeApi } from '@/api/products-api';
+import { listAllServicesApi } from '@/api/products-api';
 import {
   roundUptoFixedDigits,
   sumOfKey,
@@ -15,25 +15,25 @@ import {
 import { BDTFormat } from '@/components/_functions/number-format';
 import { getMaxDiscountSlab } from '@/api/booking-api';
 
-function EditPrixfixe({ setBookingData, bookingData, setShow }) {
+function EditService({ setBookingData, bookingData, setShow }) {
   const [productList, setProductList] = useState([]);
-  const [prixfixeItems, setPrixfixeItems] = useState(
-    bookingData?.components?.prixfixeDetails?.length
-      ? bookingData?.components?.prixfixeDetails
+  const [serviceItems, setServiceItems] = useState(
+    bookingData?.components?.serviceDetails?.length
+      ? bookingData?.components?.serviceDetails
       : []
   );
-  const [prixfixePrice, setPrixfixePrice] = useState(
-    bookingData?.price_components?.prixfixePrice
-      ? bookingData?.price_components?.prixfixePrice
+  const [servicePrice, setServicePrice] = useState(
+    bookingData?.price_components?.servicePrice
+      ? bookingData?.price_components?.servicePrice
       : []
   );
 
   useEffect(() => {
     const fetchPackageList = async () => {
-      const allProductList = await listAllPrixfixeApi();
+      const allProductList = await listAllServicesApi();
       const filteredExistingItems = allProductList.filter(
         (item) =>
-          !prixfixeItems.some((existingItem) => existingItem.id === item.id)
+          !serviceItems.some((existingItem) => existingItem.id === item.id)
       );
       setProductList(
         filteredExistingItems.map((obj, index) => {
@@ -45,89 +45,89 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
   }, []);
 
   const handleDeleteItem = (index) => {
-    setPrixfixeItems(
-      prixfixeItems.filter((item, currentIndex) => currentIndex !== index)
+    setServiceItems(
+      serviceItems.filter((item, currentIndex) => currentIndex !== index)
     );
 
     updateStateObject(
-      setPrixfixePrice,
+      setServicePrice,
       'rackPrice',
       sumOfKey(
-        prixfixeItems.filter((item, currentIndex) => currentIndex !== index),
-        'prixfixe_cost'
+        serviceItems.filter((item, currentIndex) => currentIndex !== index),
+        'service_cost'
       )
     );
 
     updateStateObject(
-      setPrixfixePrice,
+      setServicePrice,
       'priceAfterDiscount',
       Math.floor(
         sumOfKey(
-          prixfixeItems.filter((item, currentIndex) => currentIndex !== index),
-          'prixfixe_cost'
+          serviceItems.filter((item, currentIndex) => currentIndex !== index),
+          'service_cost'
         )
       ) || 0
     );
     setProductList([
       ...productList,
-      ...prixfixeItems.filter((item, currentIndex) => currentIndex === index),
+      ...serviceItems.filter((item, currentIndex) => currentIndex === index),
     ]);
   };
 
   const handleItemCountChange = (e, index) => {
     updateStateArray(
       index,
-      'prixfixe_count',
+      'service_count',
       e.target.value,
-      setPrixfixeItems,
-      prixfixeItems
+      setServiceItems,
+      serviceItems
     );
     updateStateArray(
       index,
-      'prixfixe_cost',
-      Math.max(e.target.value * prixfixeItems[index].price, 0),
-      setPrixfixeItems,
-      prixfixeItems
+      'service_cost',
+      Math.max(e.target.value * serviceItems[index].price, 0),
+      setServiceItems,
+      serviceItems
     );
     updateStateObject(
-      setPrixfixePrice,
+      setServicePrice,
       'rackPrice',
-      sumOfKey(prixfixeItems, 'prixfixe_cost')
+      sumOfKey(serviceItems, 'service_cost')
     );
     updateStateObject(
-      setPrixfixePrice,
+      setServicePrice,
       'discount',
       roundUptoFixedDigits(
-        ((sumOfKey(prixfixeItems, 'prixfixe_cost') -
-          Math.floor(sumOfKey(prixfixeItems, 'prixfixe_cost'))) *
+        ((sumOfKey(serviceItems, 'service_cost') -
+          Math.floor(sumOfKey(serviceItems, 'service_cost'))) *
           100) /
-          sumOfKey(prixfixeItems, 'prixfixe_cost'),
+          sumOfKey(serviceItems, 'service_cost'),
         2
       ) || 0
     );
     updateStateObject(
-      setPrixfixePrice,
+      setServicePrice,
       'priceAfterDiscount',
-      Math.floor(sumOfKey(prixfixeItems, 'prixfixe_cost')) || 0
+      Math.floor(sumOfKey(serviceItems, 'service_cost')) || 0
     );
-    updateStateObject(setPrixfixePrice, 'discountNotes', '-');
+    updateStateObject(setServicePrice, 'discountNotes', '-');
   };
 
   const handleDiscountChange = (e) => {
-    updateStateObject(setPrixfixePrice, 'priceAfterDiscount', e.target.value);
+    updateStateObject(setServicePrice, 'priceAfterDiscount', e.target.value);
     updateStateObject(
-      setPrixfixePrice,
+      setServicePrice,
       'discount',
       roundUptoFixedDigits(
-        ((prixfixePrice.rackPrice - e.target.value) * 100) /
-          prixfixePrice.rackPrice,
+        ((servicePrice.rackPrice - e.target.value) * 100) /
+          servicePrice.rackPrice,
         2
       )
     );
   };
 
   const handleSelect = (value) => {
-    setPrixfixeItems((currentData) => [...currentData, value]);
+    setServiceItems((currentData) => [...currentData, value]);
     setProductList(productList.filter((item) => item.id !== value.id));
   };
 
@@ -135,8 +135,8 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
     //If discount over threshold
     const maxDiscountSlab = await getMaxDiscountSlab();
     if (
-      ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) * 100) /
-        prixfixePrice.rackPrice >
+      ((servicePrice.rackPrice - servicePrice.priceAfterDiscount) * 100) /
+        servicePrice.rackPrice >
       maxDiscountSlab
     ) {
       alert(`Discount is above maximum allowed percentage`);
@@ -146,16 +146,15 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
       ...currentData,
       components: {
         ...currentData.components,
-        prixfixeDetails: prixfixeItems,
+        serviceDetails: serviceItems,
       },
       price_components: {
         ...currentData.price_components,
-        prixfixePrice: {
-          ...prixfixePrice,
+        servicePrice: {
+          ...servicePrice,
           discount: roundUptoFixedDigits(
-            ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) *
-              100) /
-              prixfixePrice.rackPrice,
+            ((servicePrice.rackPrice - servicePrice.priceAfterDiscount) * 100) /
+              servicePrice.rackPrice,
             2
           ),
         },
@@ -169,7 +168,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
     <div>
       {/* Dropdown element for all items */}
       <div className="py-2">
-        <label>Select prix fixe menu</label>
+        <label>Select service</label>
         <Select
           options={productList}
           onChange={(value) => handleSelect(value)}
@@ -177,8 +176,8 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
       </div>
 
       {/* New version */}
-      {prixfixeItems.map(
-        ({ name, price, prixfixe_count, prixfixe_cost }, index) => (
+      {serviceItems.map(
+        ({ name, price, service_count, service_cost }, index) => (
           <Row
             key={index}
             className="custom-form arrow-hidden  mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
@@ -190,7 +189,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
                   type="number"
                   className="py-0 text-end w-75px"
                   name={`itemCount_${index}`}
-                  value={prixfixe_count}
+                  value={service_count}
                   onChange={(e) => handleItemCountChange(e, index)}
                 />
                 <span className="font-small ms-1">Portions</span>
@@ -203,13 +202,13 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
                 className="py-0 text-end w-100px"
                 min={0}
                 name={`itemCount_${index}`}
-                value={prixfixe_count}
+                value={service_count}
                 onChange={(e) => handleItemCountChange(e, index)}
               />
               <span className="font-small mx-3">Portions</span>
             </Col>
             <Col md={3} xs={5} className="text-end">
-              {BDTFormat.format(prixfixe_cost || 0)}
+              {BDTFormat.format(service_cost || 0)}
             </Col>
             <Col md={1} xs={1}>
               <div className="circular-button-wrapper">
@@ -248,7 +247,7 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
               name="packageCost"
               type="text"
               value={BDTFormat.format(
-                sumOfKey(prixfixeItems, 'prixfixe_cost') || 0
+                sumOfKey(serviceItems, 'service_cost') || 0
               )}
               disabled
               className="font-small my-0 py-1 fw-bold text-end rounded-0"
@@ -268,11 +267,11 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             <input
               name="discountedPrice"
               type="number"
-              max={Math.round(sumOfKey(prixfixeItems, 'prixfixe_cost')) || 0}
+              max={Math.round(sumOfKey(serviceItems, 'service_cost')) || 0}
               min={
-                Math.round(sumOfKey(prixfixeItems, 'prixfixe_cost') * 0.5) || 0
+                Math.round(sumOfKey(serviceItems, 'service_cost') * 0.5) || 0
               }
-              value={Math.floor(prixfixePrice.priceAfterDiscount) || 0}
+              value={Math.floor(servicePrice.priceAfterDiscount) || 0}
               onChange={(e) => {
                 handleDiscountChange(e);
               }}
@@ -284,9 +283,9 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
             xs={1}
             className="label-text p-0 d-flex align-items-center">
             {roundUptoFixedDigits(
-              ((prixfixePrice.rackPrice - prixfixePrice.priceAfterDiscount) *
+              ((servicePrice.rackPrice - servicePrice.priceAfterDiscount) *
                 100) /
-                prixfixePrice.rackPrice,
+                servicePrice.rackPrice,
               2
             )}
             %
@@ -302,10 +301,10 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
           </Col>
           <Col md={5} xs={8} className="">
             <textarea
-              value={prixfixePrice.discountNotes}
+              value={servicePrice.discountNotes}
               onChange={(e) => {
                 updateStateObject(
-                  setPrixfixePrice,
+                  setServicePrice,
                   'discountNotes',
                   e.target.value
                 );
@@ -329,4 +328,4 @@ function EditPrixfixe({ setBookingData, bookingData, setShow }) {
   );
 }
 
-export default EditPrixfixe;
+export default EditService;
