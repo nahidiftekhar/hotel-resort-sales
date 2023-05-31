@@ -6,30 +6,57 @@ const {
   rooms,
   roomtypes,
   serviceitems,
+  packagecategories,
+  prixfixecategories,
+  alacartecategories,
+  servicecategories,
 } = require('../database/models');
 
 async function fetchAllPackages(req, res, next) {
-  const dbResult = await dbStandard.selectAllDb(packages);
+  const dbResult = await dbStandard.findAllFilterDb(packages, {
+    is_active: true,
+  });
   return res.json(dbResult);
 }
 
 async function fetchAllRooms(req, res, next) {
-  const dbResult = await dbStandard.joinAllDb(rooms, roomtypes);
+  // const dbResult = await dbStandard.joinAllDb(rooms, roomtypes);
+  const dbResult = await dbStandard.joinFilterDb(rooms, roomtypes, {
+    is_live: true,
+  });
   return res.json(dbResult);
 }
 
 async function fetchAllPrixfixes(req, res, next) {
-  const dbResult = await dbStandard.selectAllDb(prixfixeitems);
+  const dbResult = await dbStandard.joinFilterDb(
+    prixfixeitems,
+    prixfixecategories,
+    {
+      is_active: true,
+    }
+  );
   return res.json(dbResult);
 }
 
 async function fetchAllAlacarte(req, res, next) {
-  const dbResult = await dbStandard.selectAllDb(alacarteitems);
+  const dbResult = await dbStandard.joinFilterDb(
+    alacarteitems,
+    alacartecategories,
+    {
+      is_active: true,
+    }
+  );
   return res.json(dbResult);
 }
 
 async function fetchAllServices(req, res, next) {
-  const dbResult = await dbStandard.selectAllDb(serviceitems);
+  const dbResult = await dbStandard.joinFilterDb(
+    serviceitems,
+    servicecategories,
+    {
+      is_active: true,
+    }
+  );
   return res.json(dbResult);
 }
 
@@ -60,7 +87,7 @@ async function addPackage(req, res, next) {
 async function editPackage(req, res, next) {
   const {
     name,
-    categoryId,
+    productType,
     description,
     priceAdult,
     priceKids,
@@ -69,6 +96,7 @@ async function editPackage(req, res, next) {
     unit,
     unitKids,
   } = req.body;
+
   const dbResult = await dbStandard.modifySingleRecordDb(
     packages,
     { id: packageId },
@@ -77,10 +105,36 @@ async function editPackage(req, res, next) {
       description: description,
       price_adult: priceAdult,
       price_kids: priceKids,
-      category_id: categoryId,
+      category_id: productType,
       image_url: imageUrl,
       unit: unit,
       unit_kids: unitKids,
+    }
+  );
+  return res.json(dbResult);
+}
+
+async function deactivatePackage(req, res, next) {
+  const { packageId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    packages,
+    { id: packageId },
+    {
+      is_active: false,
+    }
+  );
+  return res.json(dbResult);
+}
+
+async function activatePackage(req, res, next) {
+  const { packageId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    packages,
+    { id: packageId },
+    {
+      is_active: true,
     }
   );
   return res.json(dbResult);
@@ -99,17 +153,31 @@ async function addPrixfixeItem(req, res, next) {
 }
 
 async function editPrixfixeItem(req, res, next) {
-  const { name, categoryId, description, price, imageUrl, prixfixeId } =
+  const { name, productType, description, price, imageUrl, prixfixeId } =
     req.body;
+  console.log('req.body: ' + JSON.stringify(req.body));
   const dbResult = await dbStandard.modifySingleRecordDb(
     prixfixeitems,
     { id: prixfixeId },
     {
       name: name,
       description: description,
-      category_id: categoryId,
+      category_id: productType,
       price: price,
       image_url: imageUrl,
+    }
+  );
+  return res.json(dbResult);
+}
+
+async function deactivatePrixfixe(req, res, next) {
+  const { prixfixeId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    prixfixeitems,
+    { id: prixfixeId },
+    {
+      is_active: false,
     }
   );
   return res.json(dbResult);
@@ -144,11 +212,24 @@ async function editAlacarteItem(req, res, next) {
   return res.json(dbResult);
 }
 
+async function deactivateAlacarte(req, res, next) {
+  const { alacarteId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    alacarteitems,
+    { id: alacarteId },
+    {
+      is_active: false,
+    }
+  );
+  return res.json(dbResult);
+}
+
 async function addRoom(req, res, next) {
   const {
     roomNumber,
     roomName,
-    roomTypeId,
+    categoryId,
     roomLocation,
     description,
     imageUrl,
@@ -156,7 +237,7 @@ async function addRoom(req, res, next) {
   const dbResult = await dbStandard.addSingleRecordDB(rooms, {
     room_name: roomName,
     room_number: roomNumber,
-    room_type_id: roomTypeId,
+    room_type_id: categoryId,
     room_location: roomLocation,
     description,
     image_url: imageUrl,
@@ -166,13 +247,13 @@ async function addRoom(req, res, next) {
 
 async function editRoom(req, res, next) {
   const {
+    roomId,
     roomNumber,
     roomName,
-    roomTypeId,
+    categoryId,
     roomLocation,
     description,
     imageUrl,
-    roomId,
   } = req.body;
   const dbResult = await dbStandard.modifySingleRecordDb(
     rooms,
@@ -180,7 +261,7 @@ async function editRoom(req, res, next) {
     {
       room_name: roomName,
       room_number: roomNumber,
-      room_type_id: roomTypeId,
+      room_type_id: categoryId,
       room_location: roomLocation,
       description: description,
       image_url: imageUrl,
@@ -189,15 +270,29 @@ async function editRoom(req, res, next) {
   return res.json(dbResult);
 }
 
+async function deactivateRoom(req, res, next) {
+  const { roomId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    rooms,
+    { id: roomId },
+    {
+      is_live: false,
+    }
+  );
+  return res.json(dbResult);
+}
+
 async function addService(req, res, next) {
   const { name, description, size, price, imageUrl, categoryId } = req.body;
-  const dbResult = await dbStandard.addSingleRecordDB(rooms, {
+  const dbResult = await dbStandard.addSingleRecordDB(serviceitems, {
     name: name,
     description: description,
     size: size,
     price: price,
     category_id: categoryId,
     image_url: imageUrl,
+    is_active: true,
   });
   return res.json(dbResult);
 }
@@ -206,7 +301,7 @@ async function editService(req, res, next) {
   const { name, description, size, price, imageUrl, categoryId, serviceId } =
     req.body;
   const dbResult = await dbStandard.modifySingleRecordDb(
-    rooms,
+    serviceitems,
     { id: serviceId },
     {
       name: name,
@@ -220,7 +315,50 @@ async function editService(req, res, next) {
   return res.json(dbResult);
 }
 
+async function deactivateService(req, res, next) {
+  const { serviceId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    serviceitems,
+    { id: serviceId },
+    {
+      is_active: false,
+    }
+  );
+  return res.json(dbResult);
+}
+
+async function fetchPackagesTypes(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(packagecategories);
+  return res.json(dbResult);
+}
+
+async function fetchPrixfixeTypes(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(prixfixecategories);
+  return res.json(dbResult);
+}
+
+async function fetchAlacarteTypes(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(alacartecategories);
+  return res.json(dbResult);
+}
+
+async function fetchServiceTypes(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(servicecategories);
+  return res.json(dbResult);
+}
+
+async function fetchRoomTypes(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(roomtypes);
+  return res.json(dbResult);
+}
+
 module.exports = {
+  fetchPackagesTypes,
+  fetchAlacarteTypes,
+  fetchPrixfixeTypes,
+  fetchRoomTypes,
+  fetchServiceTypes,
   fetchAllPackages,
   fetchAllRooms,
   fetchAllPrixfixes,
@@ -230,10 +368,16 @@ module.exports = {
   editPackage,
   addPrixfixeItem,
   editPrixfixeItem,
+  deactivatePrixfixe,
   addAlacarteItem,
   editAlacarteItem,
+  deactivateAlacarte,
   addRoom,
   editRoom,
+  deactivateRoom,
   addService,
   editService,
+  deactivateService,
+  deactivatePackage,
+  activatePackage,
 };

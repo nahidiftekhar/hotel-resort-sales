@@ -8,16 +8,20 @@ export const listAllGuestsApi = async () => {
   return apiResult.data;
 };
 
-export const addSingleGuestApi = async (guestData) => {
+export const addSingleGuestApi = async (
+  guestData,
+  profileImage,
+  idFront,
+  idBack
+) => {
   const apiResult = await axios.post(
     `${beConfig.host}/guest-management/add-guest`,
-    guestData
+    { ...guestData, profileImage, idFront, idBack }
   );
   return apiResult.data;
 };
 
 export const editSingleGuestApi = async (guestData) => {
-  console.log('guestData: ' + JSON.stringify(guestData));
   const apiResult = await axios.post(
     `${beConfig.host}/guest-management/edit-guest`,
     guestData

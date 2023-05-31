@@ -11,5 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.0.1"
+  },
+  "dependencies": {
+    "html-react-parser": "^3.0.16"
   }
 }

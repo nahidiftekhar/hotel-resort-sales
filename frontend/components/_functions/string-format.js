@@ -1,4 +1,5 @@
 export function camelCaseToCapitalizedString(text) {
+  if (!text) return '';
   // Add a space before any uppercase letter preceded by a lowercase letter
   const spacedText = text.replace(/([a-z])([A-Z])/g, '$1 $2');
   // Capitalize the first letter of each word
@@ -17,4 +18,49 @@ export function datetimeStringToDate(datetimeString) {
     .toString()
     .padStart(2, '0')}`;
   return formattedDate;
+}
+
+export function reduceStringBySubstring(string, substring, maxCount) {
+  let count = 0;
+  let lastIndex = -1;
+
+  while (count < maxCount) {
+    const index = string.indexOf(substring, lastIndex + 1);
+    if (index !== -1) {
+      lastIndex = index;
+      count++;
+    } else {
+      break;
+    }
+  }
+  return string.substring(0, lastIndex);
+}
+
+export function productDescriptionShortener(htmlString, maxCount) {
+  let count = 0;
+  let lastIndex = -1;
+  const substring = '<br />';
+
+  const string = htmlString
+    .replace(/<\/?(div|p)[^>]*>/g, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\n/g, '<br />');
+
+  while (count < maxCount) {
+    const index = string.indexOf(substring, lastIndex + 1);
+    if (index !== -1) {
+      lastIndex = index;
+      count++;
+    } else {
+      break;
+    }
+  }
+  if (lastIndex === -1) return string;
+  return string.substring(0, lastIndex);
+}
+
+export function isUrl(str) {
+  // Regular expression pattern to match a URL
+  const urlPattern = /^(http|https):\/\/[^ "]+$/;
+  return urlPattern.test(str);
 }

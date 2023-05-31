@@ -63,7 +63,19 @@ app.get('/', function (req, res) {
 // Serve static images
 app.use('/static', express.static('public'));
 
-// Upload profile image file
+// Custom error handling middleware
+app.use((err, req, res, next) => {
+  if (err) {
+    // Handle the error in the desired way
+    console.error(err);
+    res.status(404).send('Image not found');
+  } else {
+    // Proceed to the next middleware or route handler
+    next();
+  }
+});
+
+// Upload image file
 app.post('/upload', (req, res) => {
   const newpath = `${__dirname}/public`;
   const { file } = req.files;
@@ -83,9 +95,7 @@ app.post('/upload', (req, res) => {
 app.use(require('./controllers'));
 
 // Start the server in port defined in config
-// eslint-disable-next-line prefer-arrow-callback
 const server = app.listen(process.env.PORT || config.PORT, function () {
-  // eslint-disable-next-line prefer-destructuring
   const port = server.address().port;
   console.log('App started with nodemon at port:', port);
 });

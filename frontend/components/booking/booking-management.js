@@ -161,39 +161,45 @@ function BookingManagement({ bookingId, isNew }) {
                   {/* Buttons for large screen */}
                   {bookingData.booking_status !== 'canceled' && (
                     <div className="d-md-flex d-none">
-                      <div className="mx-2">
-                        <ReactiveButton
-                          buttonState="idle"
-                          idleText={
-                            <span className="fw-bold fs-6">Advanced</span>
-                          }
-                          color="blue"
-                          size="small"
-                          className="rounded-1 py-1 bg-gradient"
-                          disabled={
-                            bookingData.booking_status ===
-                            'discountApprovalPending'
-                          }
-                          onClick={() => {
-                            setShowAdvanced(true);
-                          }}
-                        />
-                      </div>
+                      {!isNew && (
+                        <div className="mx-2">
+                          <ReactiveButton
+                            buttonState="idle"
+                            idleText={
+                              <span className="fw-bold fs-6">Advanced</span>
+                            }
+                            color="blue"
+                            size="small"
+                            className="rounded-1 py-1 bg-gradient"
+                            disabled={
+                              bookingData.booking_status ===
+                              'discountApprovalPending'
+                            }
+                            onClick={() => {
+                              setShowAdvanced(true);
+                            }}
+                          />
+                        </div>
+                      )}
 
-                      <div className="mx-2">
-                        <ReactiveButton
-                          buttonState="idle"
-                          idleText={
-                            <span className="fw-bold fs-6">Cancel Booking</span>
-                          }
-                          color="red"
-                          size="small"
-                          className="rounded-1 py-1 bg-gradient"
-                          onClick={() => {
-                            setShowCancel(true);
-                          }}
-                        />
-                      </div>
+                      {!isNew && (
+                        <div className="mx-2">
+                          <ReactiveButton
+                            buttonState="idle"
+                            idleText={
+                              <span className="fw-bold fs-6">
+                                Cancel Booking
+                              </span>
+                            }
+                            color="red"
+                            size="small"
+                            className="rounded-1 py-1 bg-gradient"
+                            onClick={() => {
+                              setShowCancel(true);
+                            }}
+                          />
+                        </div>
+                      )}
 
                       <div className="edit-component ms-3">
                         <Dropdown>
@@ -230,24 +236,6 @@ function BookingManagement({ bookingId, isNew }) {
                           </Dropdown.Menu>
                         </Dropdown>
                       </div>
-
-                      {/* <div className="mx-2">
-                      <ReactiveButton
-                        buttonState="idle"
-                        idleText={
-                          <span className="fw-bold fs-6">
-                            {isNew ? 'Create ' : 'Modify'}
-                          </span>
-                        }
-                        color="green"
-                        size="small"
-                        className="rounded-1 py-1 bg-gradient"
-                        // outline
-                        onClick={() => {
-                          handleSubmitBooking(values);
-                        }}
-                      />
-                    </div> */}
                     </div>
                   )}{' '}
                 </div>
@@ -255,33 +243,39 @@ function BookingManagement({ bookingId, isNew }) {
                 {/* Buttons for mobile */}
                 {bookingData.booking_status !== 'canceled' && (
                   <div className="d-flex d-md-none justify-content-between mb-3">
-                    <div className="mx-2">
-                      <ReactiveButton
-                        buttonState="idle"
-                        idleText={
-                          <span className="fw-bold fs-6">Advanced</span>
-                        }
-                        color="blue"
-                        size="small"
-                        className="rounded-1 py-1 bg-gradient"
-                        onClick={() => {
-                          setShowAdvanced(true);
-                        }}
-                      />
-                    </div>
+                    {!isNew && (
+                      <div className="mx-2">
+                        <ReactiveButton
+                          buttonState="idle"
+                          idleText={
+                            <span className="fw-bold fs-6">Advanced</span>
+                          }
+                          color="blue"
+                          size="small"
+                          className="rounded-1 py-1 bg-gradient"
+                          onClick={() => {
+                            setShowAdvanced(true);
+                          }}
+                        />
+                      </div>
+                    )}
 
-                    <div className="mx-2">
-                      <ReactiveButton
-                        buttonState="idle"
-                        idleText={<span className="fw-bold fs-6">Cancel</span>}
-                        color="red"
-                        size="small"
-                        className="rounded-1 py-1 bg-gradient"
-                        onClick={() => {
-                          setShowCancel(true);
-                        }}
-                      />
-                    </div>
+                    {!isNew && (
+                      <div className="mx-2">
+                        <ReactiveButton
+                          buttonState="idle"
+                          idleText={
+                            <span className="fw-bold fs-6">Cancel</span>
+                          }
+                          color="red"
+                          size="small"
+                          className="rounded-1 py-1 bg-gradient"
+                          onClick={() => {
+                            setShowCancel(true);
+                          }}
+                        />
+                      </div>
+                    )}
 
                     <div className="edit-component mx-2">
                       <Dropdown>

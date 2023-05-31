@@ -9,7 +9,6 @@ export function generateRandomString(n) {
     );
   }
   const date = new Date();
-  console.log('timestamp: ' + date.valueOf());
   return randomString.concat(date.valueOf());
 }
 

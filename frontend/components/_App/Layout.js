@@ -5,15 +5,18 @@ import TopNavbar from './Navbar';
 import Footer from './Footer';
 import GoTop from './GoTop';
 import { Container } from 'react-bootstrap';
+import { NextAuthProvider } from 'pages/provider';
 
 const Layout = ({ children, staticContent }) => {
   return (
     <>
       <Meta metaContent={staticContent.metaContent} />
-      <TopNavbar />
-      <Container className="min-vh-100">{children}</Container>
-      <Footer pageContent={staticContent.footerContent} />
-      <GoTop scrollStepInPx="500" delayInMs="10.50" />
+      <NextAuthProvider>
+        <TopNavbar />
+        <Container className="min-vh-100">{children}</Container>
+        <Footer pageContent={staticContent.footerContent} />
+        <GoTop scrollStepInPx="500" delayInMs="10.50" />
+      </NextAuthProvider>
     </>
   );
 };

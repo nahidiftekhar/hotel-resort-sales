@@ -19,7 +19,12 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 1,
     },
     group_details: {
-      type: Sequelize.JSON,
+      type: Sequelize.TEXT,
+    },
+    additional_guests: {
+      type: Sequelize.ARRAY(Sequelize.INTEGER),
+      allowNull: true,
+      defaultValue: [],
     },
     visit_notes: {
       type: Sequelize.TEXT,

@@ -4,6 +4,7 @@ const crypto = require('crypto');
 
 const { credentials, usertypes } = require('../database/models');
 const db = require('./db-services/db-users');
+const dbStandard = require('./db-services/db-standard');
 const sendMail = require('./utils/send-email');
 const { secretConfig } = require('../configs/secrets.config');
 const saltRounds = secretConfig.SALT_ROUNDS;
@@ -15,6 +16,13 @@ const {
 async function testDb(req, res, next) {
   const dbResult = await db.testQuery(credentials);
   return res.json(dbResult);
+}
+
+async function hashString(req, res, next) {
+  const plainText = req.params.string;
+  bcrypt.hash(plainText, saltRounds, async function (err, hash) {
+    return res.json({ hash });
+  });
 }
 
 async function addUserPlainText(req, res, next) {
@@ -90,8 +98,11 @@ async function changePassword(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
-  const { userName, passPlain } = req.body;
-  const dbResult = await db.findUserByUsernameDb(userName);
+  const { email, passPlain } = req.body;
+  const dbResult = await dbStandard.findOneFilterDb(credentials, {
+    email: email,
+  });
+
   if (!dbResult)
     return res.json({
       successStatus: false,
@@ -114,37 +125,30 @@ async function loginUser(req, res, next) {
       forcePassChange: true,
       reason: 'Password change is mandatory',
     });
-  let refreshToken = null;
   const passwordHashDb = dbResult.password;
-  const userTypeDb = dbResult.user_type;
   bcrypt.compare(passPlain, passwordHashDb, function (err, result) {
-    if (result) {
-      refreshToken = issueRefreshToken(userName, userTypeDb);
-      res.clearCookie(secretConfig.ACCESS_TOKEN);
-      res.cookie(
-        secretConfig.ACCESS_TOKEN,
-        issueAccessToken(
-          userName,
-          userTypeDb,
-          dbResult.username,
-          dbResult.user_id
-        ),
-        {
-          httpOnly: true,
-          sameSite: 'None',
-          secure: true, //reset to true in https
-          maxAge: secretConfig.ACCESS_TOKEN_EXPIRY,
-        }
-      );
-    }
     const reasonText = result
       ? 'User Authenticated'
-      : 'Your entered email/password was not found';
+      : 'Your entered email/password did not match';
+
+    console.log(
+      JSON.stringify({
+        successStatus: result,
+        reason: reasonText,
+        id: dbResult.dataValues.id,
+        username: dbResult.dataValues.username,
+        usertype: dbResult.dataValues.user_type_id,
+        email: dbResult.dataValues.email,
+      })
+    );
+
     return res.json({
       successStatus: result,
-      type: userTypeDb,
       reason: reasonText,
-      CMRT: refreshToken,
+      id: dbResult.dataValues.id,
+      username: dbResult.dataValues.username,
+      usertype: dbResult.dataValues.user_type_id,
+      email: dbResult.dataValues.email,
     });
   });
 }
@@ -311,4 +315,5 @@ module.exports = {
   changePassword,
   loginUser,
   logoutUser,
+  hashString,
 };

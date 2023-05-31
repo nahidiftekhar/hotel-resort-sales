@@ -25,14 +25,12 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
 
   const handleAddGuest = async (e) => {
     e.preventDefault();
-    setNewGuestData((currentData) => ({
-      ...currentData,
+    const result = await addSingleGuestApi(
+      newGuestData,
       profileImage,
       idFront,
-      idBack,
-    }));
-
-    const result = await addSingleGuestApi(newGuestData);
+      idBack
+    );
     if (result.success) {
       setRefresh(true);
       setShow(false);

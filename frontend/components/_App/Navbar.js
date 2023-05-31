@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { LogOutButton } from '../auth/auth-buttons';
 
 function TopNavbar() {
   const [hideNav, setHideNav] = useState(false);
@@ -17,22 +18,6 @@ function TopNavbar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         {hideNav ? (
           ''
-        ) : userType === '1' ? (
-          <Navbar.Collapse
-            id="responsive-navbar-nav"
-            className="justify-content-end">
-            <Nav>
-              <Nav.Link className="mx-3" href="/admin/create-card">
-                Create Card
-              </Nav.Link>
-              <Nav.Link className="mx-3" href="/admin/view-cards">
-                View Cards
-              </Nav.Link>
-              <Nav.Link className="mx-3" href="/logout">
-                Logout
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
         ) : (
           <Navbar.Collapse
             id="responsive-navbar-nav"
@@ -59,6 +44,7 @@ function TopNavbar() {
             </Nav>
           </Navbar.Collapse>
         )}{' '}
+        <LogOutButton />
       </Container>
     </Navbar>
   );

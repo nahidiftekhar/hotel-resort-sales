@@ -10,6 +10,7 @@ import { Icon } from '@/components/_commom/Icon';
 import AddGuest from '@/components/guests/add-guest';
 import EditGuest from '@/components/guests/edit-guest';
 import { writeToStorage } from '@/components/_functions/storage-variable-management';
+import ViewGuest from '@/components/guests/view-guest';
 
 function ListAllGuests() {
   const [refresh, setRefresh] = useState(true);
@@ -18,6 +19,7 @@ function ListAllGuests() {
   const [modGuestData, setModGuestData] = useState({});
   const [showAddGuestModal, setShowAddGuestModal] = useState(false);
   const [showModGuestModal, setShowModGuestModal] = useState(false);
+  const [showViewGuestModal, setShowViewGuestModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
@@ -80,7 +82,7 @@ function ListAllGuests() {
             variant="success"
             className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center"
             onClick={() => handleAddBookingForGuest(row.id)}>
-            <Icon nameIcon="FaPlus" propsIcon={{ size: 12 }} />
+            <Icon nameIcon="FaRegBookmark" propsIcon={{ size: 12 }} />
           </Button>
           <Button
             size="sm"
@@ -91,6 +93,16 @@ function ListAllGuests() {
               setModGuestData(row);
             }}>
             <Icon nameIcon="FaEdit" propsIcon={{ size: 12 }} />
+          </Button>
+          <Button
+            size="sm"
+            variant="dark"
+            className="mx-1 py-1 px-md-2 px-1 d-inline-flex align-items-center"
+            onClick={() => {
+              setShowViewGuestModal(true);
+              setModGuestData(row);
+            }}>
+            <Icon nameIcon="FaEye" propsIcon={{ size: 12 }} />
           </Button>
         </div>
       ),
@@ -177,6 +189,14 @@ function ListAllGuests() {
       <EditGuest
         show={showModGuestModal}
         setShow={setShowModGuestModal}
+        setRefresh={setRefresh}
+        modGuestData={modGuestData}
+        setModGuestData={setModGuestData}
+      />
+
+      <ViewGuest
+        show={showViewGuestModal}
+        setShow={setShowViewGuestModal}
         setRefresh={setRefresh}
         modGuestData={modGuestData}
         setModGuestData={setModGuestData}

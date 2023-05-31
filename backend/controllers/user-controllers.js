@@ -1,20 +1,23 @@
-const router = require("express").Router();
-const userServices = require("../services/user-services");
+const router = require('express').Router();
+const userServices = require('../services/user-services');
 
 //Test routing and DB
-router.get("/", userServices.testDb);
+router.get('/', userServices.testDb);
+
+//Hash string
+router.get('/hash-string/:string', userServices.hashString);
 
 //User signup
-router.post("/signup", userServices.addUserPlainText); //tested
+router.post('/signup', userServices.addUserPlainText); //tested
 
 //Change Password
-router.post("/change-password", userServices.changePassword); //tested
+router.post('/change-password', userServices.changePassword); //tested
 
 //User login
-router.post("/login", userServices.loginUser); //tested
+router.post('/login', userServices.loginUser); //tested
 
 //User logout
-router.get("/logout", userServices.logoutUser);
+router.get('/logout', userServices.logoutUser);
 
 // //Authorize access
 // router.post("/authorize", userServices.authorizeAccess);

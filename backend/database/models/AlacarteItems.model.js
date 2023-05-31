@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
+    is_active: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true,
+    },
   });
 
   // Class Method
