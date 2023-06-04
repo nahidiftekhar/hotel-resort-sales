@@ -89,6 +89,12 @@ body {
     margin: 0;
   }
 
+  .center-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   select .select-disabled {
     color: #cecece;
   }
@@ -954,4 +960,20 @@ body {
       transform: scale(1.2, 1.2);
     }
   }
+}
+
+.guest-section {
+  .accordion-button {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
+    &::after {
+      background-size: 0.8rem;
+    }
+  }
+}
+
+.visit-booking {
+  font-weight: 200;
+  color: #7a7a7a;
 }

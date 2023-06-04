@@ -2,10 +2,6 @@ const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   const Payments = sequelize.define(`payments`, {
-    payment_method: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
     amount: {
       type: Sequelize.DECIMAL(15, 4),
       allowNull: false,
@@ -14,15 +10,15 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.STRING,
       defaultValue: 'BDT',
     },
-    transaction_id: {
-      type: Sequelize.STRING,
-    },
-    status: {
+    payment_method: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    payment_gateway: {
+    payment_receiver: {
       type: Sequelize.STRING,
+    },
+    payment_notes: {
+      type: Sequelize.TEXT,
     },
     reconciliation_status: {
       type: Sequelize.BOOLEAN,
@@ -31,27 +27,13 @@ module.exports = (sequelize, DataTypes) => {
     refund_date: {
       type: Sequelize.DATE,
     },
-    refund_amount: {
-      type: Sequelize.DECIMAL(15, 4),
-    },
-    payment_notes: {
-      type: Sequelize.TEXT,
-    },
   });
 
   // Class Method
   Payments.associate = function (models) {
     Payments.belongsTo(models.guests, { foreignKey: 'guest_id' });
-    Payments.belongsTo(
-      models.invoices,
-      { foreignKey: 'invoice_id' },
-      { optional: true }
-    );
-    Payments.belongsTo(
-      models.bookings,
-      { foreignKey: 'booking_id' },
-      { optional: true }
-    );
+    Payments.belongsTo(models.visits, { foreignKey: 'visit_id' });
+    Payments.belongsTo(models.bookings, { foreignKey: 'booking_id' });
   };
 
   return Payments;

@@ -53,12 +53,14 @@ function ListAllGuests() {
     {
       name: 'Name',
       selector: (row) => row.name,
+      grow: 2,
       sortable: true,
       wrap: true,
     },
     {
       name: 'Phone',
       selector: (row) => row.phone,
+      grow: 2,
       sortable: false,
     },
     {
@@ -70,11 +72,13 @@ function ListAllGuests() {
     {
       name: 'Identity Card',
       selector: (row) => `${row.id_type}- ${row.id_number}`,
+      grow: 2,
       wrap: true,
       sortable: true,
     },
     {
       name: 'Actions',
+      grow: 2,
       cell: (row) => (
         <div>
           <Button

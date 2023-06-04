@@ -166,15 +166,9 @@ export const approveDiscountApi = async (
 };
 
 export const confirmAdvancedApi = async (advancedData) => {
-  const objectToSubmit = {
-    bookingId: advancedData.bookingId,
-    advancedAmount: advancedData.advancedAmount,
-    advancedNotes: advancedData.advancedNotes,
-  };
-
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/confirm-advanced`,
-    objectToSubmit
+    advancedData
   );
   return apiResult.data;
 };

@@ -20,7 +20,6 @@ export default function FilterSelect({
         name={name}
         value={defaultValue(options, value)}
         onChange={(value) => {
-          console.log('select value: ' + JSON.stringify(value));
           onChange(value);
         }}
         options={options}

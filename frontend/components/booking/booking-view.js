@@ -115,7 +115,9 @@ function BookingView({ bookingId, isNew }) {
             return (
               <Form>
                 <div className="d-flex justify-content-between">
-                  <h2 className="mb-4">Booking Details</h2>
+                  <h2 className="mb-4">
+                    Booking Details: {bookingData.booking_ref}
+                  </h2>
                 </div>
 
                 <Row className="m-0 py-2 border border-grey">

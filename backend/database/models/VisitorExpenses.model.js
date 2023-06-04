@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  const VisitPurchases = sequelize.define(`visitpurchases`, {
+  const VisitorExpenses = sequelize.define(`visitorexpenses`, {
     item_type: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -21,9 +21,10 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   // Class Method
-  VisitPurchases.associate = function (models) {
-    VisitPurchases.belongsTo(models.visits, { foreignKey: 'visit_id' });
+  VisitorExpenses.associate = function (models) {
+    VisitorExpenses.belongsTo(models.visits, { foreignKey: 'visit_id' });
+    VisitorExpenses.belongsTo(models.bookings, { foreignKey: 'booking_id' });
   };
 
-  return VisitPurchases;
+  return VisitorExpenses;
 };

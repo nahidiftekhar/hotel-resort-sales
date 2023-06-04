@@ -51,7 +51,20 @@ export function updateStateArrayInObject(setState, key, value) {
 export function sumOfKey(arrayName, key) {
   return Array.isArray(arrayName)
     ? arrayName.reduce(
-        (accumulator, currentData) => accumulator + (currentData[key] || 0),
+        (accumulator, currentData) =>
+          accumulator + (Number(currentData[key]) || 0),
+        0
+      )
+    : 0;
+}
+
+//Sum of key in array
+export function sumOfKeyMultiply(arrayName, key1, key2) {
+  return Array.isArray(arrayName)
+    ? arrayName.reduce(
+        (accumulator, currentData) =>
+          accumulator +
+          (Number(currentData[key1]) * Number(currentData[key2]) || 0),
         0
       )
     : 0;

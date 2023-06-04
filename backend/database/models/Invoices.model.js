@@ -28,16 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   // Class Method
   Invoices.associate = function (models) {
     Invoices.belongsTo(models.guests, { foreignKey: 'guest_id' });
-    Invoices.belongsTo(
-      models.bookings,
-      { foreignKey: 'booking_id' },
-      { optional: true }
-    );
-    Invoices.hasMany(
-      models.payments,
-      { foreignKey: 'invoice_id' },
-      { optional: true }
-    );
+    Invoices.belongsTo(models.bookings, { foreignKey: 'booking_id' });
   };
 
   return Invoices;

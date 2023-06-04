@@ -4,15 +4,17 @@ import ReactiveButton from 'reactive-button';
 
 import { confirmAdvancedApi } from '@/api/booking-api';
 import { readFromStorage } from '@/components/_functions/storage-variable-management';
+import { paymentOptions } from '@/data/paymentOptions';
 
 function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
   const [notes, setNotes] = useState('');
   const [advancedAmount, setAdvancedAmount] = useState(0);
   const [userId, setUserId] = useState(0);
+  const [paymentOption, setPaymentOption] = useState('Cash');
 
   useEffect(() => {
     setUserId(readFromStorage('USER_KEY'));
-    setAdvancedAmount(bookingData.advanced_amount);
+    // setAdvancedAmount(bookingData.advanced_amount);
   }, [bookingData]);
 
   const handleSubmit = async () => {
@@ -30,9 +32,14 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
       bookingId: bookingData.id,
       advancedAmount,
       advancedNotes,
+      paymentNotes: notes,
+      guestId: bookingData.guest_id,
+      paymentOption,
+      previousAdvanced: bookingData.advanced_amount,
     });
     if (apiResult.success) {
       setReferesh(true);
+      setAdvancedAmount(0);
       setShow(false);
     } else return false;
   };
@@ -54,7 +61,17 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
               {Number(bookingData.discounted_amount).toFixed(2)}
             </p>
           </div>
-          <label for="amount">Advance amount (BDT)</label>
+          <label for="amount">Previous advance amount (BDT)</label>
+          <input
+            type="number"
+            name="amount"
+            disabled
+            value={Number(bookingData.advanced_amount).toFixed(2)}
+          />
+
+          <label for="amount" className="mt-3">
+            Advanced amount (BDT)
+          </label>
           <input
             type="number"
             name="amount"
@@ -63,6 +80,20 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
             max={Number(bookingData.discounted_amount).toFixed(2)}
             onChange={(e) => setAdvancedAmount(e.target.value)}
           />
+
+          <label for="amount" className="mt-3">
+            Payment Method
+          </label>
+          <select
+            name="paymentoption"
+            id="paymentoption"
+            onChange={(e) => setPaymentOption(e.target.value)}>
+            {paymentOptions.map((value, index) => (
+              <option key={index} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
 
           <label for="newNotes" className="mt-3">
             Existing Notes

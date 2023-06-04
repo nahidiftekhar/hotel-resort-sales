@@ -18,8 +18,6 @@ async function addNewGuest(req, res, next) {
     profileImage,
   } = req.body;
 
-  // console.log('req.body: ' + JSON.stringify(req.body));
-  // return res.json({ success: false });
   const dbResult = await dbStandard.addSingleRecordDB(guests, {
     name: name,
     phone: phone,

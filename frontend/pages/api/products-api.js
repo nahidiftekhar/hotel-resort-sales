@@ -24,7 +24,8 @@ export const listAllAlacarteApi = async () => {
 
 export const listAllRoomsApi = async () => {
   const apiResult = await axios.get(
-    `${beConfig.host}/product-management/fetch-rooms`
+    `${beConfig.host}/product-management/room-categories`
+    // `${beConfig.host}/product-management/fetch-rooms`
   );
   return apiResult.data;
 };

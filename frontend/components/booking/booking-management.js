@@ -157,7 +157,9 @@ function BookingManagement({ bookingId, isNew }) {
             return (
               <Form>
                 <div className="d-flex justify-content-between">
-                  <h2 className="mb-4">Booking Details</h2>
+                  <h2 className="mb-4">
+                    Booking Details: {bookingData.booking_ref}
+                  </h2>
                   {/* Buttons for large screen */}
                   {bookingData.booking_status !== 'canceled' && (
                     <div className="d-md-flex d-none">

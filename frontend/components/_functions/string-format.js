@@ -20,6 +20,14 @@ export function datetimeStringToDate(datetimeString) {
   return formattedDate;
 }
 
+export function datetimeStringToDateTime(datetimeString) {
+  const datetime = new Date(datetimeString);
+  const datePart = datetimeStringToDate(datetimeString);
+  const timePart = datetime.toLocaleTimeString();
+
+  return datePart + ' ' + timePart;
+}
+
 export function reduceStringBySubstring(string, substring, maxCount) {
   let count = 0;
   let lastIndex = -1;

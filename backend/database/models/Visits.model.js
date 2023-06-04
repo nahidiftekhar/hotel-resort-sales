@@ -13,14 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    group_size: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 1,
-    },
-    group_details: {
-      type: Sequelize.TEXT,
-    },
     additional_guests: {
       type: Sequelize.ARRAY(Sequelize.INTEGER),
       allowNull: true,
@@ -29,11 +21,28 @@ module.exports = (sequelize, DataTypes) => {
     visit_notes: {
       type: Sequelize.TEXT,
     },
+    booking_id: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
+    advanced_amount: {
+      type: Sequelize.DECIMAL(15, 4),
+      defaultValue: 0,
+    },
+    is_settled: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
+    visit_ref: {
+      type: Sequelize.STRING,
+      defaultValue: 'FNFGZ_0001',
+    },
   });
 
   // Class Method
   Visits.associate = function (models) {
     Visits.belongsTo(models.guests, { foreignKey: 'guest_id' });
+    Visits.hasMany(models.payments, { foreignKey: 'visit_id' });
   };
 
   return Visits;

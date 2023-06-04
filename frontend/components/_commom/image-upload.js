@@ -25,7 +25,7 @@ function ImageUpload({ setImage, imageFile, saveLocation }) {
       ];
     if (
       e.target.files[0].size / 1024 > 2048 ||
-      ['jpg', 'jpeg', 'png'].indexOf(fileExtension) === -1
+      ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'].indexOf(fileExtension) === -1
     ) {
       setErroMessage('Please upload image (jpg/png) below 2MB');
       setVisibleImage(

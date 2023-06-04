@@ -286,23 +286,24 @@ function BookingHome() {
                 </div>
               )}
             {''}
-            {row.booking_status !== 'discountApprovalPending' && (
-              <div className="reactive-button-wauto my-1">
-                <ReactiveButton
-                  buttonState="idle"
-                  idleText={
-                    <Icon
-                      nameIcon="HiCurrencyBangladeshi"
-                      propsIcon={{ size: 20 }}
-                    />
-                  }
-                  outline
-                  color="blue"
-                  className="rounded-1 py-1 px-3"
-                  onClick={() => handleCreateAdvanced(row)}
-                />
-              </div>
-            )}
+            {row.booking_status !== 'discountApprovalPending' &&
+              row.booking_status !== 'discountRejected' && (
+                <div className="reactive-button-wauto my-1">
+                  <ReactiveButton
+                    buttonState="idle"
+                    idleText={
+                      <Icon
+                        nameIcon="HiCurrencyBangladeshi"
+                        propsIcon={{ size: 20 }}
+                      />
+                    }
+                    outline
+                    color="blue"
+                    className="rounded-1 py-1 px-3"
+                    onClick={() => handleCreateAdvanced(row)}
+                  />
+                </div>
+              )}
 
             <div className="reactive-button-wauto">
               <ReactiveButton
@@ -388,7 +389,6 @@ function BookingHome() {
     <div className="my-5">
       <div className="d-flex justify-content-between mb-5">
         <h3 className="text-center">Booking Management</h3>
-        {/* <a href="booking/add-booking"> */}
         <ReactiveButton
           buttonState="idle"
           idleText={<span className="fw-bold fs-6">Add Booking</span>}
@@ -397,7 +397,6 @@ function BookingHome() {
           className="rounded-1 py-1 bg-gradient"
           onClick={() => setShowGuestModal(true)}
         />
-        {/* </a> */}
       </div>
 
       <DataTable

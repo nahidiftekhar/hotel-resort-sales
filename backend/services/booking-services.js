@@ -5,6 +5,7 @@ const {
   discounts,
   discountslabs,
   guests,
+  payments,
   credentials,
   packages,
   prixfixeitems,
@@ -13,6 +14,7 @@ const {
   serviceitems,
   usertypes,
 } = require('../database/models');
+const helper = require('../services/utils/helper');
 
 const { Op, Sequelize } = require('sequelize');
 const { sendSingleEmail } = require('./utils/send-email');
@@ -46,7 +48,8 @@ async function listAllBookingAfterToday(req, res, next) {
     guests,
     discounts,
     {
-      [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }, { id: 4 }],
+      [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }],
+      // [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }, { id: 4 }],
     }
   );
   return res.json(result);
@@ -103,6 +106,8 @@ async function addBooking(req, res, next) {
 
   if (discountStatus === 0) return res.json(discountStatus);
 
+  const uniqueRef = await helper.generateReference(0);
+
   const dbBooking = await dbStandard.addSingleRecordDB(bookings, {
     user_id: user_id,
     guest_id: guest_id,
@@ -119,6 +124,7 @@ async function addBooking(req, res, next) {
         : 'discountApprovalPending',
     booking_notes: booking_notes,
     advanced_notes: new Date() + 'Booking created',
+    booking_ref: uniqueRef,
   });
 
   const dbDiscount = dbBooking.success
@@ -380,18 +386,40 @@ async function approveDiscount(req, res, next) {
 }
 
 async function confirmAdvancedReceipt(req, res, next) {
-  const { bookingId, advancedAmount, advancedNotes } = req.body;
-  console.log('advancedNotes: ' + JSON.stringify(advancedNotes));
+  const {
+    bookingId,
+    advancedAmount,
+    previousAdvanced,
+    advancedNotes,
+    paymentNotes,
+    paymentOption,
+    guestId,
+    // visitId,
+  } = req.body;
+
+  const addPayment = await dbStandard.addSingleRecordDB(payments, {
+    amount: advancedAmount,
+    payment_method: paymentOption,
+    payment_notes: paymentNotes,
+    guest_id: guestId,
+    // visit_id: visitId,
+    booking_id: bookingId,
+    payment_receiver: 'Advanced',
+  });
+
   const modifyBooking = await dbStandard.modifySingleRecordDb(
     bookings,
     { id: bookingId },
     {
-      advanced_amount: advancedAmount,
+      advanced_amount: Number(advancedAmount) + Number(previousAdvanced),
       advanced_notes: advancedNotes,
       booking_status: 'bookingConfirmed',
     }
   );
-  return res.json(modifyBooking);
+
+  if (modifyBooking.success && addPayment.success)
+    return res.json({ success: true, addPayment, modifyBooking });
+  else return res.json({ success: false, addPayment, modifyBooking });
 }
 
 async function cancelBooking(req, res, next) {

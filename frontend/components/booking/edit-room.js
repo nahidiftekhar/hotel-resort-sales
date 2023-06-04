@@ -34,12 +34,13 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
       const filteredExistingItems = allProductList.filter(
         (item) => !roomItems.some((existingItem) => existingItem.id === item.id)
       );
+      // setProductList(allProductList);
       setProductList(
         filteredExistingItems.map((obj, index) => {
           return {
             ...obj,
             value: index,
-            label: obj.roomtype.room_type_name + '-' + obj.room_name,
+            label: obj.room_type_name,
           };
         })
       );
@@ -88,7 +89,12 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
     updateStateArray(
       index,
       'room_cost',
-      Math.max(e.target.value * roomItems[index].roomtype.price * daysCount, 0),
+      Math.max(
+        daysCount > 0
+          ? e.target.value * roomItems[index].price * daysCount
+          : e.target.value * roomItems[index].price,
+        0
+      ),
       setRoomItems,
       roomItems
     );
@@ -179,16 +185,13 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
 
       {/* New version */}
       {roomItems.map(
-        (
-          { name, price, roomtype, room_name, room_count, room_cost },
-          index
-        ) => (
+        ({ name, price, room_type_name, room_count, room_cost }, index) => (
           <Row
             key={index}
             className="custom-form arrow-hidden  mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
             <Col md={5} xs={6}>
               {/* {name} */}
-              {roomtype.room_type_name + '-' + room_name}
+              {room_type_name}
               {/* Input for mobile screen */}
               <div className="d-block d-sm-none">
                 <input

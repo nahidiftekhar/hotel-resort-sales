@@ -13,9 +13,9 @@ export const LogInButton = () => {
 export const LogOutButton = () => {
   return (
     <button
-      className="text-white font-bold py-1 px-4 bg-secondary rounded-1"
+      className="text-white font-bold py-0 px-3 ms-5 bg-secondary bg-gradient rounded-1"
       onClick={() => signOut()}>
-      Sign out
+      <span className="fs-6">Sign out</span>
     </button>
   );
 };

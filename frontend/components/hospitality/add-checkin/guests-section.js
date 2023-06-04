@@ -6,9 +6,9 @@ import { Icon } from '@/components/_commom/Icon';
 import GuestSelection from './guest-selection';
 import SingleGuestInfo from '@/components/guests/single-guest-info';
 
-function GuestSection() {
+function GuestSection({ checkinGuests, setCheckinGuests }) {
   const [showGuestSelection, setShowGuestSelection] = useState(false);
-  const [checkinGuests, setCheckinGuests] = useState([]);
+  // const [checkinGuests, setCheckinGuests] = useState([]);
   return (
     <div className="my-3 p-3 border rounded-1">
       <div className="d-flex justify-content-between reactive-button-wauto mb-2">
