@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { PropagateLoader } from 'react-spinners';
+import React from 'react';
 import DataTable, { FilterComponent } from 'react-data-table-component';
-import { Container, Button, Form } from 'react-bootstrap';
-import ReactiveButton from 'reactive-button';
-import { roundUptoFixedDigits } from '@/components/_functions/common-functions';
 import {
-  datetimeStringToDate,
-  datetimeStringToDateTime,
-} from '@/components/_functions/string-format';
+  roundUptoFixedDigits,
+  sumOfKeyMultiply,
+} from '@/components/_functions/common-functions';
+import { datetimeStringToDateTime } from '@/components/_functions/string-format';
+import { BDTFormat } from '@/components/_functions/number-format';
 
 function PurchaseRecords({ purchaseRecords }) {
   const headerResponsive = [
@@ -57,9 +55,22 @@ function PurchaseRecords({ purchaseRecords }) {
   };
 
   return (
-    <>
+    <div className="border border-dark border-opacity-75">
+      {/* <div className="p-2 fw-bold bg-light">
+        <span className="me-5">Purchase Records</span>
+      </div> */}
+
+      <div className="p-2 d-flex justify-content-between fw-bold bg-light">
+        <span className="me-5">Purchase Records</span>
+        <span>
+          {BDTFormat.format(
+            sumOfKeyMultiply(purchaseRecords, 'unit_price', 'item_count') || 0
+          )}
+        </span>
+      </div>
+
       <DataTable
-        title="Purchase records"
+        // title="Purchases"
         columns={headerResponsive}
         data={purchaseRecords.filter((item) => item.item_type !== 'Booking')}
         pagination
@@ -69,7 +80,7 @@ function PurchaseRecords({ purchaseRecords }) {
         striped
         dense
       />
-    </>
+    </div>
   );
 }
 

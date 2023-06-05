@@ -11,15 +11,16 @@ import {
   updateStateArray,
 } from '@/components/_functions/common-functions';
 import { addPurchaseApi } from '@/api/visit-api';
-import { paymentOptions, paymentReceivers } from '@/data/paymentOptions';
+import PaymentForm from '@/components/payment/payment-form';
 
-function AddAlacarte({ componentType, visitId, setRefresh, setShow }) {
+function AddAlacarte({ componentType, visitId, setRefresh, setShow, session }) {
   const [productList, setProductList] = useState([]);
   const [purchaseItems, setPurchaseItems] = useState([]);
   const [paymentRecord, setPaymentRecord] = useState({
     paymentMethod: 'Cash',
     visitId: visitId,
     paymentReceiver: 'Restaurant',
+    userId: session.user.id,
   });
 
   useEffect(() => {
@@ -56,15 +57,15 @@ function AddAlacarte({ componentType, visitId, setRefresh, setShow }) {
     );
   };
 
+  const handleItemCountChange = (value, index, key) => {
+    if (value >= 0)
+      updateStateArray(index, key, value, setPurchaseItems, purchaseItems);
+  };
+
   const handleSubmit = async () => {
     const apiResult = await addPurchaseApi(purchaseItems, paymentRecord);
     setRefresh(true);
     setShow(false);
-  };
-
-  const handleItemCountChange = (value, index, key) => {
-    if (value >= 0)
-      updateStateArray(index, key, value, setPurchaseItems, purchaseItems);
   };
 
   return (
@@ -183,87 +184,10 @@ function AddAlacarte({ componentType, visitId, setRefresh, setShow }) {
       </Row>
 
       {/* Payment */}
-      <Row className="border-top border-dark mx-0 my-1 py-2 custom-form arrow-hidden">
-        <Col xs={6} md={9} className="fw-bold">
-          Payment amount (BDT)
-        </Col>
-        <Col xs={6} md={2} className="fw-bold text-end">
-          <input
-            type="number"
-            min={0}
-            value={paymentRecord.amount || 0}
-            onChange={(e) =>
-              setPaymentRecord({ ...paymentRecord, amount: e.target.value })
-            }
-          />
-        </Col>
-
-        {paymentRecord.amount > 0 ? (
-          <>
-            <Col xs={6} md={4}>
-              <label for="paymentMethod" className="mt-3">
-                Payment Method
-              </label>
-              <select
-                name="paymentoption"
-                id="paymentoption"
-                onChange={(e) =>
-                  setPaymentRecord({
-                    ...paymentRecord,
-                    paymentMethod: e.target.value,
-                  })
-                }>
-                {paymentOptions.map((value, index) => (
-                  <option key={index} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </Col>
-
-            <Col xs={6} md={4}>
-              <label for="paymentMethod" className="mt-3">
-                Received by
-              </label>
-              <select
-                name="paymentreceiver"
-                id="paymentreceiver"
-                onChange={(e) =>
-                  setPaymentRecord({
-                    ...paymentRecord,
-                    paymentReceiver: e.target.value,
-                  })
-                }>
-                {paymentReceivers.map((value, index) => (
-                  <option key={index} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </Col>
-
-            <Col md={4}>
-              <label for="paymentNotes" className="mt-3">
-                Payment Notes
-              </label>
-              <textarea
-                rows={2}
-                placeholder="Transaction reference"
-                name="paymentNotes"
-                id="paymentNotes"
-                onChange={(e) =>
-                  setPaymentRecord({
-                    ...paymentRecord,
-                    paymentNotes: e.target.value,
-                  })
-                }
-              />
-            </Col>
-          </>
-        ) : (
-          ''
-        )}
-      </Row>
+      <PaymentForm
+        paymentRecord={paymentRecord}
+        setPaymentRecord={setPaymentRecord}
+      />
 
       {/* Submit button */}
       <div className="center-flex mt-3">

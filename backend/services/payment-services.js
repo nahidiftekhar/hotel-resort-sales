@@ -10,6 +10,7 @@ const {
   visitorexpenses,
   payments,
 } = require('../database/models');
+const orgConfig = require('../configs/org.config');
 
 async function listAllPayment(req, res, next) {
   const dbResult = await dbStandard.selectAllDb(payments);
@@ -19,14 +20,22 @@ async function listAllPayment(req, res, next) {
 }
 
 async function addPurchasePayment(req, res, next) {
-  const { amount, paymentMethod, paymentNotes, visitId, paymentReceiver } =
-    req.body.payment;
+  const {
+    amount,
+    paymentMethod,
+    paymentNotes,
+    visitId,
+    paymentReceiver,
+    userId,
+  } = req.body.payment;
+
   const dbResult = await dbStandard.addSingleRecordDB(payments, {
     amount: amount,
     payment_method: paymentMethod,
     payment_notes: paymentNotes,
     visit_id: visitId,
     payment_receiver: paymentReceiver,
+    user_id: userId || orgConfig.orgConfig.DEFAULT_USER_ID,
   });
 
   return res.json(dbResult);

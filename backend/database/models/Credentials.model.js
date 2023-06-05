@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
   // Class Method
   Credentials.associate = function (models) {
     Credentials.belongsTo(models.usertypes, { foreignKey: 'user_type_id' });
+    Credentials.hasMany(models.payments, { foreignKey: 'user_id' });
+    Credentials.hasMany(models.visitorexpenses, { foreignKey: 'user_id' });
+    Credentials.hasMany(models.visits, { foreignKey: 'user_id' });
     Credentials.hasMany(models.discounts, {
       as: 'requester',
       foreignKey: 'requester_id',

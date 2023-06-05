@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Class Method
   Payments.associate = function (models) {
+    Payments.belongsTo(models.credentials, { foreignKey: 'user_id' });
     Payments.belongsTo(models.guests, { foreignKey: 'guest_id' });
     Payments.belongsTo(models.visits, { foreignKey: 'visit_id' });
     Payments.belongsTo(models.bookings, { foreignKey: 'booking_id' });

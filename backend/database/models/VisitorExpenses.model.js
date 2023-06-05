@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   VisitorExpenses.associate = function (models) {
     VisitorExpenses.belongsTo(models.visits, { foreignKey: 'visit_id' });
     VisitorExpenses.belongsTo(models.bookings, { foreignKey: 'booking_id' });
+    VisitorExpenses.belongsTo(models.credentials, { foreignKey: 'user_id' });
   };
 
   return VisitorExpenses;

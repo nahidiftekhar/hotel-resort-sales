@@ -25,6 +25,18 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.INTEGER,
       defaultValue: 0,
     },
+    expense: {
+      type: Sequelize.DECIMAL(15, 4),
+      defaultValue: 0,
+    },
+    payment: {
+      type: Sequelize.DECIMAL(15, 4),
+      defaultValue: 0,
+    },
+    adjustment: {
+      type: Sequelize.DECIMAL(15, 4),
+      defaultValue: 0,
+    },
     advanced_amount: {
       type: Sequelize.DECIMAL(15, 4),
       defaultValue: 0,
@@ -43,6 +55,7 @@ module.exports = (sequelize, DataTypes) => {
   Visits.associate = function (models) {
     Visits.belongsTo(models.guests, { foreignKey: 'guest_id' });
     Visits.hasMany(models.payments, { foreignKey: 'visit_id' });
+    Visits.belongsTo(models.credentials, { foreignKey: 'user_id' });
   };
 
   return Visits;

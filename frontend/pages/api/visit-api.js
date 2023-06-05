@@ -52,6 +52,37 @@ export const addPurchaseApi = async (purchases, payment) => {
   else return { success: false };
 };
 
+export const addPaymentApi = async (payment) => {
+  const apiResult = await axios.post(
+    `${beConfig.host}/payments/purchase-payment`,
+    {
+      payment,
+    }
+  );
+  return apiResult.data;
+};
+
+export const addAdjustmentApi = async (adjustment) => {
+  const payment = { ...adjustment, amount: adjustment.amount * -1 };
+  const apiResult = await axios.post(
+    `${beConfig.host}/payments/purchase-payment`,
+    {
+      payment,
+    }
+  );
+  return apiResult.data;
+};
+
+export const checkoutApi = async (checkoutRecord) => {
+  const apiResult = await axios.post(
+    `${beConfig.host}/visit-management/checkout`,
+    {
+      ...checkoutRecord,
+    }
+  );
+  return apiResult.data;
+};
+
 export const fetchVisitPurchasesApi = async (id) => {
   if (!id) return false;
 

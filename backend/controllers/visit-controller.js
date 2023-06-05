@@ -22,4 +22,7 @@ router.get(
   visitorServices.fetchVisitPurchaseByVisitId
 );
 
+//Checkout
+router.post('/checkout', visitorServices.checkout);
+
 module.exports = router;

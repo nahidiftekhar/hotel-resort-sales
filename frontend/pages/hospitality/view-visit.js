@@ -15,6 +15,7 @@ import {
   sumOfKey,
   sumOfKeyMultiply,
 } from '@/components/_functions/common-functions';
+import ReactiveButton from 'reactive-button';
 
 const componentList = [
   { id: 1, name: 'Package', icon: 'FaBoxes', type: 'package' },
@@ -24,7 +25,7 @@ const componentList = [
   { id: 5, name: 'Services', icon: 'FaTableTennis', type: 'service' },
 ];
 
-function ViewVisit() {
+function ViewVisit({ session }) {
   const [visitData, setVisitData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [showPurchase, setShowPurchase] = useState(false);
@@ -55,34 +56,44 @@ function ViewVisit() {
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="mt-3">Details of visit: #{visitData.visit_ref}</h2>
+        <h2 className="mt-3">{visitData.visit_ref}</h2>
 
-        <div className="edit-component">
-          <Dropdown>
-            <Dropdown.Toggle
-              id="add-action"
-              variant="dark"
-              className="btn btn-one my-0 py-1 px-2 rounded-1 bg-gradient">
-              <span className="mx-2">Add Purchase</span>{' '}
-              <Icon nameIcon="FaCaretDown" propsIcon={{ size: 12 }} />
-            </Dropdown.Toggle>
+        <div className="d-flex">
+          <div className="edit-component mx-1">
+            <Dropdown>
+              <Dropdown.Toggle
+                id="add-action"
+                variant="dark"
+                className="btn btn-one my-0 py-1 px-2 rounded-1 bg-gradient">
+                <span className="mx-2">Add Purchase</span>{' '}
+                <Icon nameIcon="FaCaretDown" propsIcon={{ size: 12 }} />
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropdown-menu-custom" variant="dark">
+                {componentList.map(({ id, name, icon, type }) => (
+                  <Dropdown.Item
+                    key={id}
+                    href="#"
+                    className="btn btn-three d-flex justify-content-between px-3"
+                    onClick={() => {
+                      setComponentType(type);
+                      setShowPurchase(true);
+                    }}>
+                    {name}
+                    <Icon nameIcon={icon} propsIcon={{ size: 20 }} />
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
 
-            <Dropdown.Menu className="dropdown-menu-custom" variant="dark">
-              {componentList.map(({ id, name, icon, type }) => (
-                <Dropdown.Item
-                  key={id}
-                  href="#"
-                  className="btn btn-three d-flex justify-content-between px-3"
-                  onClick={() => {
-                    setComponentType(type);
-                    setShowPurchase(true);
-                  }}>
-                  {name}
-                  <Icon nameIcon={icon} propsIcon={{ size: 20 }} />
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          <a href={`/hospitality/checkout?id=${visitData.id}`}>
+            <ReactiveButton
+              buttonState="idle"
+              className="rounded-1 bg-gradient"
+              idleText="Check-out"
+              color="green"
+            />
+          </a>
         </div>
       </div>
       {/* Basic visit data */}
@@ -171,6 +182,7 @@ function ViewVisit() {
           ))}
         </Accordion>
       </div>
+
       {/* Booking */}
       <h5 className="mt-4 mb-1">Booking Details</h5>
       {visitData.booking && (
@@ -276,6 +288,7 @@ function ViewVisit() {
           </Row>
         </div>
       )}
+
       <PurchaseRecords purchaseRecords={visitData.purchases} />
       <AddPurchase
         show={showPurchase}
@@ -283,6 +296,7 @@ function ViewVisit() {
         componentType={componentType}
         visitId={visitData.id}
         setRefresh={setRefresh}
+        session={session}
       />
     </>
   );

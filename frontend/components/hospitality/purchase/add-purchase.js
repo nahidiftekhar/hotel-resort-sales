@@ -8,7 +8,14 @@ import AddRoom from './add-room';
 import AddService from './add-service';
 import AddPackage from './add-package';
 
-function AddPurchase({ show, setShow, componentType, visitId, setRefresh }) {
+function AddPurchase({
+  show,
+  setShow,
+  componentType,
+  visitId,
+  setRefresh,
+  session,
+}) {
   return (
     <Modal
       show={show}
@@ -34,6 +41,7 @@ function AddPurchase({ show, setShow, componentType, visitId, setRefresh }) {
                   visitId={visitId}
                   setRefresh={setRefresh}
                   setShow={setShow}
+                  session={session}
                 />
               );
             case 'alacarte':
@@ -43,6 +51,7 @@ function AddPurchase({ show, setShow, componentType, visitId, setRefresh }) {
                   visitId={visitId}
                   setRefresh={setRefresh}
                   setShow={setShow}
+                  session={session}
                 />
               );
 
@@ -53,6 +62,7 @@ function AddPurchase({ show, setShow, componentType, visitId, setRefresh }) {
                   visitId={visitId}
                   setRefresh={setRefresh}
                   setShow={setShow}
+                  session={session}
                 />
               );
 
@@ -63,6 +73,7 @@ function AddPurchase({ show, setShow, componentType, visitId, setRefresh }) {
                   visitId={visitId}
                   setRefresh={setRefresh}
                   setShow={setShow}
+                  session={session}
                 />
               );
 
@@ -73,6 +84,7 @@ function AddPurchase({ show, setShow, componentType, visitId, setRefresh }) {
                   visitId={visitId}
                   setRefresh={setRefresh}
                   setShow={setShow}
+                  session={session}
                 />
               );
 

@@ -9,6 +9,8 @@ const {
   payments,
 } = require('../database/models');
 const helper = require('../services/utils/helper');
+const orgConfig = require('../configs/org.config');
+const { Op } = require('sequelize');
 
 async function createCheckin(req, res, next) {
   const {
@@ -21,6 +23,7 @@ async function createCheckin(req, res, next) {
     guestIdArray,
     guestId,
     notes,
+    userId,
   } = req.body;
 
   const uniqueRef = await helper.generateReference(0);
@@ -35,6 +38,7 @@ async function createCheckin(req, res, next) {
     booking_id: bookigId,
     advanced_amount: advancedAmount,
     visit_ref: uniqueRef,
+    user_id: userId || orgConfig.orgConfig.DEFAULT_USER_ID,
   });
   const visitId = dbResult.dbResult.id;
 
@@ -46,6 +50,7 @@ async function createCheckin(req, res, next) {
     unit_price: amount,
     visit_id: visitId,
     booking_id: bookigId,
+    user_id: orgConfig.orgConfig.DEFAULT_USER_ID,
   });
 
   // Modify advanced payment record with visit ID
@@ -70,6 +75,7 @@ async function modifyCheckin(req, res, next) {
     guestId,
     notes,
     isSettled,
+    userId,
   } = req.body;
 
   const dbResult = await dbStandard.modifySingleRecordDb(
@@ -81,7 +87,7 @@ async function modifyCheckin(req, res, next) {
       room_number: roomId,
       guest_id: guestId,
       additional_guests: guestIdArray,
-      visit_notes: notes,
+      visit_notes: notes + '\nModified by: ' + userId,
       booking_id: bookigId,
       advanced_amount: advancedAmount,
       is_settled: isSettled,
@@ -144,6 +150,13 @@ async function fetchVisitById(req, res, next) {
   const paymentRecords = await dbStandard.findAllFilterDb(payments, {
     visit_id: visitId,
     refund_date: null,
+    amount: { [Op.gte]: 0 },
+  });
+
+  const adjustmentRecords = await dbStandard.findAllFilterDb(payments, {
+    visit_id: visitId,
+    refund_date: null,
+    amount: { [Op.lt]: 0 },
   });
 
   const returnRecord = {
@@ -153,6 +166,7 @@ async function fetchVisitById(req, res, next) {
     purchases,
     booking,
     paymentRecords,
+    adjustmentRecords,
   };
 
   return res.json(returnRecord);
@@ -174,6 +188,28 @@ async function fetchVisitPurchaseByVisitId(req, res, next) {
   return res.json(purchaseDetails);
 }
 
+async function checkout(req, res, next) {
+  const { id, expense, payment, adjustment, checkoutDate, visitNotes } =
+    req.body;
+
+  console.log('req.body: ' + JSON.stringify(req.body));
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    visits,
+    { id: id },
+    {
+      checkout_date: checkoutDate,
+      expense: expense,
+      payment: payment,
+      adjustment: adjustment,
+      visit_notes: visitNotes,
+      is_settled: true,
+    }
+  );
+
+  return res.json(dbResult);
+}
+
 module.exports = {
   createCheckin,
   modifyCheckin,
@@ -181,4 +217,5 @@ module.exports = {
   fetchVisitById,
   addPurchase,
   fetchVisitPurchaseByVisitId,
+  checkout,
 };
