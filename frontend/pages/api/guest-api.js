@@ -3,7 +3,12 @@ import { beConfig } from '@/configs/backend';
 
 export const listAllGuestsApi = async () => {
   const apiResult = await axios.get(
-    `${beConfig.host}/guest-management/list-all`
+    `${beConfig.host}/guest-management/list-all`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -16,7 +21,12 @@ export const addSingleGuestApi = async (
 ) => {
   const apiResult = await axios.post(
     `${beConfig.host}/guest-management/add-guest`,
-    { ...guestData, profileImage, idFront, idBack }
+    { ...guestData, profileImage, idFront, idBack },
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -24,14 +34,24 @@ export const addSingleGuestApi = async (
 export const editSingleGuestApi = async (guestData) => {
   const apiResult = await axios.post(
     `${beConfig.host}/guest-management/edit-guest`,
-    guestData
+    guestData,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
 
 export const fetchGuestApi = async (guestId) => {
   const apiResult = await axios.get(
-    `${beConfig.host}/guest-management/fetch-guest/${guestId}`
+    `${beConfig.host}/guest-management/fetch-guest/${guestId}`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };

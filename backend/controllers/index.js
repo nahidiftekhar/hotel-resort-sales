@@ -8,5 +8,6 @@ router.use('/product-management', require('./product-controller'));
 router.use('/visit-management', require('./visit-controller'));
 router.use('/services', require('./standard-controllers'));
 router.use('/payments', require('./payment-controller'));
+router.use('/reports', require('./report-controller'));
 
 module.exports = router;

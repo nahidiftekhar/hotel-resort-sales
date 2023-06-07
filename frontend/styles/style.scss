@@ -161,6 +161,30 @@ body {
     }
   }
 
+  .btn-grad-blue {
+    background-image: linear-gradient(
+      to right,
+      #1e3c72 0%,
+      #2a5298 51%,
+      #1e3c72 100%
+    );
+    // margin: 10px;
+    padding: 0.5rem 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 4px;
+    display: block;
+    &:hover {
+      background-position: right center; /* change the direction of the change here */
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+
   .min-vh-70 {
     min-height: 70vh;
   }
@@ -170,6 +194,10 @@ body {
 
   .mw-800 {
     max-width: 800px !important;
+  }
+
+  .max-w-500 {
+    max-width: 500px !important;
   }
 
   .max-vw-50 {
@@ -576,6 +604,7 @@ body {
 
   input[type='email'],
   input[type='text'],
+  input[type='password'],
   input[type='number'] {
     padding: 0.3rem 0.5rem;
     font-size: 1rem;
@@ -590,6 +619,7 @@ body {
   }
 
   input[type='email']:disabled,
+  input[type='password']:disabled,
   input[type='text']:disabled,
   input[type='number']:disabled,
   textarea:disabled,
@@ -982,5 +1012,43 @@ body {
   label {
     color: v.$black-color;
     font-size: 1rem;
+  }
+}
+
+/*=====================signin=================*/
+.signin form button,
+.signin > div button {
+  width: auto !important;
+}
+.signin {
+  .card {
+    .provider {
+      form {
+        .button {
+          width: 200px !important;
+          background-image: linear-gradient(
+            to right,
+            #314755 0%,
+            #26a0da 51%,
+            #314755 100%
+          );
+          margin: 10px;
+          padding: 15px 45px;
+          text-align: center;
+          text-transform: uppercase;
+          transition: 0.5s;
+          background-size: 200% auto;
+          color: white;
+          box-shadow: 0 0 20px #eee;
+          border-radius: 10px;
+          display: block;
+          &:hover {
+            background-position: right center; /* change the direction of the change here */
+            color: #fff;
+            text-decoration: none;
+          }
+        }
+      }
+    }
   }
 }

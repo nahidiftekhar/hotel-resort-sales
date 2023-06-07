@@ -8,7 +8,8 @@ export const authOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: 'User Credentials',
+      id: 'credentials',
+      name: 'Credentials',
       credentials: {
         email: {
           label: 'Email',
@@ -25,13 +26,6 @@ export const authOptions = {
         const user = apiResult.successStatus ? apiResult : null;
 
         if (user) {
-          // return user;
-          const userData = {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            usertype: user.usertype,
-          };
           return {
             id: user.id,
             email: user.email,
@@ -74,4 +68,7 @@ export const authOptions = {
       return token;
     },
   },
+  // pages: {
+  //   signIn: '/auth/signin',
+  // },
 };

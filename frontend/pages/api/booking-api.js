@@ -4,14 +4,24 @@ import { organizationConfigs } from '@/configs/organizationConfig';
 
 export const listAllBookingApi = async () => {
   const apiResult = await axios.get(
-    `${beConfig.host}/booking-management/list-all-booking`
+    `${beConfig.host}/booking-management/list-all-booking`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
 
 export const getSingleBookingApi = async (bookingId) => {
   const apiResult = await axios.get(
-    `${beConfig.host}/booking-management/get-booking-record/${bookingId}`
+    `${beConfig.host}/booking-management/get-booking-record/${bookingId}`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -52,7 +62,12 @@ export const createBookingApi = async (visitData, productData) => {
 
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/create-booking`,
-    objectToSubmit
+    objectToSubmit,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
 
   return apiResult.data;
@@ -80,7 +95,12 @@ export const modifyBookingApi = async (bookingData, discountData) => {
 
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/edit-booking`,
-    bookingData
+    bookingData,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -108,14 +128,24 @@ export const addBookingApi = async (bookingData, checkInDate, checkOutDate) => {
 
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/create-booking`,
-    bookingData
+    bookingData,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
 
 export const getMaxDiscountSlab = async () => {
   const apiResult = await axios.get(
-    `${beConfig.host}/booking-management/max-discount`
+    `${beConfig.host}/booking-management/max-discount`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -131,7 +161,12 @@ export const createDiscountApi = async (discountData) => {
   };
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/create-discount`,
-    objectToSubmit
+    objectToSubmit,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -160,7 +195,12 @@ export const approveDiscountApi = async (
   };
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/approve-discount`,
-    objectToSubmit
+    objectToSubmit,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -168,7 +208,12 @@ export const approveDiscountApi = async (
 export const confirmAdvancedApi = async (advancedData) => {
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/confirm-advanced`,
-    advancedData
+    advancedData,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
@@ -181,14 +226,24 @@ export const cancelBookingApi = async (bookingId, notes) => {
 
   const apiResult = await axios.post(
     `${beConfig.host}/booking-management/cancel-booking`,
-    objectToSubmit
+    objectToSubmit,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };
 
 export const pendingApprovalRequestsApi = async (approverId) => {
   const apiResult = await axios.get(
-    `${beConfig.host}/booking-management/pending-discount-requests/${approverId}`
+    `${beConfig.host}/booking-management/pending-discount-requests/${approverId}`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
   );
   return apiResult.data;
 };

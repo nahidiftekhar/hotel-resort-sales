@@ -7,12 +7,12 @@ import GoTop from './GoTop';
 import { Container } from 'react-bootstrap';
 import { NextAuthProvider } from 'pages/provider';
 
-const Layout = ({ children, staticContent }) => {
+const Layout = ({ children, staticContent, session }) => {
   return (
     <>
       <Meta metaContent={staticContent.metaContent} />
       <NextAuthProvider>
-        <TopNavbar />
+        {session && <TopNavbar />}
         <Container className="min-vh-100">{children}</Container>
         <Footer pageContent={staticContent.footerContent} />
         <GoTop scrollStepInPx="500" delayInMs="10.50" />

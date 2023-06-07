@@ -11,6 +11,7 @@ const exphbs = require('express-handlebars');
 const fileupload = require('express-fileupload');
 
 const { config } = require('./configs/config');
+const { apiKeyMiddleware } = require('./middleware/apiKey');
 
 // CORS policy configuration
 const corsOptions = {
@@ -91,6 +92,7 @@ app.post('/upload', (req, res) => {
   });
 });
 
+app.use(apiKeyMiddleware);
 // Imports all of the routes from ./routes/index.js
 app.use(require('./controllers'));
 

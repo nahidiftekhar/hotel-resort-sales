@@ -8,7 +8,7 @@ import { layoutContent } from '@/data/common-static-content';
 
 function MyApp({ Component, pageProps, session }) {
   return (
-    <Layout staticContent={layoutContent}>
+    <Layout staticContent={layoutContent} session={session}>
       <Component {...pageProps} session={session} />
     </Layout>
   );
