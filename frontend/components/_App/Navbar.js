@@ -41,10 +41,12 @@ function TopNavbar() {
               <Nav.Link className="mx-3" href="/hospitality">
                 Hospitality
               </Nav.Link>
+              <div className="center-flex ">
+                <LogOutButton />{' '}
+              </div>
             </Nav>
           </Navbar.Collapse>
         )}{' '}
-        <LogOutButton />
       </Container>
     </Navbar>
   );

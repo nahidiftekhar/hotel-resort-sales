@@ -16,6 +16,9 @@ import {
   sumOfKeyMultiply,
 } from '@/components/_functions/common-functions';
 import ReactiveButton from 'reactive-button';
+import AddPayment from '@/components/payment/add-payment';
+import AddAdjustment from '@/components/payment/add-adjustment';
+import AdjustmentRecord from '@/components/hospitality/view-visit/adjustment-record';
 
 const componentList = [
   { id: 1, name: 'Package', icon: 'FaBoxes', type: 'package' },
@@ -31,6 +34,8 @@ function ViewVisit({ session }) {
   const [showPurchase, setShowPurchase] = useState(false);
   const [componentType, setComponentType] = useState('');
   const [refresh, setRefresh] = useState(true);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showAdjustment, setShowAdjustment] = useState(false);
 
   const router = useRouter();
   const { query } = router;
@@ -84,6 +89,24 @@ function ViewVisit({ session }) {
                 ))}
               </Dropdown.Menu>
             </Dropdown>
+          </div>
+
+          <div className="mx-1">
+            <ReactiveButton
+              idleText="Add Adjustment"
+              color="indigo"
+              className="bg-gradient rounded-1"
+              onClick={() => setShowAdjustment(true)}
+            />
+          </div>
+
+          <div className="mx-1">
+            <ReactiveButton
+              idleText="Add Payment"
+              color="teal"
+              className="bg-gradient rounded-1"
+              onClick={() => setShowPayment(true)}
+            />
           </div>
 
           <a href={`/hospitality/checkout?id=${visitData.id}`}>
@@ -167,6 +190,7 @@ function ViewVisit({ session }) {
 
       <ExpenseRecord visitData={visitData} />
       <PaymentRecord visitData={visitData} />
+      <AdjustmentRecord visitData={visitData} />
 
       {/* Guests */}
       <h5 className="mt-4 mb-1">Guests</h5>
@@ -297,6 +321,22 @@ function ViewVisit({ session }) {
         visitId={visitData.id}
         setRefresh={setRefresh}
         session={session}
+      />
+
+      <AddPayment
+        show={showPayment}
+        setShow={setShowPayment}
+        session={session}
+        visitId={visitData.id}
+        setRefresh={setRefresh}
+      />
+
+      <AddAdjustment
+        show={showAdjustment}
+        setShow={setShowAdjustment}
+        session={session}
+        visitId={visitData.id}
+        setRefresh={setRefresh}
       />
     </>
   );

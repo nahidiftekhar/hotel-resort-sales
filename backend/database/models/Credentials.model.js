@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     Credentials.hasMany(models.payments, { foreignKey: 'user_id' });
     Credentials.hasMany(models.visitorexpenses, { foreignKey: 'user_id' });
     Credentials.hasMany(models.visits, { foreignKey: 'user_id' });
+    Credentials.hasMany(models.bookings, { foreignKey: 'user_id' });
     Credentials.hasMany(models.discounts, {
       as: 'requester',
       foreignKey: 'requester_id',
@@ -37,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'approver',
       foreignKey: 'approver_id',
     });
+    Credentials.hasMany(models.roomreservations, { foreignKey: 'user_id' });
   };
 
   return Credentials;

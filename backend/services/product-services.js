@@ -353,11 +353,17 @@ async function fetchRoomTypes(req, res, next) {
   return res.json(dbResult);
 }
 
+async function fetchRooms(req, res, next) {
+  const dbResult = await dbStandard.joinAllDb(rooms, roomtypes);
+  return res.json(dbResult);
+}
+
 module.exports = {
   fetchPackagesTypes,
   fetchAlacarteTypes,
   fetchPrixfixeTypes,
   fetchRoomTypes,
+  fetchRooms,
   fetchServiceTypes,
   fetchAllPackages,
   fetchAllRooms,

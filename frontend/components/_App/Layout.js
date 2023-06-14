@@ -13,6 +13,14 @@ const Layout = ({ children, staticContent, session }) => {
       <Meta metaContent={staticContent.metaContent} />
       <NextAuthProvider>
         {session && <TopNavbar />}
+        {session && (
+          <Container className="d-flex align-items-center justify-content-end my-1">
+            <p className="mx-1 my-0 text-muted smaller-label fw-bold">
+              Logged in user: {session.user.username}
+            </p>
+          </Container>
+        )}
+
         <Container className="min-vh-100">{children}</Container>
         <Footer pageContent={staticContent.footerContent} />
         <GoTop scrollStepInPx="500" delayInMs="10.50" />

@@ -52,6 +52,14 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.STRING,
       defaultValue: 'FNFGZ_0001',
     },
+    readiness: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
+    channel: {
+      type: Sequelize.STRING,
+      defaultValue: 'sales',
+    },
   });
 
   // Class Method
@@ -62,6 +70,7 @@ module.exports = (sequelize, DataTypes) => {
     Bookings.hasMany(models.invoices, { foreignKey: 'booking_id' });
     Bookings.hasOne(models.discounts, { foreignKey: 'booking_id' });
     Bookings.hasOne(models.visitorexpenses, { foreignKey: 'booking_id' });
+    Bookings.hasMany(models.roomreservations, { foreignKey: 'booking_id' });
   };
 
   return Bookings;

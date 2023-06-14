@@ -60,6 +60,13 @@ async function createCheckin(req, res, next) {
     { visit_id: visitId }
   );
 
+  // Modify booking status
+  const modBooking = await dbStandard.modifySingleRecordDb(
+    bookings,
+    { id: bookigId },
+    { booking_status: 'checkedin' }
+  );
+
   return res.json(dbResult);
 }
 

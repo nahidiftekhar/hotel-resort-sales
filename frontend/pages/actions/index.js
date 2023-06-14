@@ -1,12 +1,12 @@
-import PendingActions from '@/components/actions/pending-actions';
 import React from 'react';
+import PendingActions from '@/components/actions/pending-actions';
 
-function GuestHome() {
+function ActionsHome({ session }) {
   return (
     <>
-      <PendingActions />
+      <PendingActions session={session} />
     </>
   );
 }
 
-export default GuestHome;
+export default ActionsHome;

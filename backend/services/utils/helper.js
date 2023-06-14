@@ -60,7 +60,32 @@ async function generateReference(type) {
   return referenceNumber;
 }
 
+function getDateWithOffset(offset) {
+  const date = new Date();
+  date.setDate(date.getDate() + Number(offset));
+  return date;
+}
+
+function getEndDateWithDuration(startDate, duration) {
+  const startDateObj = new Date(startDate);
+  startDateObj.setDate(startDateObj.getDate() + Number(duration));
+  return startDateObj;
+  date.setDate(date.getDate() + Number(duration));
+  return date;
+}
+
+function parseDateString(dateString) {
+  const year = dateString.substring(0, 4);
+  const month = dateString.substring(4, 6) - 1;
+  const day = dateString.substring(6, 8);
+
+  return new Date(year, month, day);
+}
+
 module.exports = {
   generateRandomString,
   generateReference,
+  getDateWithOffset,
+  parseDateString,
+  getEndDateWithDuration,
 };

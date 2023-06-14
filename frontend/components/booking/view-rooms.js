@@ -10,7 +10,11 @@ function ViewRooms({ selectedProducts, priceDetails }) {
       <Col sm={6}>
         {selectedProducts.map((singlePackage, index) => (
           <div key={index} className="border-top">
-            <div>{singlePackage.name}</div>
+            {/* <div>{singlePackage.name}</div> */}
+            <div>
+              {singlePackage.roomtype.room_type_name} +:{' '}
+              {singlePackage.room_number}
+            </div>
             <div className="font-small">
               <span className="text-muted">Number of rooms</span>
               <span className="ms-2">{singlePackage.room_count}</span>

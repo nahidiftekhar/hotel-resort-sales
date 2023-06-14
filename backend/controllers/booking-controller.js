@@ -4,7 +4,7 @@ const bookingServices = require('../services/booking-services');
 // Create new reservation/booking
 router.post('/create-booking', bookingServices.addBooking);
 
-// Create new reservation/booking
+// Edit reservation/booking
 router.post('/edit-booking', bookingServices.editBooking);
 
 //Get a single booking record by id
@@ -39,5 +39,8 @@ router.post('/confirm-advanced', bookingServices.confirmAdvancedReceipt);
 
 // Cancel Booking
 router.post('/cancel-booking', bookingServices.cancelBooking);
+
+// Edit room booking status
+router.post('/room-booking', bookingServices.eidtRoomBooking);
 
 module.exports = router;

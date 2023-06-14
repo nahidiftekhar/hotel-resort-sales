@@ -1,4 +1,8 @@
 import { signIn, signOut } from 'next-auth/react';
+import ReactiveButton from 'reactive-button';
+import { Icon } from '../_commom/Icon';
+import { ClipLoader } from 'react-spinners';
+import React, { useState } from 'react';
 
 export const LogInButton = () => {
   return (
@@ -11,11 +15,30 @@ export const LogInButton = () => {
 };
 
 export const LogOutButton = () => {
+  const [buttonState, setButtonState] = useState('idle');
   return (
-    <button
-      className="text-white font-bold py-0 px-3 ms-5 bg-secondary bg-gradient rounded-1"
-      onClick={() => signOut()}>
-      <span className="fs-6">Sign out</span>
-    </button>
+    <div className="reactive-button-wauto ms-md-5">
+      <ReactiveButton
+        buttonState={buttonState}
+        idleText={<Icon nameIcon="FaPowerOff" propsIcon={{ size: 12 }} />}
+        loadingText={
+          <ClipLoader
+            color="#ffffff"
+            size={12}
+            speedMultiplier={1}
+            className="p-1 py-0"
+          />
+        }
+        messageDuration={2000}
+        animation={true}
+        rounded
+        color="red"
+        className="p-2 bg-gradient"
+        onClick={() => {
+          setButtonState('loading');
+          signOut();
+        }}
+      />
+    </div>
   );
 };

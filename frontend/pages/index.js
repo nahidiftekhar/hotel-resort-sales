@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import React from 'react';
 
-import {
-  readFromStorage,
-  writeToStorage,
-} from '@/components/_functions/storage-variable-management';
+import HomeManager from '@/components/home/home-manager';
 
-function Home() {
-  const [userData, setUserData] = useState('');
-  const { data: session, status } = useSession();
-  const userId = session?.user?.id;
-
-  useEffect(() => {
-    writeToStorage(userId?.toString(), 'USER_KEY');
-    setUserData(readFromStorage('USER_KEY'));
-  }, [session, userId]);
-
+function Home({ session }) {
   return (
-    <div>
-      <div>session: {JSON.stringify(session?.user)}</div>
-      <div>userId: {userData}</div>
+    <div className="my-3">
+      {(() => {
+        switch (session.user?.usertype) {
+          case 2:
+            return <HomeManager session={session} />;
+          case 1:
+            return <HomeManager session={session} />;
+          default:
+            return <div className="error-message">Other roles</div>;
+        }
+      })()}
     </div>
   );
 }

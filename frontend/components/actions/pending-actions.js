@@ -20,34 +20,32 @@ import {
   returnPercentage,
 } from '@/components/_functions/number-format';
 import BookingView from '../booking/booking-view';
+import axios from 'axios';
+import DiscountApproval from '../discounts/discount-approval';
 
 // const userId = readFromStorage('USER_KEY');
 
-function PendingActions() {
+function PendingActions({ session }) {
   const [refresh, setRefresh] = useState(true);
-  const [filterData, setFilterData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportData, setReportData] = useState([]);
   const [showBooking, setShowBooking] = useState(false);
-  const [showApproval, setShowApproval] = useState(false);
+  const [showDiscountApporoval, setShowDiscountApporoval] = useState(false);
   const [currentBookingId, setCurrentBookingId] = useState(0);
-  const [currentRecord, setCurrentRecord] = useState(0);
-  const [approverComment, setApproverComment] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [maxDiscountSlab, setMaxDiscountSlab] = useState(50);
-  const [userId, setUserId] = useState(0);
+  const [discountData, setDiscountData] = useState([]);
+
+  const getPendingActionsList = async () => {
+    setIsLoading(true);
+    const userId = session.user.id;
+    const pendingActions = await axios.get(
+      `/api/dashboard/md/pending-actions-api?userId=${userId}`
+    );
+    setReportData(pendingActions.data);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    const getListOfPendingDiscount = async () => {
-      setIsLoading(true);
-      const userId = readFromStorage('USER_KEY');
-      const pendingApprovalRequests = await pendingApprovalRequestsApi(userId);
-      setFilterData((current) => [...pendingApprovalRequests]);
-      const maxSlab = await getMaxDiscountSlab();
-      setMaxDiscountSlab(maxSlab);
-      setIsLoading(false);
-    };
-    getListOfPendingDiscount();
-    setUserId(readFromStorage('USER_KEY'));
+    getPendingActionsList();
     setRefresh(false);
   }, [refresh]);
 
@@ -100,10 +98,10 @@ function PendingActions() {
           <div className="reactive-button-wauto mx-1">
             <ReactiveButton
               buttonState="idle"
-              idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
+              idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 14 }} />}
               outline
               color="dark"
-              className="rounded-1 py-1 px-3"
+              className="rounded-1 py-1 px-2"
               onClick={() => {
                 setCurrentBookingId(row.booking_id);
                 setShowBooking(true);
@@ -114,14 +112,17 @@ function PendingActions() {
           <div className="reactive-button-wauto mx-1">
             <ReactiveButton
               buttonState="idle"
-              idleText={<Icon nameIcon="FaEdit" propsIcon={{ size: 20 }} />}
+              idleText={<Icon nameIcon="FaEdit" propsIcon={{ size: 14 }} />}
               outline
-              color="green"
-              className="rounded-1 py-1 px-3"
+              color="blue"
+              className="rounded-1 py-1 px-2"
               onClick={() => {
-                setApproverComment('');
-                setCurrentRecord(row);
-                setShowApproval(true);
+                setDiscountData({
+                  ...row,
+                  amount: row.rack_price,
+                  discountedAmount: row.rack_price - row.total_discount,
+                });
+                setShowDiscountApporoval(true);
               }}
             />
           </div>
@@ -134,31 +135,31 @@ function PendingActions() {
     selectAllRowsItem: true,
   };
 
-  const handleApproval = async (approvalStatus) => {
-    if (!approvalStatus && !approverComment) {
-      setErrorMessage('Please enter recommendation');
-      return false;
-    }
-    if (
-      approvalStatus &&
-      (currentRecord.total_discount * 100) / currentRecord.rack_price >
-        maxDiscountSlab
-    ) {
-      setErrorMessage('Discount cannot exceed ' + maxDiscountSlab + '%');
-      return false;
-    }
-    const apiResult = await approveDiscountApi(
-      currentRecord,
-      approvalStatus,
-      approverComment,
-      userId
-    );
-    if (!apiResult) setErrorMessage('Something went wrong');
+  // const handleApproval = async (approvalStatus) => {
+  //   if (!approvalStatus && !approverComment) {
+  //     setErrorMessage('Please enter recommendation');
+  //     return false;
+  //   }
+  //   if (
+  //     approvalStatus &&
+  //     (currentRecord.total_discount * 100) / currentRecord.rack_price >
+  //       maxDiscountSlab
+  //   ) {
+  //     setErrorMessage('Discount cannot exceed ' + maxDiscountSlab + '%');
+  //     return false;
+  //   }
+  //   const apiResult = await approveDiscountApi(
+  //     currentRecord,
+  //     approvalStatus,
+  //     approverComment,
+  //     userId
+  //   );
+  //   if (!apiResult) setErrorMessage('Something went wrong');
 
-    setErrorMessage('');
-    setShowApproval(false);
-    setRefresh(true);
-  };
+  //   setErrorMessage('');
+  //   setShowApproval(false);
+  //   setRefresh(true);
+  // };
 
   if (isLoading) {
     return (
@@ -170,10 +171,11 @@ function PendingActions() {
 
   return (
     <>
+      {' '}
       <DataTable
         title="Discount Requests Awaiting Approval"
         columns={headerResponsive}
-        data={filterData}
+        data={reportData.pendingDiscountApprovals}
         pagination
         paginationComponentOptions={paginationComponentOptions}
         defaultSortFieldId={1}
@@ -181,7 +183,6 @@ function PendingActions() {
         striped
         dense
       />
-
       {/* View booking details */}
       <Modal
         show={showBooking}
@@ -189,123 +190,27 @@ function PendingActions() {
         backdrop="static"
         keyboard={false}
         size="xl">
-        <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <BookingView isNew={false} bookingId={currentBookingId} />
-        </Modal.Body>
-      </Modal>
-
-      {/* Approve/reject discount request */}
-      <Modal
-        show={showApproval}
-        onHide={() => setShowApproval(false)}
-        backdrop="static"
-        keyboard={false}>
-        <Modal.Body>
-          <Row className="custom-form arrow-hidden mt-1 mb-4">
-            <Col md={6}>
-              <label>Rack Rate</label>
-              <input
-                disabled
-                type="text"
-                value={Number(currentRecord?.rack_price).toFixed(2)}
-              />
-            </Col>
-
-            <Col md={6}>
-              <label>Requested Discount</label>
-              <input
-                disabled
-                type="text"
-                value={(
-                  Number(currentRecord?.rack_price) -
-                  Number(currentRecord?.booking?.discounted_amount)
-                ).toFixed(2)}
-              />
-            </Col>
-
-            {/* <Col md={6} xs={9} className="my-2">
-              <label>Approve Discount</label>
-              <input
-                type="number"
-                min={0}
-                max={currentRecord?.rack_price * (1 - maxDiscountSlab / 100)}
-                value={Number(currentRecord?.total_discount).toFixed(2)}
-                onChange={(e) => {
-                  setCurrentRecord({
-                    ...currentRecord,
-                    total_discount: e.target.value,
-                  });
-                }}
-              />
-            </Col>
-
-            <Col md={6} xs={3} className="my-2 d-flex align-items-end">
-              <span
-                className={
-                  (currentRecord?.total_discount * 100) /
-                    currentRecord?.rack_price >
-                  maxDiscountSlab
-                    ? 'error-message'
-                    : 'font-small text-muted fw-bold'
-                }>
-                {(
-                  (currentRecord?.total_discount * 100) /
-                  currentRecord?.rack_price
-                ).toFixed(2)}
-                %
-              </span>
-            </Col> */}
-
-            <Col xs={12} className="my-3">
-              <label>Comment</label>
-              <textarea
-                rows={3}
-                onChange={(e) => setApproverComment(e.target.value)}
-              />
-            </Col>
-            <p className="error-message">{errorMessage}</p>
-          </Row>
-          <div className="d-flex justify-content-center">
-            <div className="mx-1">
-              <ReactiveButton
-                buttonState="idle"
-                idleText={'Approve'}
-                outline
-                color="green"
-                className="rounded-1 py-1 px-3"
-                onClick={() => {
-                  handleApproval(true);
-                }}
-              />
-            </div>
-            <div className="mx-1">
-              <ReactiveButton
-                buttonState="idle"
-                idleText={'Reject'}
-                outline
-                color="red"
-                className="rounded-1 py-1 px-3"
-                onClick={() => {
-                  handleApproval(false);
-                }}
-              />
-            </div>
-            <div className="mx-1">
-              <ReactiveButton
-                buttonState="idle"
-                idleText={'Cancel'}
-                outline
-                color="yellow"
-                className="rounded-1 py-1 px-3"
-                onClick={() => {
-                  setShowApproval(false);
-                }}
-              />
-            </div>
+          <div className="center-flex">
+            <ReactiveButton
+              color="red"
+              buttonState="idle"
+              idleText="Close"
+              onClick={() => setShowBooking(false)}
+              className="rounded-1 bg-gradient"
+            />
           </div>
         </Modal.Body>
       </Modal>
+      {/* Approve discount */}
+      <DiscountApproval
+        show={showDiscountApporoval}
+        setShow={setShowDiscountApporoval}
+        discountData={discountData}
+        setReferesh={setRefresh}
+        session={session}
+      />
     </>
   );
 }

@@ -167,7 +167,7 @@ body {
       #1e3c72 0%,
       #2a5298 51%,
       #1e3c72 100%
-    );
+    ) !important;
     // margin: 10px;
     padding: 0.5rem 45px;
     text-align: center;
@@ -182,6 +182,7 @@ body {
       background-position: right center; /* change the direction of the change here */
       color: #fff;
       text-decoration: none;
+      padding: 0.5rem 45px !important;
     }
   }
 
@@ -190,6 +191,14 @@ body {
   }
   .min-vh-50 {
     min-height: 50vh;
+  }
+
+  .min-vh-30 {
+    min-height: 30vh;
+  }
+
+  .max-vh-30 {
+    max-height: 30vh;
   }
 
   .mw-800 {
@@ -496,6 +505,51 @@ body {
   inset: 0;
   position: absolute;
 }
+
+/*=============Reactive Button=========*/
+.reactive-btn-wrapper,
+.reactive-btn {
+  --reactive-button-min-width: 100px;
+  --reactive-button-min-height: 35px;
+  --reactive-button-font-size: 14px;
+  --reactive-button-font-weight: 400;
+  --reactive-button-border-radius: 0px;
+  --reactive-button-text-color: #ffffff;
+  --reactive-progress-color: rgba(0, 0, 0, 0.15);
+
+  --reactive-button-indigo-color: rgb(0, 119, 216);
+  --reactive-progress-outline-indigo-color: rgba(3, 105, 188, 0.3);
+}
+
+/* indigo button starts */
+.reactive-btn.indigo {
+  background: var(--reactive-button-indigo-color);
+}
+
+.reactive-btn.indigo.outline {
+  border-color: var(--reactive-button-indigo-color);
+  color: var(--reactive-button-indigo-color);
+  border: 1px solid var(--reactive-button-indigo-color);
+  box-shadow: inset 0 -1px 0 var(--reactive-button-indigo-color);
+  -webkit-box-shadow: inset 0 -1px 0 var(--reactive-button-indigo-color);
+  -moz-box-shadow: inset 0 -1px 0 var(--reactive-button-indigo-color);
+}
+
+.reactive-btn.indigo.outline .progress {
+  background-color: var(--reactive-progress-outline-indigo-color) !important;
+}
+
+.reactive-btn.indigo.outline:hover:not(:disabled):not(.disabled) {
+  box-shadow: inset 0 -3px 0 var(--reactive-button-indigo-color);
+  -webkit-box-shadow: inset 0 -3px 0 var(--reactive-button-indigo-color);
+  -moz-box-shadow: inset 0 -3px 0 var(--reactive-button-indigo-color);
+}
+
+.reactive-btn.indigo.shadow {
+  box-shadow: 0px 5px 16px -3px var(--reactive-button-indigo-color) !important;
+}
+
+/* indigo button ends */
 
 /*=============Go Top CSS============*/
 .go-top {

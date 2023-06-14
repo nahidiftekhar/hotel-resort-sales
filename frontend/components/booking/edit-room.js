@@ -14,8 +14,15 @@ import {
 } from '@/components/_functions/common-functions';
 import { BDTFormat } from '@/components/_functions/number-format';
 import { getMaxDiscountSlab } from '@/api/booking-api';
+import axios from 'axios';
 
-function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
+function EditRoom({
+  setBookingData,
+  bookingData,
+  setShow,
+  daysCount,
+  session,
+}) {
   const [productList, setProductList] = useState([]);
   const [roomItems, setRoomItems] = useState(
     bookingData?.components?.roomDetails?.length
@@ -40,7 +47,8 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
           return {
             ...obj,
             value: index,
-            label: obj.room_type_name,
+            label: obj.roomtype?.room_type_name + ': ' + obj.room_number,
+            price: obj.roomtype?.price,
           };
         })
       );
@@ -48,7 +56,7 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
     fetchPackageList();
   }, []);
 
-  const handleDeleteItem = (index) => {
+  const handleDeleteItem = async (index) => {
     setRoomItems(
       roomItems.filter((item, currentIndex) => currentIndex !== index)
     );
@@ -78,50 +86,6 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
     ]);
   };
 
-  const handleItemCountChange = (e, index) => {
-    updateStateArray(
-      index,
-      'room_count',
-      e.target.value,
-      setRoomItems,
-      roomItems
-    );
-    updateStateArray(
-      index,
-      'room_cost',
-      Math.max(
-        daysCount > 0
-          ? e.target.value * roomItems[index].price * daysCount
-          : e.target.value * roomItems[index].price,
-        0
-      ),
-      setRoomItems,
-      roomItems
-    );
-    updateStateObject(
-      setRoomPrice,
-      'rackPrice',
-      sumOfKey(roomItems, 'room_cost')
-    );
-    updateStateObject(
-      setRoomPrice,
-      'discount',
-      roundUptoFixedDigits(
-        ((sumOfKey(roomItems, 'room_cost') -
-          Math.floor(sumOfKey(roomItems, 'room_cost'))) *
-          100) /
-          sumOfKey(roomItems, 'room_cost'),
-        2
-      ) || 0
-    );
-    updateStateObject(
-      setRoomPrice,
-      'priceAfterDiscount',
-      Math.floor(sumOfKey(roomItems, 'room_cost')) || 0
-    );
-    updateStateObject(setRoomPrice, 'discountNotes', '-');
-  };
-
   const handleDiscountChange = (e) => {
     updateStateObject(setRoomPrice, 'priceAfterDiscount', e.target.value);
     updateStateObject(
@@ -135,8 +99,39 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
   };
 
   const handleSelect = (value) => {
+    value.room_count = 1;
+    value.room_cost = Math.max(
+      daysCount > 0 ? value.roomtype?.price * daysCount : value.roomtype?.price,
+      0
+    );
+
     setRoomItems((currentData) => [...currentData, value]);
     setProductList(productList.filter((item) => item.id !== value.id));
+
+    updateStateObject(
+      setRoomPrice,
+      'rackPrice',
+      (roomPrice.rackPrice || 0) + value.room_cost
+    );
+    updateStateObject(
+      setRoomPrice,
+      'discount',
+      roundUptoFixedDigits(
+        (((roomPrice.rackPrice || 0) +
+          value.room_cost -
+          Math.floor((roomPrice.rackPrice || 0) + value.room_cost)) *
+          100) /
+          (roomPrice.rackPrice || 0) +
+          value.room_cost,
+        2
+      ) || 0
+    );
+    updateStateObject(
+      setRoomPrice,
+      'priceAfterDiscount',
+      Math.floor((roomPrice.rackPrice || 0) + value.room_cost) || 0
+    );
+    updateStateObject(setRoomPrice, 'discountNotes', '-');
   };
 
   const handleSubmit = async () => {
@@ -185,21 +180,24 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
 
       {/* New version */}
       {roomItems.map(
-        ({ name, price, room_type_name, room_count, room_cost }, index) => (
+        (
+          { name, price, room_number, room_count, room_cost, roomtype },
+          index
+        ) => (
           <Row
             key={index}
             className="custom-form arrow-hidden  mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
             <Col md={5} xs={6}>
               {/* {name} */}
-              {room_type_name}
+              {roomtype.room_type_name}: {room_number}
               {/* Input for mobile screen */}
               <div className="d-block d-sm-none">
                 <input
                   type="number"
+                  disabled
                   className="py-0 text-end w-75px"
                   name={`itemCount_${index}`}
                   value={room_count}
-                  onChange={(e) => handleItemCountChange(e, index)}
                 />
                 <span className="font-small ms-1">Number of Rooms</span>
               </div>
@@ -208,11 +206,11 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
             <Col md={3} className="d-none d-sm-block">
               <input
                 type="number"
+                disabled
                 className="py-0 text-end w-100px"
                 min={0}
                 name={`itemCount_${index}`}
                 value={room_count}
-                onChange={(e) => handleItemCountChange(e, index)}
               />
               <span className="font-small mx-3">Number of Rooms</span>
             </Col>

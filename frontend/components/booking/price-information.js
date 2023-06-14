@@ -64,6 +64,24 @@ function PriceInformation({ bookingDetails, discountDetails }) {
       <Col xs={6} md={3} className="">
         {camelCaseToCapitalizedString(bookingDetails?.booking_status || '-')}
       </Col>
+
+      {(discountDetails.discount_notes || discountDetails.approval_notes) && (
+        <>
+          <Col xs={6} md={9} className="text-muted text-md-end">
+            Discount Notes
+          </Col>
+          <Col xs={6} md={3} className="">
+            <p className="my-0">
+              <strong>Requester: </strong>
+              {discountDetails.discount_notes}
+            </p>
+            <p className="my-0">
+              <strong>Approver: </strong>
+              {discountDetails.approval_notes}
+            </p>
+          </Col>
+        </>
+      )}
     </Row>
   );
 }

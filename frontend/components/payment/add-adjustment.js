@@ -97,7 +97,7 @@ function AddAdjustment({ show, setShow, visitId, setRefresh, session }) {
             </label>
             <textarea
               rows={2}
-              placeholder="Transaction reference"
+              placeholder="Adjustment justification"
               name="paymentNotes"
               id="paymentNotes"
               onChange={(e) =>

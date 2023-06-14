@@ -4,6 +4,8 @@ import ReactiveButton from 'reactive-button';
 
 import ImageUpload from '@/components/_commom/image-upload';
 import { editSingleGuestApi } from '@/api/guest-api';
+import { RiseLoader } from 'react-spinners';
+import { Icon } from '../_commom/Icon';
 
 function EditGuest({
   show,
@@ -18,6 +20,7 @@ function EditGuest({
   const [idBack, setIdBack] = useState();
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [buttonState, setButtonState] = useState('idle');
 
   useEffect(() => {
     setNewGuestData(modGuestData);
@@ -35,15 +38,17 @@ function EditGuest({
 
   const handleModGuest = async (e) => {
     e.preventDefault();
-
+    setButtonState('loading');
     const submitData = { ...newGuestData, profileImage, idFront, idBack };
     const result = await editSingleGuestApi(submitData);
     if (result.success) {
+      setButtonState('success');
       setRefresh(true);
       setShow(false);
       setModGuestData(result.result[1][0]);
       setShowAlert(true);
       setErrorMessage('');
+      setButtonState('idle');
     } else setErrorMessage('Something went wrong. Editing guest data failed');
   };
 
@@ -297,10 +302,20 @@ function EditGuest({
             />
 
             <ReactiveButton
-              buttonState="idle"
+              buttonState={buttonState}
               idleText={<span className="">Edit Information</span>}
               type={'submit'}
               color="blue"
+              loadingText={
+                <RiseLoader color="#ffffff" size={5} speedMultiplier={2} />
+              }
+              successText={
+                <span className="d-flex justify-content-center">
+                  <Icon nameIcon="FaRegThumbsUp" />
+                </span>
+              }
+              messageDuration={2000}
+              animation={true}
             />
           </Modal.Footer>
         </Form>

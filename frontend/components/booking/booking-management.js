@@ -2,20 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
-import { PropagateLoader } from 'react-spinners';
+import { PropagateLoader, RiseLoader } from 'react-spinners';
 import * as Yup from 'yup';
 
 import {
   CustomTextInput,
-  CustomSelect,
   FormDatePicker,
-  CustomTextArea,
 } from '@/components/_commom/form-elements';
 
 import { Icon } from '@/components/_commom/Icon';
 import {
   addBookingApi,
-  createBookingApi,
   getSingleBookingApi,
   modifyBookingApi,
 } from '@/api/booking-api';
@@ -59,7 +56,6 @@ const validationRules = Yup.object({
         return !checkInDate || !value || value >= checkInDate;
       }
     ),
-  currency: Yup.string().oneOf(['BDT', 'USD'], 'Invalid currency'),
 });
 
 const componentList = [
@@ -70,7 +66,7 @@ const componentList = [
   { id: 5, name: 'Services', icon: 'FaTableTennis', type: 'service' },
 ];
 
-function BookingManagement({ bookingId, isNew }) {
+function BookingManagement({ bookingId, isNew, session }) {
   const [bookingData, setBookingData] = useState({});
   const [guestData, setGuestData] = useState({});
   const [discountData, setDiscountData] = useState({});
@@ -81,6 +77,8 @@ function BookingManagement({ bookingId, isNew }) {
   const [editable, setEditable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [referesh, setReferesh] = useState(false);
+  const [buttonState, setButtonState] = useState('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const router = useRouter();
   const toDay = new Date();
@@ -111,6 +109,12 @@ function BookingManagement({ bookingId, isNew }) {
   }, [bookingId, isNew, referesh]);
 
   const handleSubmitBooking = async (values) => {
+    if (!bookingData.price_components) {
+      setButtonState('idle');
+      setErrorMessage('No booking components!');
+      return false;
+    }
+    setButtonState('loading');
     if (!isNew) {
       const apiResult = await modifyBookingApi(bookingData, discountData);
       alert(
@@ -120,6 +124,12 @@ function BookingManagement({ bookingId, isNew }) {
             )}"`
           : 'Something went wrong'
       );
+
+      if (apiResult) {
+        setErrorMessage('');
+        router.push(`show-booking?id=${apiResult.dbBooking.result[1][0].id}`);
+        setButtonState('idle');
+      }
     } else {
       const apiResult = await addBookingApi(
         bookingData,
@@ -127,8 +137,12 @@ function BookingManagement({ bookingId, isNew }) {
         values.checkOutDate
       );
 
-      if (apiResult)
+      if (apiResult) {
+        setIsLoading(true);
+        setErrorMessage('');
         router.push(`show-booking?id=${apiResult.dbBooking.dbResult.id}`);
+        setButtonState('idle');
+      }
     }
   };
 
@@ -151,47 +165,47 @@ function BookingManagement({ bookingId, isNew }) {
             currency: 'BDT',
           }}
           validationSchema={validationRules}
-          onSubmit={(values) => handleSubmit(values)}>
+          // onSubmit={(values) => handleSubmit(values)}>
+          onSubmit={(values) => handleSubmitBooking(values)}>
           {(formik) => {
             const { values } = formik;
             return (
               <Form>
                 <div className="d-flex justify-content-between">
-                  <h2 className="mb-4">
+                  <h4 className="mb-4">
                     Booking Details: {bookingData.booking_ref}
-                  </h2>
+                  </h4>
                   {/* Buttons for large screen */}
-                  {bookingData.booking_status !== 'canceled' && (
+                  {bookingData.booking_status !== 'cancelled' && (
                     <div className="d-md-flex d-none">
-                      {!isNew && (
-                        <div className="mx-2">
-                          <ReactiveButton
-                            buttonState="idle"
-                            idleText={
-                              <span className="fw-bold fs-6">Advanced</span>
-                            }
-                            color="blue"
-                            size="small"
-                            className="rounded-1 py-1 bg-gradient"
-                            disabled={
-                              bookingData.booking_status ===
-                              'discountApprovalPending'
-                            }
-                            onClick={() => {
-                              setShowAdvanced(true);
-                            }}
-                          />
-                        </div>
-                      )}
+                      {!isNew &&
+                        bookingData.booking_status !== 'discountRejected' && (
+                          <div className="mx-2">
+                            <ReactiveButton
+                              buttonState="idle"
+                              idleText={
+                                <span className="fw-bold fs-6">Advanced</span>
+                              }
+                              color="indigo"
+                              size="small"
+                              className="rounded-1 py-1 bg-gradient"
+                              disabled={
+                                bookingData.booking_status ===
+                                'discountApprovalPending'
+                              }
+                              onClick={() => {
+                                setShowAdvanced(true);
+                              }}
+                            />
+                          </div>
+                        )}
 
                       {!isNew && (
                         <div className="mx-2">
                           <ReactiveButton
                             buttonState="idle"
                             idleText={
-                              <span className="fw-bold fs-6">
-                                Cancel Booking
-                              </span>
+                              <span className="fw-bold fs-6">Cancel</span>
                             }
                             color="red"
                             size="small"
@@ -243,24 +257,25 @@ function BookingManagement({ bookingId, isNew }) {
                 </div>
 
                 {/* Buttons for mobile */}
-                {bookingData.booking_status !== 'canceled' && (
+                {bookingData.booking_status !== 'cancelled' && (
                   <div className="d-flex d-md-none justify-content-between mb-3">
-                    {!isNew && (
-                      <div className="mx-2">
-                        <ReactiveButton
-                          buttonState="idle"
-                          idleText={
-                            <span className="fw-bold fs-6">Advanced</span>
-                          }
-                          color="blue"
-                          size="small"
-                          className="rounded-1 py-1 bg-gradient"
-                          onClick={() => {
-                            setShowAdvanced(true);
-                          }}
-                        />
-                      </div>
-                    )}
+                    {!isNew &&
+                      bookingData.booking_status !== 'discountRejected' && (
+                        <div className="mx-2">
+                          <ReactiveButton
+                            buttonState="idle"
+                            idleText={
+                              <span className="fw-bold fs-6">Advanced</span>
+                            }
+                            color="indigo"
+                            size="small"
+                            className="rounded-1 py-1 bg-gradient"
+                            onClick={() => {
+                              setShowAdvanced(true);
+                            }}
+                          />
+                        </div>
+                      )}
 
                     {!isNew && (
                       <div className="mx-2">
@@ -458,7 +473,7 @@ function BookingManagement({ bookingId, isNew }) {
                     name="bookingNotes"
                     label="Booking Notes"
                     disabled={bookingData.booking_status === 'canceled'}
-                    value={bookingData.booking_notes}
+                    value={bookingData.booking_notes || ''}
                     onChange={(e) => {
                       setBookingData((currentData) => ({
                         ...currentData,
@@ -468,24 +483,38 @@ function BookingManagement({ bookingId, isNew }) {
                   />
 
                   {/* Submit button */}
-                  {bookingData.booking_status !== 'canceled' && (
+                  {bookingData.booking_status !== 'cancelled' && (
                     <div className="d-flex justify-content-end my-3">
                       <ReactiveButton
-                        buttonState="idle"
+                        buttonState={buttonState}
                         idleText={
                           <span className="fw-bold fs-6">
                             {isNew ? 'Create ' : 'Modify'}
                           </span>
                         }
+                        type="submit"
                         color="green"
                         size="small"
                         className="rounded-1 py-1 bg-gradient"
-                        // outline
-                        onClick={() => {
-                          handleSubmitBooking(values);
-                        }}
+                        loadingText={
+                          <RiseLoader
+                            color="#ffffff"
+                            size={5}
+                            speedMultiplier={2}
+                          />
+                        }
+                        successText={
+                          <span className="d-flex justify-content-center">
+                            <Icon nameIcon="FaRegThumbsUp" />
+                          </span>
+                        }
+                        messageDuration={2000}
+                        animation={true}
                       />
                     </div>
+                  )}
+                  {errorMessage && (
+                    <p className="error-message">{errorMessage}</p>
                   )}
                 </div>
 
@@ -499,6 +528,7 @@ function BookingManagement({ bookingId, isNew }) {
                     (values.checkOutDate - values.checkInDate) /
                       (1000 * 60 * 60 * 24)
                   )}
+                  session={session}
                 />
               </Form>
             );
@@ -511,6 +541,7 @@ function BookingManagement({ bookingId, isNew }) {
         setShow={setShowAdvanced}
         bookingData={bookingData}
         setReferesh={setReferesh}
+        session={session}
       />
 
       <CancelBooking

@@ -55,7 +55,9 @@ module.exports = (sequelize, DataTypes) => {
   Visits.associate = function (models) {
     Visits.belongsTo(models.guests, { foreignKey: 'guest_id' });
     Visits.hasMany(models.payments, { foreignKey: 'visit_id' });
+    Visits.hasMany(models.visitorexpenses, { foreignKey: 'visit_id' });
     Visits.belongsTo(models.credentials, { foreignKey: 'user_id' });
+    Visits.hasMany(models.roomreservations, { foreignKey: 'visit_id' });
   };
 
   return Visits;

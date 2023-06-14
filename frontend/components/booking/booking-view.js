@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { PropagateLoader } from 'react-spinners';
@@ -10,13 +9,7 @@ import {
   FormDatePicker,
 } from '@/components/_commom/form-elements';
 
-import { Icon } from '@/components/_commom/Icon';
-import {
-  addBookingApi,
-  createBookingApi,
-  getSingleBookingApi,
-  modifyBookingApi,
-} from '@/api/booking-api';
+import { getSingleBookingApi } from '@/api/booking-api';
 import ViewPackages from './view-packages';
 import ViewRooms from './view-rooms';
 import ViewPrixfixe from './view-prixfixe';
@@ -24,10 +17,8 @@ import ViewAlacarte from './view-alacarte';
 import ViewServices from './view-services';
 import PriceInformation from './price-information';
 import ReactiveButton from 'reactive-button';
-import AddBookingComponent from './add-booking-component';
 import { readFromStorage } from '@/components/_functions/storage-variable-management';
 import { fetchGuestApi } from '@/api/guest-api';
-import { camelCaseToCapitalizedString } from '@/components/_functions/string-format';
 import { updateStateObject } from '@/components/_functions/common-functions';
 
 const validationRules = Yup.object({

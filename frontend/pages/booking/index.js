@@ -6,6 +6,8 @@ import {
   OverlayTrigger,
   Popover,
   Modal,
+  Row,
+  Col,
 } from 'react-bootstrap';
 import { PropagateLoader } from 'react-spinners';
 import ReactiveButton from 'reactive-button';
@@ -19,7 +21,7 @@ import { listAllBookingApi } from '@/api/booking-api';
 import { camelCaseToCapitalizedString } from '@/components/_functions/string-format';
 import BookingView from '@/components/booking/booking-view';
 
-function BookingHome() {
+function BookingHome({ session }) {
   const [allBookings, setAllBookings] = useState([]);
   const [discountData, setDiscountData] = useState([]);
   const [filterData, setFilterData] = useState([]);
@@ -60,9 +62,9 @@ function BookingHome() {
 
   const headerResponsive = [
     {
-      name: 'ID',
-      selector: (row) => row.id,
-      width: '50px',
+      name: 'Booking Ref',
+      selector: (row) => row.booking_ref,
+      wrap: true,
     },
     {
       name: 'Check-in',
@@ -254,7 +256,7 @@ function BookingHome() {
       name: 'Actions',
       grow: 1,
       cell: (row) =>
-        row.booking_status === 'canceled' ? (
+        row.booking_status === 'cancelled' ? (
           <div className="reactive-button-wauto">
             <ReactiveButton
               buttonState="idle"
@@ -364,16 +366,21 @@ function BookingHome() {
 
   const subHeaderComponent = () => {
     return (
-      <Form className="w-50">
-        <Form.Group className="mb-3" controlId="searchString">
-          <Form.Control
-            size="sm"
-            type="text"
-            placeholder="Enter name/email/phone/ID number to filter"
-            onChange={(e) => handleFilter(e)}
-          />
-        </Form.Group>
-      </Form>
+      <Row className="w-100">
+        <Col md={6} className="d-none d-md-block"></Col>
+        <Col md={6} xs={12}>
+          <Form className="w-100">
+            <Form.Group className="mb-3" controlId="searchString">
+              <Form.Control
+                size="sm"
+                type="text"
+                placeholder="Enter name/email/phone/ID number to filter"
+                onChange={(e) => handleFilter(e)}
+              />
+            </Form.Group>
+          </Form>
+        </Col>
+      </Row>
     );
   };
 
@@ -392,7 +399,7 @@ function BookingHome() {
         <ReactiveButton
           buttonState="idle"
           idleText={<span className="fw-bold fs-6">Add Booking</span>}
-          color="blue"
+          color="indigo"
           size="small"
           className="rounded-1 py-1 bg-gradient"
           onClick={() => setShowGuestModal(true)}
@@ -418,6 +425,7 @@ function BookingHome() {
         setShow={setShowDiscountApporoval}
         discountData={discountData}
         setReferesh={setReferesh}
+        session={session}
       />
 
       <AdvancedCreations
@@ -425,6 +433,7 @@ function BookingHome() {
         setShow={setShowAdvanced}
         bookingData={discountData}
         setReferesh={setReferesh}
+        session={session}
       />
 
       {/* View booking details */}

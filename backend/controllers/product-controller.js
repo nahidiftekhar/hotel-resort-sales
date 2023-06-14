@@ -20,6 +20,7 @@ router.post('/add-room', productServices.addRoom);
 router.post('/edit-room', productServices.editRoom);
 router.post('/deactivate-room', productServices.deactivateRoom);
 router.get('/room-categories', productServices.fetchRoomTypes);
+router.get('/room-list', productServices.fetchRooms);
 
 // Add single prixfixe
 router.post('/add-prixfixe', productServices.addPrixfixeItem);

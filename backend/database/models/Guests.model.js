@@ -28,12 +28,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     id_type: {
       type: Sequelize.STRING,
-      allowNull: false,
       unique: 'compositeIndex',
     },
     id_number: {
       type: Sequelize.STRING,
-      allowNull: false,
       unique: 'compositeIndex',
     },
     guest_notes: {

@@ -47,8 +47,8 @@ function ListAllGuests() {
 
   const headerResponsive = [
     {
-      name: 'ID',
-      selector: (row) => row.id,
+      name: 'SL',
+      selector: (row, index) => index + 1,
       width: '50px',
     },
     {
@@ -124,8 +124,8 @@ function ListAllGuests() {
         return guest;
       } else if (
         guest.email?.toLowerCase().includes(e.target.value.toLowerCase()) ||
-        guest.phone.toLowerCase().includes(e.target.value.toLowerCase()) ||
-        guest.id_number.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        guest.phone?.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        guest.id_number?.toLowerCase().includes(e.target.value.toLowerCase()) ||
         guest.name.toLowerCase().includes(e.target.value.toLowerCase())
       )
         return guest;
@@ -169,6 +169,7 @@ function ListAllGuests() {
           }
           color="blue"
           onClick={addGuestModalOpener}
+          className="rounded-1 bg-gradient"
         />
       </div>
       <DataTable

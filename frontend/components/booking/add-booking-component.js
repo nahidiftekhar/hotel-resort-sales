@@ -14,6 +14,7 @@ function AddBookingComponent({
   bookingData,
   setBookingData,
   daysCount,
+  session,
 }) {
   return (
     <Modal
@@ -64,6 +65,7 @@ function AddBookingComponent({
                   bookingData={bookingData}
                   setShow={setShow}
                   daysCount={daysCount}
+                  session={session}
                 />
               );
 

@@ -3,27 +3,41 @@ import { Modal } from 'react-bootstrap';
 import ReactiveButton from 'reactive-button';
 
 import { approveDiscountApi } from '@/api/booking-api';
-import { readFromStorage } from '@/components/_functions/storage-variable-management';
+import { camelCaseToCapitalizedString } from '../_functions/string-format';
 
-function DiscountApproval({ show, setShow, discountData, setReferesh }) {
+function DiscountApproval({
+  show,
+  setShow,
+  discountData,
+  setReferesh,
+  session,
+}) {
   const [notes, setNotes] = useState('');
   const [userId, setUserId] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    setUserId(readFromStorage('USER_KEY'));
-  }, []);
+    setUserId(session.user.id);
+  }, [session.user.id]);
 
   const handleSubmit = async (approvalStatus) => {
-    const apiResult = await approveDiscountApi({
-      ...discountData,
+    if (!notes && !approvalStatus) {
+      setErrorMessage('Please include appropriate notes.');
+      return false;
+    }
+
+    const apiResult = await approveDiscountApi(
+      discountData,
       approvalStatus,
       notes,
-    });
-    if (apiResult.modifyBooking.success) {
+      userId
+    );
+    if (apiResult.modifyBooking?.success) {
       setReferesh(true);
       setShow(false);
     }
   };
+
   return (
     <Modal show={show} onHide={() => setShow(false)} backdrop="static">
       <Modal.Header>
@@ -51,12 +65,19 @@ function DiscountApproval({ show, setShow, discountData, setReferesh }) {
           </div>
           <div className="d-flex justify-content-between bg-light rounded px-2 py-1 my-2">
             <p className="my-0">Approval Status </p>
-            <p className="my-0">{discountData.approval_status}</p>
+            <p className="my-0">
+              {camelCaseToCapitalizedString(discountData.approval_status)}
+            </p>
           </div>
-          <textarea
-            name="newNotes"
-            onChange={(e) => setNotes(e.target.value)}
-          />
+          {discountData.approver_id === userId && (
+            <textarea
+              name="newNotes"
+              disabled={discountData.approver_id !== userId}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          )}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
         {discountData.approver_id === userId ? (
           <div className="d-flex justify-content-end mt-3">
@@ -66,10 +87,9 @@ function DiscountApproval({ show, setShow, discountData, setReferesh }) {
                 idleText="Close"
                 color="yellow"
                 size="tiny"
-                outline
                 rounded
                 onClick={() => setShow(false)}
-                className=""
+                className="bg-gradient fw-bold"
               />
             </div>
 
@@ -79,9 +99,9 @@ function DiscountApproval({ show, setShow, discountData, setReferesh }) {
                 idleText="Approve"
                 color="green"
                 size="tiny"
-                outline
                 rounded
                 onClick={() => handleSubmit(true)}
+                className="bg-gradient fw-bold"
               />
             </div>
 
@@ -91,9 +111,9 @@ function DiscountApproval({ show, setShow, discountData, setReferesh }) {
                 idleText="Reject"
                 color="red"
                 size="tiny"
-                outline
                 rounded
                 onClick={() => handleSubmit(false)}
+                className="bg-gradient fw-bold"
               />
             </div>
           </div>
@@ -105,10 +125,9 @@ function DiscountApproval({ show, setShow, discountData, setReferesh }) {
                 idleText="Close"
                 color="yellow"
                 size="tiny"
-                outline
                 rounded
                 onClick={() => setShow(false)}
-                className=""
+                className="bg-gradient fw-bold"
               />
             </div>
           </div>

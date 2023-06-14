@@ -6,6 +6,7 @@ import { Icon } from '@/components/_commom/Icon';
 import ImageUpload from '@/components/_commom/image-upload';
 import { generateRandomString } from '@/components/_functions/common-functions';
 import { addSingleGuestApi } from '@/api/guest-api';
+import { RiseLoader } from 'react-spinners';
 
 function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
   const [newGuestData, setNewGuestData] = useState({});
@@ -14,6 +15,7 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
   const [idBack, setIdBack] = useState();
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [buttonState, setButtonState] = useState('idle');
 
   useEffect(() => {
     setNewGuestData({});
@@ -25,6 +27,7 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
 
   const handleAddGuest = async (e) => {
     e.preventDefault();
+    setButtonState('loading');
     const result = await addSingleGuestApi(
       newGuestData,
       profileImage,
@@ -32,11 +35,13 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
       idBack
     );
     if (result.success) {
+      setButtonState('success');
       setRefresh(true);
       setShow(false);
       if (setNewGuest) setNewGuest(result.dbResult);
       setShowAlert(true);
       setErrorMessage('');
+      setButtonState('idle');
     } else setErrorMessage('Something went wrong. Adding guest failed');
   };
 
@@ -133,7 +138,7 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
                     as="textarea"
                     rows={2}
                     size="sm"
-                    required
+                    // required
                     placeholder="Full address of the guest"
                     value={newGuestData.address || ''}
                     onChange={(e) =>
@@ -201,7 +206,7 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
                   <Form.Control
                     type="text"
                     size="sm"
-                    required
+                    // required
                     placeholder="NID/Passport/Driving License/etc."
                     value={newGuestData.idType || ''}
                     onChange={(e) =>
@@ -222,7 +227,7 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
                   <Form.Control
                     type="text"
                     size="sm"
-                    required
+                    // required
                     placeholder="NID/Passport/Driving License/etc. number"
                     value={newGuestData.idNumber || ''}
                     onChange={(e) =>
@@ -281,11 +286,20 @@ function AddGuest({ show, setShow, setRefresh, setNewGuest }) {
             />
 
             <ReactiveButton
-              buttonState="idle"
+              buttonState={buttonState}
               idleText={<span className="">Add Guest</span>}
-              // onClick={handleAddGuest}
               type={'submit'}
               color="blue"
+              loadingText={
+                <RiseLoader color="#ffffff" size={5} speedMultiplier={2} />
+              }
+              successText={
+                <span className="d-flex justify-content-center">
+                  <Icon nameIcon="FaRegThumbsUp" />
+                </span>
+              }
+              messageDuration={2000}
+              animation={true}
             />
           </Modal.Footer>
         </Form>

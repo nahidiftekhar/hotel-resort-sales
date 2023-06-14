@@ -1,20 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import {
-  Container,
-  Row,
-  Col,
-  Accordion,
-  Dropdown,
-  Modal,
-} from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import { PropagateLoader } from 'react-spinners';
 import { fetchVisitApi } from '@/api/visit-api';
-import { BDTFormat } from '@/components/_functions/number-format';
-import {
-  sumOfKey,
-  sumOfKeyMultiply,
-} from '@/components/_functions/common-functions';
 import PurchaseRecords from '@/components/hospitality/view-visit/purchase-records';
 import PaymentRecord from '@/components/hospitality/view-visit/payment-record';
 import ReactiveButton from 'reactive-button';
@@ -68,6 +56,8 @@ function Checkout({ session }) {
           <div className="mx-1">
             <ReactiveButton
               idleText="Add Payment"
+              color="indigo"
+              className="bg-gradient rounded-1"
               onClick={() => setShowPayment(true)}
             />
           </div>
@@ -75,6 +65,8 @@ function Checkout({ session }) {
           <div className="mx-1">
             <ReactiveButton
               idleText="Add Adjustment"
+              color="indigo"
+              className="bg-gradient rounded-1"
               onClick={() => setShowAdjustment(true)}
             />
           </div>
@@ -82,6 +74,8 @@ function Checkout({ session }) {
           <div className="mx-1">
             <ReactiveButton
               idleText="Confirm Checkout"
+              color="indigo"
+              className="bg-gradient rounded-1"
               onClick={() => setShowModal(true)}
             />
           </div>
@@ -116,16 +110,3 @@ function Checkout({ session }) {
 }
 
 export default Checkout;
-
-{
-  /* 
-    keep an option to add expense
-    option to add adjustment
-    option to add payment amount, method, notes
-    checkbox to confirm verification - room service, stay duration, key receipt
-    create bill
-    feedback - both side
-    update room status
-
- */
-}

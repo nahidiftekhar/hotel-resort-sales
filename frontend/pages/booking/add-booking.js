@@ -1,13 +1,11 @@
 import React from 'react';
 
-import BookingFrom from '@/components/booking/booking-form';
 import BookingManagement from '@/components/booking/booking-management';
 
-function AddBooking() {
+function AddBooking({ session }) {
   return (
     <div className="d-flex justify-content-center">
-      {/* <BookingFrom /> */}
-      <BookingManagement bookingId={0} isNew={true} />
+      <BookingManagement bookingId={0} isNew={true} session={session} />
     </div>
   );
 }

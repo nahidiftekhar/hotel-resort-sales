@@ -30,15 +30,16 @@ function PurchaseRecords({ purchaseRecords }) {
       grow: 1,
     },
     {
-      name: 'Count',
-      selector: (row) => row.item_count,
+      name: 'Purchase Date',
+      selector: (row) => datetimeStringToDateTime(row.createdAt),
       sortable: true,
       grow: 1,
     },
     {
-      name: 'Purchase Date',
-      selector: (row) => datetimeStringToDateTime(row.createdAt),
+      name: 'Count',
+      selector: (row) => row.item_count,
       sortable: true,
+      right: true,
       grow: 1,
     },
     {
@@ -46,6 +47,7 @@ function PurchaseRecords({ purchaseRecords }) {
       selector: (row) =>
         roundUptoFixedDigits(row.item_count * row.unit_price, 2),
       sortable: false,
+      right: true,
       grow: 1,
     },
   ];

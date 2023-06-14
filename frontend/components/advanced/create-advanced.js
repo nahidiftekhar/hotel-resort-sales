@@ -5,26 +5,34 @@ import ReactiveButton from 'reactive-button';
 import { confirmAdvancedApi } from '@/api/booking-api';
 import { readFromStorage } from '@/components/_functions/storage-variable-management';
 import { paymentOptions } from '@/data/paymentOptions';
+import { formatDateYYYYMMDDwithDash } from '../_functions/date-functions';
 
-function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
+function AdvancedCreations({
+  show,
+  setShow,
+  bookingData,
+  setReferesh,
+  session,
+}) {
   const [notes, setNotes] = useState('');
   const [advancedAmount, setAdvancedAmount] = useState(0);
   const [userId, setUserId] = useState(0);
   const [paymentOption, setPaymentOption] = useState('Cash');
 
   useEffect(() => {
-    setUserId(readFromStorage('USER_KEY'));
-    // setAdvancedAmount(bookingData.advanced_amount);
+    setUserId(session.user.id);
   }, [bookingData]);
 
   const handleSubmit = async () => {
     const advancedNotes =
       bookingData.advanced_notes +
-      '\n\nDate: ' +
-      new Date() +
+      '\n\nAdvanced Received\nDate: ' +
+      formatDateYYYYMMDDwithDash(new Date()) +
       '\n' +
       'User ID: ' +
       userId +
+      '\nUser Name: ' +
+      session.user.username +
       '\nNote: ' +
       notes;
     if (advancedAmount > Number(bookingData.discounted_amount)) return false;
@@ -55,6 +63,7 @@ function AdvancedCreations({ show, setShow, bookingData, setReferesh }) {
       </Modal.Header>
       <Modal.Body>
         <div className="custom-form arrow-hidden">
+          {JSON.stringify(session.user)}
           <div className="d-flex justify-content-between bg-light rounded px-2 py-1 my-2">
             <p className="my-0">Price after discont (BDT) </p>
             <p className="my-0 fw-bold">

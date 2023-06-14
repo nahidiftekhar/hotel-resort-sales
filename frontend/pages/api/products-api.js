@@ -39,7 +39,8 @@ export const listAllAlacarteApi = async () => {
 
 export const listAllRoomsApi = async () => {
   const apiResult = await axios.get(
-    `${beConfig.host}/product-management/room-categories`,
+    `${beConfig.host}/product-management/room-list`,
+    // `${beConfig.host}/product-management/room-categories`,
     {
       headers: {
         'X-CM-API-KEY': beConfig.key,

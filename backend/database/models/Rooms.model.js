@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
+    is_ready: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true,
+    },
     is_live: {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
@@ -39,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
   // Class Method
   Rooms.associate = function (models) {
     Rooms.belongsTo(models.roomtypes, { foreignKey: 'room_type_id' });
+    Rooms.hasMany(models.roomreservations, { foreignKey: 'room_id' });
   };
 
   return Rooms;

@@ -105,7 +105,7 @@ function AddGuestForm({ show, setShow, setRefresh, setNewGuest }) {
               as="textarea"
               rows={2}
               size="sm"
-              required
+              // required
               placeholder="Full address of the guest"
               value={newGuestData.address || ''}
               onChange={(e) =>
@@ -167,7 +167,7 @@ function AddGuestForm({ show, setShow, setRefresh, setNewGuest }) {
             <Form.Control
               type="text"
               size="sm"
-              required
+              // required
               placeholder="NID/Passport/Driving License/etc."
               value={newGuestData.idType || ''}
               onChange={(e) =>
@@ -186,7 +186,7 @@ function AddGuestForm({ show, setShow, setRefresh, setNewGuest }) {
             <Form.Control
               type="text"
               size="sm"
-              required
+              // required
               placeholder="NID/Passport/Driving License/etc. number"
               value={newGuestData.idNumber || ''}
               onChange={(e) =>

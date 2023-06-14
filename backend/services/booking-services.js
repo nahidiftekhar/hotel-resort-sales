@@ -13,6 +13,7 @@ const {
   rooms,
   serviceitems,
   usertypes,
+  roomreservations,
 } = require('../database/models');
 const helper = require('../services/utils/helper');
 
@@ -160,16 +161,34 @@ async function addBooking(req, res, next) {
     }
   }
 
+  if (components.roomDetails) {
+    components.roomDetails.map(async (singleRoom) => {
+      const currentDate = new Date(checkInDate);
+      const lastDate = new Date(checkOutDate);
+      while (currentDate <= lastDate) {
+        await manageRoomBooking({
+          roomId: singleRoom.id,
+          reservationDate: currentDate,
+          status: 'booked',
+          notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+          bookingId: dbBooking.dbResult.id,
+          visitId: null,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+  }
+
   return res.json({ dbBooking, dbDiscount });
 }
 
 async function editBooking(req, res, next) {
   const {
     id,
-    guestId,
-    userId,
-    checkInDate,
-    checkOutDate,
+    guest_id,
+    user_id,
+    checkin_date,
+    checkout_date,
     amount,
     discounted_amount,
     currency,
@@ -182,6 +201,35 @@ async function editBooking(req, res, next) {
     approver_id,
     discount_notes,
   } = req.body;
+
+  const existingRecord = await dbStandard.findOneFilterDb(bookings, { id });
+  // All these for removed rooms
+  if (existingRecord.components?.roomDetails) {
+    const previousRooms = existingRecord.components.roomDetails.map(
+      (obj) => obj.id
+    );
+    const currentRooms = components?.roomDetails?.map((obj) => obj.id);
+    const removedRooms = previousRooms.filter(
+      (element) => !currentRooms.includes(element)
+    );
+
+    removedRooms.map(async (singleRoom) => {
+      const currentDate = new Date(checkin_date);
+      const lastDate = new Date(checkout_date);
+      while (currentDate <= lastDate) {
+        await manageRoomBooking({
+          roomId: singleRoom,
+          reservationDate: currentDate,
+          status: '',
+          notes: 'Released',
+          bookingId: id,
+          visitId: null,
+          userId: user_id,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+  }
 
   const highestDiscount = await dbStandard.findOneFilterDb(discountslabs, {
     user_type_id: 1,
@@ -205,16 +253,20 @@ async function editBooking(req, res, next) {
       id: id,
     },
     {
-      user_id: userId,
-      guest_id: guestId,
-      checkin_date: checkInDate,
-      checkout_date: checkOutDate,
+      user_id: user_id,
+      guest_id: guest_id,
+      checkin_date: checkin_date,
+      checkout_date: checkout_date,
       amount: amount,
       discounted_amount: discounted_amount,
       currency: currency ? currency : 'BDT',
       components: components,
       price_components: price_components,
-      booking_status: booking_status,
+      // booking_status: booking_status,
+      booking_status:
+        discountStatus === 2
+          ? 'advancedPaymentPending'
+          : 'discountApprovalPending',
       booking_notes: booking_notes,
     }
   );
@@ -234,7 +286,7 @@ async function editBooking(req, res, next) {
           total_discount: amount - discounted_amount,
           approval_status:
             discountStatus === 2 ? 'selfApproved' : 'pendingApproval',
-          discount_notes: discount_notes,
+          discount_notes: '\nUser Id: ' + user_id + '\n' + discount_notes,
           price_components: price_components,
         }
       )
@@ -256,6 +308,25 @@ async function editBooking(req, res, next) {
         sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
       );
     }
+  }
+
+  if (components.roomDetails) {
+    components.roomDetails.map(async (singleRoom) => {
+      const currentDate = new Date(checkin_date);
+      const lastDate = new Date(checkout_date);
+      while (currentDate <= lastDate) {
+        await manageRoomBooking({
+          roomId: singleRoom.id,
+          reservationDate: currentDate,
+          status: 'booked',
+          notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+          bookingId: id,
+          visitId: null,
+          userId: user_id,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
   }
 
   return res.json({ dbBooking, dbDiscount });
@@ -428,11 +499,68 @@ async function cancelBooking(req, res, next) {
     bookings,
     { id: bookingId },
     {
-      booking_status: 'canceled',
+      booking_status: 'cancelled',
       booking_notes: notes,
     }
   );
   return res.json(modifyBooking);
+}
+
+async function eidtRoomBooking(req, res, next) {
+  const {
+    roomId,
+    checkInDate,
+    checkOutDate,
+    status,
+    userId,
+    bookingId,
+    visitId,
+    guestId,
+  } = req.body;
+
+  const currentDate = new Date(checkInDate);
+  const lastDate = new Date(checkOutDate);
+  while (currentDate <= lastDate) {
+    await manageRoomBooking({
+      roomId: roomId,
+      reservationDate: currentDate,
+      status: status,
+      notes: 'User: ' + userId + '\nGuest: ' + guestId,
+      bookingId: bookingId,
+      visitId: visitId,
+    });
+
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return roomsStatusUpdate;
+}
+
+async function manageRoomBooking({
+  roomId,
+  reservationDate,
+  status,
+  notes,
+  bookingId,
+  visitId,
+  userId,
+}) {
+  const roomsStatusUpdate = await dbStandard.addOrUpdateSingleDb(
+    roomreservations,
+    {
+      room_id: roomId,
+      reservation_date: reservationDate,
+    },
+    {
+      booking_id: bookingId,
+      visit_id: visitId,
+      user_id: userId,
+      status: status,
+      notes: notes,
+    }
+  );
+
+  return roomsStatusUpdate;
 }
 
 module.exports = {
@@ -448,4 +576,6 @@ module.exports = {
   cancelBooking,
   fetchMaxDiscountSlab,
   listAllBookingAfterToday,
+  eidtRoomBooking,
+  manageRoomBooking,
 };
