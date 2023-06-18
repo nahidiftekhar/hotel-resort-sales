@@ -26,11 +26,16 @@ import ReactiveButton from 'reactive-button';
 import AddBookingComponent from './add-booking-component';
 import AdvancedCreations from '@/components/advanced/create-advanced';
 
-import { readFromStorage } from '@/components/_functions/storage-variable-management';
+import {
+  readFromStorage,
+  removeStorage,
+  writeToStorage,
+} from '@/components/_functions/storage-variable-management';
 import { fetchGuestApi } from '@/api/guest-api';
 import { camelCaseToCapitalizedString } from '@/components/_functions/string-format';
 import { updateStateObject } from '@/components/_functions/common-functions';
 import CancelBooking from './cancel-booking';
+import axios from 'axios';
 
 const validationRules = Yup.object({
   checkInDate: Yup.date()
@@ -70,8 +75,14 @@ function BookingManagement({ bookingId, isNew, session }) {
   const [bookingData, setBookingData] = useState({});
   const [guestData, setGuestData] = useState({});
   const [discountData, setDiscountData] = useState({});
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [componentType, setComponentType] = useState('');
+  const [showEditModal, setShowEditModal] = useState(
+    localStorage.getItem('selectedRoom') ? true : false
+  );
+  const [componentType, setComponentType] = useState(
+    localStorage.getItem('selectedRoom') ? 'room' : ''
+  );
+  // const [showEditModal, setShowEditModal] = useState(false);
+  // const [componentType, setComponentType] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [editable, setEditable] = useState(false);
@@ -94,7 +105,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
     const getGuestInfo = async () => {
       const guestId = readFromStorage('GUEST_KEY');
-      const userId = readFromStorage('USER_KEY');
+      const userId = session.user.id;
       const guestDataTemp = await fetchGuestApi(guestId);
       setGuestData(guestDataTemp);
       updateStateObject(setBookingData, 'guest_id', guestId);
@@ -105,6 +116,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
     if (!isNew && bookingId) getBookingData();
     if (isNew) getGuestInfo();
+
     setReferesh(false);
   }, [bookingId, isNew, referesh]);
 
@@ -140,6 +152,7 @@ function BookingManagement({ bookingId, isNew, session }) {
       if (apiResult) {
         setIsLoading(true);
         setErrorMessage('');
+        removeStorage('GUEST_KEY');
         router.push(`show-booking?id=${apiResult.dbBooking.dbResult.id}`);
         setButtonState('idle');
       }
@@ -150,6 +163,16 @@ function BookingManagement({ bookingId, isNew, session }) {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-70">
         <PropagateLoader color="#0860ae" size={10} />
+      </Container>
+    );
+  }
+
+  if (!guestData) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-70">
+        <h3 className="text-danger">
+          You have to select the primary guest first
+        </h3>
       </Container>
     );
   }
@@ -334,28 +357,28 @@ function BookingManagement({ bookingId, isNew, session }) {
                   <Col sm={12} className="border-bottom">
                     <p className="mb-1">
                       <span className="text-muted me-3">Name:</span>
-                      {guestData.name}
+                      {guestData?.name}
                     </p>
                   </Col>
 
                   <Col sm={6}>
                     <p className="mb-1">
                       <span className="text-muted me-3">Phone:</span>
-                      {guestData.phone}
+                      {guestData?.phone}
                     </p>
                   </Col>
 
                   <Col sm={6}>
                     <p className="mb-1">
                       <span className="text-muted me-3">Email:</span>
-                      {guestData.email}
+                      {guestData?.email}
                     </p>
                   </Col>
 
                   <Col sm={12}>
                     <p className="mb-1">
                       <span className="text-muted me-3">Address:</span>
-                      {guestData.address}
+                      {guestData?.address}
                     </p>
                   </Col>
                 </Row>

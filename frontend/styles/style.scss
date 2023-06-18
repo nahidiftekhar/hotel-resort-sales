@@ -161,6 +161,15 @@ body {
     }
   }
 
+  .reactive-button-50 {
+    width: 50px;
+    .reactive-btn-wrapper {
+      // min-width: 25px;
+      width: 50px;
+      height: auto;
+    }
+  }
+
   .btn-grad-blue {
     background-image: linear-gradient(
       to right,
@@ -1100,6 +1109,172 @@ body {
             background-position: right center; /* change the direction of the change here */
             color: #fff;
             text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+/*===================Room Status===============*/
+.room-status {
+  .scrolling-container {
+    width: 100%;
+    overflow-x: auto;
+
+    .date-container {
+      display: flex;
+      border: 1px #cecece solid;
+
+      .date-header {
+        flex-basis: 50px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        border-right: 1px #cecece solid;
+        background-color: #ececec;
+        padding: 0 5px;
+        font-size: 0.7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 800;
+      }
+
+      .gap-100 {
+        flex-basis: 100px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        border-right: 5px #acacac solid;
+      }
+    }
+
+    .component-header {
+      margin: 2px;
+      padding-left: 5px;
+      flex-basis: 200px;
+      flex-grow: 0;
+      flex-shrink: 0;
+      border-right: 5px #acacac solid;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .roomtype-container {
+      display: flex;
+
+      .room-container {
+        border-bottom: 1px #cecece solid;
+        display: flex;
+        width: 100%;
+
+        .room-header {
+          flex-basis: 100px;
+          flex-grow: 0;
+          flex-shrink: 0;
+          border-right: 5px #acacac solid;
+        }
+
+        .room-status {
+          flex-basis: 50px;
+          flex-grow: 0;
+          flex-shrink: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .room-booked {
+          background-color: #fff2b1;
+        }
+        .room-provisioned {
+          background-color: #93f4ff;
+        }
+        .room-available {
+          background-color: #ffffff;
+        }
+        .room-unavailable {
+          background-color: #ff9393;
+        }
+
+        .btn-available {
+          background-image: linear-gradient(
+            to right,
+            #eeeeee 0%,
+            #ffffff 51%,
+            #eeeeee 100%
+          );
+          padding: 5px;
+          width: 100%;
+          text-align: center;
+          text-transform: uppercase;
+          transition: 0.2s;
+          background-size: 200% auto;
+          color: white;
+          box-shadow: 0 0 20px #eee;
+          display: flex;
+          justify-content: center;
+
+          &:hover {
+            box-shadow: 0 10px 5px -10px rgba(#000, 0.4);
+            transform: translateY(1px);
+          }
+          &:active {
+            transform: translateY(-1px);
+            transition: 0.1s;
+            background-image: linear-gradient(
+              to right,
+              #a1a1a1 0%,
+              #a1a1a1 100%
+            );
+          }
+        }
+
+        .btn-provisioned {
+          background-color: #ffe26f;
+          padding: 5px;
+          width: 100%;
+          text-align: center;
+          text-transform: uppercase;
+          transition: 0.2s;
+          background-size: 200% auto;
+          color: white;
+          box-shadow: 0 0 5px #b59e30;
+          display: flex;
+          justify-content: center;
+
+          &:hover {
+            box-shadow: 0 10px 5px -10px rgba(#000, 0.4);
+            transform: translateY(1px);
+          }
+          &:active {
+            transform: translateY(-1px);
+            transition: 0.1s;
+            background-color: #ffcc00;
+          }
+        }
+
+        .btn-booked {
+          background-color: #2a60c3;
+          padding: 5px;
+          width: 100%;
+          text-align: center;
+          text-transform: uppercase;
+          transition: 0.2s;
+          background-size: 200% auto;
+          color: white;
+          box-shadow: 0 0 5px #1e3c72;
+          display: flex;
+          justify-content: center;
+          &:hover {
+            box-shadow: 0 10px 5px -10px rgba(#000, 0.4);
+            transform: translateY(1px);
+          }
+          &:active {
+            transform: translateY(-1px);
+            transition: 0.1s;
+            background-color: #00318d;
           }
         }
       }

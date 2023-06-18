@@ -11,6 +11,7 @@ export default async function handler(req, res) {
     bookingId,
     visitId,
     guestId,
+    notes,
   } = req.body;
 
   const apiResult = await axios.post(
@@ -24,6 +25,7 @@ export default async function handler(req, res) {
       bookingId,
       visitId,
       guestId,
+      notes,
     },
     {
       headers: {

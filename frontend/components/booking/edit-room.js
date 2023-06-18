@@ -36,17 +36,42 @@ function EditRoom({
   );
 
   useEffect(() => {
+    const handlePreselectedRoom = async () => {
+      const preselectedRoom = JSON.parse(localStorage.getItem('selectedRoom'));
+      localStorage.removeItem('selectedRoom');
+      // Get the room data and include to bookingData.components.roomDetails
+      const singleRoomApi = await axios.get(
+        `/api/booking/get-room-data-api?roomId=${preselectedRoom.roomId}`
+      );
+      const singleRoomData = singleRoomApi.data;
+      singleRoomData.value = singleRoomData.id;
+      singleRoomData.label =
+        singleRoomData.roomtype?.room_type_name +
+        ': ' +
+        singleRoomData.room_number;
+      singleRoomData.price = singleRoomData.roomtype?.price;
+
+      singleRoomData.room_count = 1;
+      singleRoomData.room_cost = Math.max(
+        daysCount > 0
+          ? singleRoomData.roomtype?.price * daysCount
+          : singleRoomData.roomtype?.price,
+        0
+      );
+
+      handleSelect(singleRoomData);
+    };
+
     const fetchPackageList = async () => {
       const allProductList = await listAllRoomsApi();
       const filteredExistingItems = allProductList.filter(
         (item) => !roomItems.some((existingItem) => existingItem.id === item.id)
       );
-      // setProductList(allProductList);
       setProductList(
         filteredExistingItems.map((obj, index) => {
           return {
             ...obj,
-            value: index,
+            value: obj.id,
             label: obj.roomtype?.room_type_name + ': ' + obj.room_number,
             price: obj.roomtype?.price,
           };
@@ -54,6 +79,7 @@ function EditRoom({
       );
     };
     fetchPackageList();
+    if (localStorage.getItem('selectedRoom')) handlePreselectedRoom();
   }, []);
 
   const handleDeleteItem = async (index) => {

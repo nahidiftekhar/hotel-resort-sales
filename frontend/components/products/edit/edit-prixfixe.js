@@ -9,11 +9,7 @@ import {
   CustomSelect,
   CustomTextInput,
 } from '@/components/_commom/form-elements';
-import {
-  editPackageApi,
-  editPrixfixeApi,
-  listPrixfixeTypesApi,
-} from '@/api/products-api';
+import { editPrixfixeApi, listPrixfixeTypesApi } from '@/api/products-api';
 
 function EditPrixfixe({ productDetail, isNew, setRefresh, setShow }) {
   const [value, setValue] = useState(productDetail.description);

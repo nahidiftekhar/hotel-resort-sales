@@ -28,3 +28,13 @@ export function readFromStorage(key) {
 
   return Number(decodedValue);
 }
+
+export function removeStorage(key) {
+  try {
+    localStorage.removeItem(storageConfig[key]);
+    return true;
+  } catch (error) {
+    console.log('Error while rempving localstorage: ' + error);
+    return false;
+  }
+}

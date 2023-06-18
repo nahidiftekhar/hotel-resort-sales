@@ -160,6 +160,11 @@ function logoutUser(req, res, next) {
   });
 }
 
+async function fetchUserTypes(req, res, next) {
+  const dbResult = await dbStandard.selectAllDb(usertypes);
+  return res.json(dbResult);
+}
+
 async function validateEmail(req, res, next) {
   const dbResult = await db.validateUserToken(
     req.params.token,
@@ -316,4 +321,5 @@ module.exports = {
   loginUser,
   logoutUser,
   hashString,
+  fetchUserTypes,
 };

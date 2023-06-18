@@ -75,11 +75,24 @@ function getEndDateWithDuration(startDate, duration) {
 }
 
 function parseDateString(dateString) {
+  if (!dateString) return new Date();
   const year = dateString.substring(0, 4);
   const month = dateString.substring(4, 6) - 1;
   const day = dateString.substring(6, 8);
 
   return new Date(year, month, day);
+}
+
+function formatDateYYYYMMDDwithDash(date) {
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
 }
 
 module.exports = {
@@ -88,4 +101,5 @@ module.exports = {
   getDateWithOffset,
   parseDateString,
   getEndDateWithDuration,
+  formatDateYYYYMMDDwithDash,
 };

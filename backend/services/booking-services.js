@@ -516,24 +516,33 @@ async function eidtRoomBooking(req, res, next) {
     bookingId,
     visitId,
     guestId,
+    notes,
   } = req.body;
+
+  console.log('req.body: ' + JSON.stringify(req.body));
 
   const currentDate = new Date(checkInDate);
   const lastDate = new Date(checkOutDate);
-  while (currentDate <= lastDate) {
-    await manageRoomBooking({
-      roomId: roomId,
-      reservationDate: currentDate,
-      status: status,
-      notes: 'User: ' + userId + '\nGuest: ' + guestId,
-      bookingId: bookingId,
-      visitId: visitId,
-    });
 
-    currentDate.setDate(currentDate.getDate() + 1);
+  try {
+    while (currentDate <= lastDate) {
+      await manageRoomBooking({
+        roomId: roomId,
+        reservationDate: currentDate,
+        status: status,
+        notes: notes + '\n\nUser: ' + userId + '\nGuest: ' + guestId,
+        bookingId: bookingId,
+        visitId: visitId,
+        userId: userId,
+      });
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return res.json({ success: true });
+  } catch (error) {
+    console.log('Error in room booking: ' + error);
+    return res.json({ success: false });
   }
-
-  return roomsStatusUpdate;
 }
 
 async function manageRoomBooking({

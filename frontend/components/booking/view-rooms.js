@@ -12,7 +12,7 @@ function ViewRooms({ selectedProducts, priceDetails }) {
           <div key={index} className="border-top">
             {/* <div>{singlePackage.name}</div> */}
             <div>
-              {singlePackage.roomtype.room_type_name} +:{' '}
+              {singlePackage.roomtype.room_type_name}:{' '}
               {singlePackage.room_number}
             </div>
             <div className="font-small">

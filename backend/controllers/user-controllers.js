@@ -19,6 +19,11 @@ router.post('/login', userServices.loginUser); //tested
 //User logout
 router.get('/logout', userServices.logoutUser);
 
+//Fetch user types
+router.get('/user-types', userServices.fetchUserTypes);
+
+module.exports = router;
+
 // //Authorize access
 // router.post("/authorize", userServices.authorizeAccess);
 
@@ -29,5 +34,3 @@ router.get('/logout', userServices.logoutUser);
 // router.post("/forgot-password", userServices.forgotPassword);
 // router.post("/set-password", userServices.setPassword);
 // router.get("/reset/:token/:userId", userServices.checkPwToken);
-
-module.exports = router;

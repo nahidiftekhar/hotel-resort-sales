@@ -107,6 +107,29 @@ async function joinFilterDb(tableName1, tableName2, filterCondition) {
   }
 }
 
+async function joinFilterSingleRecordDb(
+  tableName1,
+  tableName2,
+  filterCondition
+) {
+  try {
+    const result = await tableName1.findOne({
+      // raw: true,
+      where: filterCondition,
+      include: [
+        {
+          model: tableName2,
+          attributes: {},
+        },
+      ],
+    });
+    return result;
+  } catch (error) {
+    console.log('Error executing query: ' + error);
+    return 0;
+  }
+}
+
 async function joinTwoTablesFilterDb(
   tableName1,
   tableName2,
@@ -242,6 +265,7 @@ module.exports = {
   modifySingleRecordDb,
   joinAllDb,
   joinFilterDb,
+  joinFilterSingleRecordDb,
   joinTwoTablesFilterDb,
   joinThreeTablesFilterDb,
   sumWithFilterDb,

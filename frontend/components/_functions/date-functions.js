@@ -59,6 +59,15 @@ export function dateStringToDate(dateString) {
   return new Date(year, month, day);
 }
 
+export function dateStringFormattedToDate(dateString, splitter) {
+  const dateComponent = dateString.split(splitter);
+  return new Date(
+    dateComponent[0],
+    Number(dateComponent[1]) - 1,
+    dateComponent[2]
+  );
+}
+
 export function datetimeStringToDateTime(datetimeString) {
   const datetime = new Date(datetimeString);
   const datePart = datetimeStringToDate(datetimeString);
