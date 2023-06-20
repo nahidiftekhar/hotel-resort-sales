@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: Sequelize.STRING,
     },
+    phone: {
+      type: Sequelize.STRING,
+    },
     is_deactive: {
       type: Sequelize.BOOLEAN,
       defaultValue: true,

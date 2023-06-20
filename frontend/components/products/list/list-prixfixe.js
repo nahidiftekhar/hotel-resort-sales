@@ -12,6 +12,7 @@ import { productDescriptionShortener } from '../../_functions/string-format';
 import ViewProduct from '../view-product';
 import EditProduct from '../edit-products';
 import DeleteProduct from '../delete-product';
+import AddProduct from '../add-products';
 
 function ListPrixfixe() {
   const [refresh, setRefresh] = useState(true);
@@ -22,6 +23,7 @@ function ListPrixfixe() {
   const [showEditProduct, setShowEditProduct] = useState(false);
   const [showDeactivateProduct, setShowDeactivateProduct] = useState(false);
   const [singleProduct, setSingleProduct] = useState({});
+  const [showAddProduct, setShowAddProduct] = useState(false);
 
   useEffect(() => {
     const fetchPackageList = async () => {
@@ -49,14 +51,15 @@ function ListPrixfixe() {
     },
     {
       name: 'Category',
-      selector: (row) => row.prixfixecategory.name,
+      selector: (row) => row.prixfixecategory?.name,
       sortable: true,
       wrap: true,
       grow: 1,
     },
     {
       name: 'Description',
-      selector: (row) => parse(productDescriptionShortener(row.description, 5)),
+      selector: (row) =>
+        parse(productDescriptionShortener(row.description || '', 5)),
       sortable: false,
       wrap: true,
       grow: 2,
@@ -161,6 +164,19 @@ function ListPrixfixe() {
 
   return (
     <>
+      <div className="d-flex justify-content-end my-3">
+        <ReactiveButton
+          buttonState="idle"
+          idleText="Add New"
+          color="indigo"
+          rounded
+          outline
+          onClick={() => {
+            setShowAddProduct(true);
+          }}
+        />
+      </div>
+
       <DataTable
         title="List of all active prixfixe items"
         columns={headerResponsive}
@@ -195,6 +211,12 @@ function ListPrixfixe() {
         setShow={setShowDeactivateProduct}
         setRefresh={setRefresh}
         productDetail={singleProduct}
+        productType="prixfixe"
+      />
+      <AddProduct
+        show={showAddProduct}
+        setShow={setShowAddProduct}
+        setRefresh={setRefresh}
         productType="prixfixe"
       />
     </>

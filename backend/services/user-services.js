@@ -25,6 +25,41 @@ async function hashString(req, res, next) {
   });
 }
 
+async function addUser(req, res, next) {
+  const { email, password, name, phone, userType } = req.body;
+  const existingRecord = await dbStandard.findOneFilterDb(credentials, {
+    username: name,
+  });
+  if (existingRecord)
+    return res.json({
+      successStatus: false,
+      message: existingRecord.is_deactive
+        ? 'This account has not been verified, please check email to verify and activate account'
+        : 'This email ID is already used',
+      type: userType,
+      passChangePending: existingRecord.pass_change_required,
+    });
+  bcrypt.hash(password, saltRounds, async function (err, hash) {
+    const dbResult = await dbStandard.addSingleRecordDB(credentials, {
+      username: name,
+      password: hash,
+      email: email,
+      phone: phone,
+      is_deactive: false,
+      pass_change_required: true,
+      user_type_id: userType,
+    });
+
+    const successStatus = dbResult.success ? true : false;
+    const message = dbResult.success ? dbResult.dbResult.id : dbResult.error;
+    return res.json({
+      successStatus: successStatus,
+      message: message,
+      type: userType,
+    });
+  });
+}
+
 async function addUserPlainText(req, res, next) {
   const { email, passPlain, type, userName } = req.body;
   const userType = type ? type : 0;
@@ -99,6 +134,7 @@ async function changePassword(req, res, next) {
 
 async function loginUser(req, res, next) {
   const { email, passPlain } = req.body;
+
   const dbResult = await dbStandard.findOneFilterDb(credentials, {
     email: email,
   });
@@ -118,29 +154,18 @@ async function loginUser(req, res, next) {
       reason:
         'This account has not been verified, please check email to verify and activate account',
     });
-  if (dbResult.pass_change_required)
-    return res.json({
-      successStatus: false,
-      type: 0,
-      forcePassChange: true,
-      reason: 'Password change is mandatory',
-    });
+  // if (dbResult.pass_change_required)
+  //   return res.json({
+  //     successStatus: false,
+  //     type: 0,
+  //     forcePassChange: true,
+  //     reason: 'Password change is mandatory',
+  //   });
   const passwordHashDb = dbResult.password;
   bcrypt.compare(passPlain, passwordHashDb, function (err, result) {
     const reasonText = result
       ? 'User Authenticated'
       : 'Your entered email/password did not match';
-
-    console.log(
-      JSON.stringify({
-        successStatus: result,
-        reason: reasonText,
-        id: dbResult.dataValues.id,
-        username: dbResult.dataValues.username,
-        usertype: dbResult.dataValues.user_type_id,
-        email: dbResult.dataValues.email,
-      })
-    );
 
     return res.json({
       successStatus: result,
@@ -317,6 +342,7 @@ async function setPassword(req, res, next) {
 module.exports = {
   testDb,
   addUserPlainText,
+  addUser,
   changePassword,
   loginUser,
   logoutUser,

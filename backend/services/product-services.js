@@ -141,11 +141,11 @@ async function activatePackage(req, res, next) {
 }
 
 async function addPrixfixeItem(req, res, next) {
-  const { name, categoryId, description, price, imageUrl } = req.body;
+  const { name, productType, description, price, imageUrl } = req.body;
   const dbResult = await dbStandard.addSingleRecordDB(prixfixeitems, {
     name,
     description,
-    category_id: categoryId,
+    category_id: productType,
     price,
     image_url: imageUrl,
   });
@@ -155,7 +155,6 @@ async function addPrixfixeItem(req, res, next) {
 async function editPrixfixeItem(req, res, next) {
   const { name, productType, description, price, imageUrl, prixfixeId } =
     req.body;
-  console.log('req.body: ' + JSON.stringify(req.body));
   const dbResult = await dbStandard.modifySingleRecordDb(
     prixfixeitems,
     { id: prixfixeId },
@@ -184,11 +183,11 @@ async function deactivatePrixfixe(req, res, next) {
 }
 
 async function addAlacarteItem(req, res, next) {
-  const { name, categoryId, description, price, imageUrl } = req.body;
+  const { name, productType, description, price, imageUrl } = req.body;
   const dbResult = await dbStandard.addSingleRecordDB(alacarteitems, {
     name: name,
     description: description,
-    category_id: categoryId,
+    category_id: productType,
     price: price,
     image_url: imageUrl,
   });
@@ -196,7 +195,7 @@ async function addAlacarteItem(req, res, next) {
 }
 
 async function editAlacarteItem(req, res, next) {
-  const { name, categoryId, description, price, imageUrl, alacarteId } =
+  const { name, productType, description, price, imageUrl, alacarteId } =
     req.body;
   const dbResult = await dbStandard.modifySingleRecordDb(
     alacarteitems,
@@ -204,7 +203,7 @@ async function editAlacarteItem(req, res, next) {
     {
       name: name,
       description: description,
-      category_id: categoryId,
+      category_id: productType,
       price: price,
       image_url: imageUrl,
     }

@@ -179,7 +179,7 @@ function ListService() {
         />
       </div>
       <DataTable
-        title="List of all active a la carte items"
+        title="List of all active service items"
         columns={headerResponsive}
         data={filterData}
         pagination

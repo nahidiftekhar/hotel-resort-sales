@@ -12,6 +12,7 @@ import { productDescriptionShortener } from '../../_functions/string-format';
 import ViewProduct from '../view-product';
 import EditProduct from '../edit-products';
 import DeleteProduct from '../delete-product';
+import AddProduct from '../add-products';
 
 function ListAlacarte() {
   const [refresh, setRefresh] = useState(true);
@@ -22,6 +23,7 @@ function ListAlacarte() {
   const [showEditProduct, setShowEditProduct] = useState(false);
   const [showDeactivateProduct, setShowDeactivateProduct] = useState(false);
   const [singleProduct, setSingleProduct] = useState({});
+  const [showAddProduct, setShowAddProduct] = useState(false);
 
   useEffect(() => {
     const fetchProductList = async () => {
@@ -161,6 +163,19 @@ function ListAlacarte() {
 
   return (
     <>
+      <div className="d-flex justify-content-end my-3">
+        <ReactiveButton
+          buttonState="idle"
+          idleText="Add New"
+          color="indigo"
+          rounded
+          outline
+          onClick={() => {
+            setShowAddProduct(true);
+          }}
+        />
+      </div>
+
       <DataTable
         title="List of all active a la carte items"
         columns={headerResponsive}
@@ -195,6 +210,13 @@ function ListAlacarte() {
         setShow={setShowDeactivateProduct}
         setRefresh={setRefresh}
         productDetail={singleProduct}
+        productType="alacarte"
+      />
+
+      <AddProduct
+        show={showAddProduct}
+        setShow={setShowAddProduct}
+        setRefresh={setRefresh}
         productType="alacarte"
       />
     </>

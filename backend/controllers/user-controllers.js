@@ -10,6 +10,9 @@ router.get('/hash-string/:string', userServices.hashString);
 //User signup
 router.post('/signup', userServices.addUserPlainText); //tested
 
+//Create user
+router.post('/create-user', userServices.addUser);
+
 //Change Password
 router.post('/change-password', userServices.changePassword); //tested
 
