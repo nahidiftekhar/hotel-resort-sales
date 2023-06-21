@@ -10,7 +10,7 @@ function AddCheckin() {
   const [checkinGuests, setCheckinGuests] = useState([]);
   const [checkInData, setCheckinData] = useState({});
 
-  const handleCreateCheckin = async () => {
+  const handleCreateCheckin = async ({ session }) => {
     const guestIdArray = checkinGuests.map((obj) => obj.id);
     const submissionData = {
       checkinDate: checkInData.checkinDate,
@@ -22,6 +22,7 @@ function AddCheckin() {
       guestIdArray: guestIdArray,
       guestId: guestIdArray[0],
       notes: checkInData.notes,
+      userId: session.user.id,
     };
     const res = await createCheckinApi(submissionData);
     if (res.success) {

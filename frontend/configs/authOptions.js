@@ -1,6 +1,5 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { loginApi } from '@/api/server/user-management/authentication-api';
-import { writeToStorage } from '@/components/_functions/storage-variable-management';
 
 export const authOptions = {
   session: {

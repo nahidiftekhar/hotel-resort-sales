@@ -5,7 +5,7 @@ import TopNavbar from './Navbar';
 import Footer from './Footer';
 import GoTop from './GoTop';
 import { Container } from 'react-bootstrap';
-import { NextAuthProvider } from 'pages/provider';
+import { NextAuthProvider } from 'provider';
 
 const Layout = ({ children, staticContent, session }) => {
   return (
