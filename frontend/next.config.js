@@ -21,7 +21,7 @@ module.exports = {
   swcMinify: true,
   experimental: { appDir: true },
   images: {
-    domains: ['images.unsplash.com', 'localhost', 'loremflickr.com'],
+    domains: ['images.unsplash.com', 'localhost', '161.97.137.104'],
   },
 };
 

@@ -6,11 +6,11 @@ import GuestSection from '@/components/hospitality/add-checkin/guests-section';
 import CheckinForm from '@/components/hospitality/add-checkin/checkin-form';
 import { createCheckinApi } from '@/api/visit-api';
 
-function AddCheckin() {
+function AddCheckin({ session }) {
   const [checkinGuests, setCheckinGuests] = useState([]);
   const [checkInData, setCheckinData] = useState({});
 
-  const handleCreateCheckin = async ({ session }) => {
+  const handleCreateCheckin = async () => {
     const guestIdArray = checkinGuests.map((obj) => obj.id);
     const submissionData = {
       checkinDate: checkInData.checkinDate,

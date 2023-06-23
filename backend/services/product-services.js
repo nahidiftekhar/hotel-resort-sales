@@ -63,20 +63,21 @@ async function fetchAllServices(req, res, next) {
 async function addPackage(req, res, next) {
   const {
     name,
-    categoryId,
+    productType,
     description,
     priceAdult,
     priceKids,
     imageUrl,
     unit,
     unitKids,
+
   } = req.body;
   const dbResult = await dbStandard.addSingleRecordDB(packages, {
     name: name,
     description: description,
     price_adult: priceAdult,
     price_kids: priceKids,
-    category_id: categoryId,
+    category_id: productType,
     image_url: imageUrl,
     unit: unit,
     unit_kids: unitKids,

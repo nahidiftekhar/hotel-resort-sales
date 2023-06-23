@@ -10,9 +10,10 @@ import {
   CustomTextInput,
 } from '@/components/_commom/form-elements';
 import { editPackageApi, listPackageTypesApi } from '@/api/products-api';
+import axios from 'axios';
 
 function EditPackage({ productDetail, isNew, setRefresh, setShow }) {
-  const [value, setValue] = useState(productDetail.description);
+  const [value, setValue] = useState(productDetail?.description);
   const [deltaValue, setDeltaValue] = useState('');
   const [error, setError] = useState(false);
   const [productTypes, setProductTypes] = useState([]);
@@ -28,8 +29,14 @@ function EditPackage({ productDetail, isNew, setRefresh, setShow }) {
 
   const handleSubmit = async (productData) => {
     if (productData) {
-      const apiResult = await editPackageApi(productData, value, image);
-      if (apiResult.success) {
+      // const apiResult = await editPackageApi(productData, value, image);
+      const apiResult = await axios.post('/api/products/edit-package-api', {
+        productData,
+        description: value,
+        imageUrl: image,
+        isNew,
+      });
+      if (apiResult.data.success) {
         setRefresh(true);
         setShow(false);
       } else {
@@ -47,14 +54,14 @@ function EditPackage({ productDetail, isNew, setRefresh, setShow }) {
     <div className="">
       <Formik
         initialValues={{
-          name: isNew ? '' : productDetail.name,
-          priceAdult: isNew ? 0 : productDetail.price_adult,
-          priceKids: isNew ? 0 : productDetail.price_kids,
-          imageUrl: isNew ? '' : productDetail.image_url,
-          unit: isNew ? 'Per person per day' : productDetail.unit,
-          unitKids: isNew ? 'Per person per day' : productDetail.unit_kids,
-          productType: isNew ? 1 : productDetail.category_id,
-          packageId: isNew ? 0 : productDetail.id,
+          name: isNew ? '' : productDetail?.name,
+          priceAdult: isNew ? 0 : productDetail?.price_adult,
+          priceKids: isNew ? 0 : productDetail?.price_kids,
+          imageUrl: isNew ? '' : productDetail?.image_url,
+          unit: isNew ? 'Per person per day' : productDetail?.unit,
+          unitKids: isNew ? 'Per person per day' : productDetail?.unit_kids,
+          productType: isNew ? 1 : productDetail?.category_id,
+          packageId: isNew ? 0 : productDetail?.id,
         }}
         // validationSchema={validationRules}
         onSubmit={(values) => handleSubmit(values)}>
@@ -121,7 +128,7 @@ function EditPackage({ productDetail, isNew, setRefresh, setShow }) {
                 <Col md={6}>
                   <ImageUpload
                     setImage={setImage}
-                    imageFile={productDetail.image_url || ''}
+                    imageFile={productDetail?.image_url || ''}
                     saveLocation={'products/packages'}
                   />
                 </Col>

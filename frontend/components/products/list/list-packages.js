@@ -12,6 +12,7 @@ import { productDescriptionShortener } from '../../_functions/string-format';
 import ViewProduct from '../view-product';
 import EditProduct from '../edit-products';
 import DeleteProduct from '../delete-product';
+import AddProduct from '../add-products';
 
 function ListPackages() {
   const [refresh, setRefresh] = useState(true);
@@ -22,6 +23,7 @@ function ListPackages() {
   const [showEditProduct, setShowEditProduct] = useState(false);
   const [showDeactivateProduct, setShowDeactivateProduct] = useState(false);
   const [singleProduct, setSingleProduct] = useState({});
+  const [showAddProduct, setShowAddProduct] = useState(false);
 
   useEffect(() => {
     const fetchPackageList = async () => {
@@ -163,6 +165,19 @@ function ListPackages() {
 
   return (
     <>
+      <div className="d-flex justify-content-end my-3">
+        <ReactiveButton
+          buttonState="idle"
+          idleText="Add New"
+          color="indigo"
+          rounded
+          outline
+          onClick={() => {
+            setShowAddProduct(true);
+          }}
+        />
+      </div>
+
       <DataTable
         title="List of all active packages"
         columns={headerResponsive}
@@ -197,6 +212,13 @@ function ListPackages() {
         setShow={setShowDeactivateProduct}
         setRefresh={setRefresh}
         productDetail={singleProduct}
+        productType="package"
+      />
+
+      <AddProduct
+        show={showAddProduct}
+        setShow={setShowAddProduct}
+        setRefresh={setRefresh}
         productType="package"
       />
     </>
