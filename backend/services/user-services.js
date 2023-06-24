@@ -47,6 +47,16 @@ async function addUser(req, res, next) {
       user_type_id: userType,
     });
 
+    if (dbResult.success) {
+      const messageBody =
+        'Hello,<br /><br />New user created for you for FNF Resort. <br />' +
+        '<br />Your Password: ' +
+        password +
+        '<br /><br />You can now login to the system. <br />You are strongly recommended to modify password upon login.';
+      const mailSubject = 'Password Reset';
+      await sendMail.sendSingleEmail(email, messageBody, mailSubject);
+    }
+
     const successStatus = dbResult.success ? true : false;
     const message = dbResult.success ? dbResult.dbResult.id : dbResult.error;
     return res.json({
