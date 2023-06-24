@@ -77,7 +77,7 @@ body {
   h6 {
     font-family: Candara, sans-serif;
     font-weight: 400;
-    font-size: 0.6em;
+    font-size: 1em;
     padding: 0;
     margin: 0;
   }
@@ -228,6 +228,9 @@ body {
   .min-vw-50 {
     min-width: 50vw;
   }
+  .min-vw-30 {
+    min-width: 30vw;
+  }
   .max-vw-30 {
     max-width: 30vw;
   }
@@ -236,6 +239,10 @@ body {
   }
   .w-100px {
     width: 100px !important;
+  }
+
+  .w-200px {
+    width: 200px !important;
   }
 
   .w-75px {
@@ -279,6 +286,19 @@ body {
 
 .border-bottom {
   border-bottom: 1px solid #cecece;
+}
+
+.important-div {
+  cursor: pointer !important;
+}
+
+.placeholder {
+  cursor: pointer;
+  color: v.$white-color;
+
+  &:hover {
+    color: v.$theme-color4;
+  }
 }
 
 .bg-theme {

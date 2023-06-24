@@ -17,7 +17,7 @@ export const LogInButton = () => {
 export const LogOutButton = () => {
   const [buttonState, setButtonState] = useState('idle');
   return (
-    <div className="reactive-button-wauto ms-md-5">
+    <div className="reactive-button-wauto">
       <ReactiveButton
         buttonState={buttonState}
         idleText={<Icon nameIcon="FaPowerOff" propsIcon={{ size: 12 }} />}

@@ -8,10 +8,7 @@ const dbStandard = require('./db-services/db-standard');
 const sendMail = require('./utils/send-email');
 const { secretConfig } = require('../configs/secrets.config');
 const saltRounds = secretConfig.SALT_ROUNDS;
-const {
-  issueAccessToken,
-  issueRefreshToken,
-} = require('./utils/jwt-functions');
+const helper = require('../services/utils/helper');
 
 async function testDb(req, res, next) {
   const dbResult = await db.testQuery(credentials);
@@ -87,13 +84,15 @@ async function addUserPlainText(req, res, next) {
 }
 
 async function changePassword(req, res, next) {
-  const { oldPassword, newPassword, userName } = req.body;
-  const existingRecord = await db.findUserByUsernameDb(userName);
+  const { newPassword, email } = req.body;
+  const existingRecord = await dbStandard.findOneFilterDb(credentials, {
+    email: email,
+  });
   if (!existingRecord)
     return res.json({
       successStatus: false,
       type: 0,
-      reason: 'credential mismatch',
+      reason: 'email mismatch',
     });
 
   if (!newPassword)
@@ -103,32 +102,79 @@ async function changePassword(req, res, next) {
       reason: 'New password cannot be empty',
     });
 
-  bcrypt.compare(oldPassword, existingRecord.password, function (err, result) {
-    if (result) {
-      bcrypt.hash(newPassword, saltRounds, async function (err, hash) {
-        try {
-          const dbResult = await db.changePassword(hash, userName);
-          if (dbResult)
-            return res.json({
-              successStatus: true,
-              type: existingRecord.user_type_id,
-              reason:
-                'Password change successful. Please log in with new password.',
-            });
-        } catch (error) {
-          return res.json({
-            successStatus: false,
-            type: existingRecord.user_type_id,
-            reason: 'Password change failed.',
-          });
-        }
-      });
-    } else
+  bcrypt.hash(newPassword, saltRounds, async function (err, hash) {
+    try {
+      const dbResult = await dbStandard.modifySingleRecordDb(
+        credentials,
+        { email: email },
+        { password: hash, pass_change_required: false }
+      );
+      if (dbResult)
+        return res.json({
+          successStatus: true,
+          type: existingRecord.user_type_id,
+          reason:
+            'Password change successful. Please log in with new password.',
+        });
+    } catch (error) {
       return res.json({
         successStatus: false,
         type: existingRecord.user_type_id,
-        reason: 'Username/password mismatch.',
+        reason: 'Password change failed.',
       });
+    }
+  });
+}
+
+async function resetPassword(req, res, next) {
+  const { email } = req.body;
+  const newPassword = await helper.generateRandomString(6);
+  const existingRecord = await dbStandard.findOneFilterDb(credentials, {
+    email: email,
+  });
+  if (!existingRecord)
+    return res.json({
+      successStatus: false,
+      type: 0,
+      reason: 'email mismatch',
+    });
+
+  if (!newPassword)
+    return res.json({
+      successStatus: false,
+      type: 0,
+      reason: 'New password cannot be empty',
+    });
+
+  bcrypt.hash(newPassword, saltRounds, async function (err, hash) {
+    try {
+      const dbResult = await dbStandard.modifySingleRecordDb(
+        credentials,
+        { email: email },
+        { password: hash, pass_change_required: true }
+      );
+      if (dbResult) {
+        const messageBody =
+          'Hello,<br /><br />Your password has been reset. <br />' +
+          '<br />New Password: ' +
+          newPassword +
+          '<br /><br />You can now use the new password to login. <br />You are strongly recommended to modify password upon login.';
+        const mailSubject = 'Password Reset';
+        await sendMail.sendSingleEmail(email, messageBody, mailSubject);
+
+        return res.json({
+          successStatus: true,
+          reason:
+            'Password change successful. Please log in with new password.',
+        });
+      }
+    } catch (error) {
+      return res.json({
+        successStatus: false,
+        type: existingRecord.user_type_id,
+        reason: 'Password change failed.',
+      });
+    }
   });
 }
 
@@ -174,6 +220,7 @@ async function loginUser(req, res, next) {
       username: dbResult.dataValues.username,
       usertype: dbResult.dataValues.user_type_id,
       email: dbResult.dataValues.email,
+      passChangePending: dbResult.dataValues.pass_change_required,
     });
   });
 }
@@ -344,6 +391,7 @@ module.exports = {
   addUserPlainText,
   addUser,
   changePassword,
+  resetPassword,
   loginUser,
   logoutUser,
   hashString,

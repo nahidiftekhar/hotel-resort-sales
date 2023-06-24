@@ -16,9 +16,7 @@ const validationRules = Yup.object({
   email: Yup.string()
     .email('Please enter a valid email')
     .required('Email is required'),
-  phone: Yup.string()
-    // .matches(/^\+[1-9]\d{1,14}$/, 'Please enter a valid phone number')
-    .required('Phone number is required'),
+  phone: Yup.string().required('Phone number is required'),
 });
 
 export default function CreateUser({ session }) {

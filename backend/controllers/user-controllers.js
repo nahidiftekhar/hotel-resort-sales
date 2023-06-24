@@ -25,6 +25,12 @@ router.get('/logout', userServices.logoutUser);
 //Fetch user types
 router.get('/user-types', userServices.fetchUserTypes);
 
+//Change password (user provided password)
+router.post('/change-password', userServices.changePassword);
+
+//Reset password (system generated)
+router.post('/reset-password', userServices.resetPassword);
+
 module.exports = router;
 
 // //Authorize access

@@ -70,7 +70,6 @@ async function addPackage(req, res, next) {
     imageUrl,
     unit,
     unitKids,
-
   } = req.body;
   const dbResult = await dbStandard.addSingleRecordDB(packages, {
     name: name,

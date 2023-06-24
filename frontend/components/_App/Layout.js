@@ -6,13 +6,18 @@ import Footer from './Footer';
 import GoTop from './GoTop';
 import { Container } from 'react-bootstrap';
 import { NextAuthProvider } from 'provider';
+import ChangePassword from 'pages/auth/change-password';
 
 const Layout = ({ children, staticContent, session }) => {
+  // if (session?.user?.passChangePending) {
+  //   return <ChangePassword session={session} />;
+  // }
+
   return (
     <>
       <Meta metaContent={staticContent.metaContent} />
       <NextAuthProvider>
-        {session && <TopNavbar />}
+        {session && <TopNavbar session={session} />}
         {session && (
           <Container className="d-flex align-items-center justify-content-end my-1">
             <p className="mx-1 my-0 text-muted smaller-label fw-bold">

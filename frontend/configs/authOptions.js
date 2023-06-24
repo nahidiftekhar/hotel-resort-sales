@@ -1,5 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { loginApi } from '@/api/server/user-management/authentication-api';
+import ChangePassword from 'pages/auth/change-password';
 
 export const authOptions = {
   session: {
@@ -30,6 +31,7 @@ export const authOptions = {
             email: user.email,
             username: user.username,
             usertype: user.usertype,
+            passChangePending: user.passChangePending,
           };
         } else {
           return null;
@@ -49,6 +51,7 @@ export const authOptions = {
           username: token.username,
           usertype: token.usertype,
           email: token.email,
+          passChangePending: token.passChangePending,
         },
       };
     },
@@ -62,6 +65,7 @@ export const authOptions = {
           username: u.username,
           usertype: u.usertype,
           email: u.email,
+          passChangePending: u.passChangePending,
         };
       }
       return token;

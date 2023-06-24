@@ -12,11 +12,6 @@ async function generateRandomString(n) {
       Math.floor(Math.random() * characters.length)
     );
   }
-  const matchExisting = await Cards.count({
-    where: { card_link: randomString },
-  });
-  if (matchExisting) generateRandomString(n);
-  console.log(randomString);
   return randomString;
 }
 
