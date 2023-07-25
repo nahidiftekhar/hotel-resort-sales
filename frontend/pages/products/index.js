@@ -33,6 +33,11 @@ function AddNewPackage() {
       <Link href="/products/list?type=service">
         <ReactiveButton buttonState="idle" idleText="Services" size="large" />
       </Link>
+
+      <Link href="/products/list?type=roomtypes">
+        <ReactiveButton buttonState="idle" idleText="Room Categories" size="large" />
+      </Link>
+
     </div>
   );
 }

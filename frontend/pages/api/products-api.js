@@ -40,14 +40,11 @@ export const listAllAlacarteApi = async () => {
 export const listAllRoomsApi = async () => {
   const apiResult = await axios.get(
     `${beConfig.host}/product-management/room-list`,
-    // `${beConfig.host}/product-management/room-categories`,
     {
       headers: {
         'X-CM-API-KEY': beConfig.key,
       },
     }
-
-    // `${beConfig.host}/product-management/fetch-rooms`
   );
   return apiResult.data;
 };
@@ -224,6 +221,39 @@ export const editRoomApi = async (
   return apiResult.data;
 };
 
+export const editRoomTypeApi = async (
+  productDetails,
+  description,
+  isNew
+) => {
+  const apiResult = isNew
+    ? await axios.post(
+        `${beConfig.host}/product-management/add-room-type`,
+        {
+          ...productDetails,
+          description,
+        },
+        {
+          headers: {
+            'X-CM-API-KEY': beConfig.key,
+          },
+        }
+      )
+    : await axios.post(
+        `${beConfig.host}/product-management/edit-room-type`,
+        {
+          ...productDetails,
+          description,
+        },
+        {
+          headers: {
+            'X-CM-API-KEY': beConfig.key,
+          },
+        }
+      );
+  return apiResult.data;
+};
+
 export const editServiceApi = async (
   packageDetails,
   description,
@@ -303,6 +333,19 @@ export const deactivateRoomApi = async (roomId) => {
   const apiResult = await axios.post(
     `${beConfig.host}/product-management/deactivate-room`,
     { roomId },
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
+  );
+  return apiResult.data;
+};
+
+export const deactivateRoomTypeApi = async (roomTypeId) => {
+  const apiResult = await axios.post(
+    `${beConfig.host}/product-management/deactivate-room-type`,
+    { roomTypeId },
     {
       headers: {
         'X-CM-API-KEY': beConfig.key,

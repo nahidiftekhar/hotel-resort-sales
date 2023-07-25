@@ -22,6 +22,12 @@ router.post('/deactivate-room', productServices.deactivateRoom);
 router.get('/room-categories', productServices.fetchRoomTypes);
 router.get('/room-list', productServices.fetchRooms);
 
+// Room type
+router.get('/room-categories', productServices.fetchRoomTypes);
+router.post('/edit-room-type', productServices.editRoomType);
+router.post('/add-room-type', productServices.addRoomType);
+router.post('/deactivate-room-type', productServices.deactivateRoomType);
+
 // Add single prixfixe
 router.post('/add-prixfixe', productServices.addPrixfixeItem);
 router.post('/edit-prixfixe', productServices.editPrixfixeItem);
@@ -34,7 +40,7 @@ router.post('/edit-service', productServices.editService);
 router.get('/service-categories', productServices.fetchServiceTypes);
 router.post('/deactivate-service', productServices.deactivateService);
 
-// Add single room
+// Alacarte
 router.post('/add-alacarte', productServices.addAlacarteItem);
 router.post('/edit-alacarte', productServices.editAlacarteItem);
 router.get('/alacarte-categories', productServices.fetchAlacarteTypes);

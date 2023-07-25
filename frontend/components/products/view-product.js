@@ -5,6 +5,7 @@ import ViewPrixfixe from './view/view-prixfixe';
 import ViewAlacarte from './view/view-alacarte';
 import ViewRoom from './view/view-room';
 import ViewService from './view/view-service';
+import ViewRoomType from './view/view-room-type';
 
 function ViewProduct({ show, setShow, productDetail, productType }) {
   return (
@@ -32,6 +33,9 @@ function ViewProduct({ show, setShow, productDetail, productType }) {
 
             case 'room':
               return <ViewRoom productDetail={productDetail} />;
+
+            case 'roomtype':
+              return <ViewRoomType productDetail={productDetail} />;
 
             case 'service':
               return <ViewService productDetail={productDetail} />;

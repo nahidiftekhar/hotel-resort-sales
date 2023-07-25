@@ -269,6 +269,61 @@ async function editRoom(req, res, next) {
   return res.json(dbResult);
 }
 
+async function addRoomType(req, res, next) {
+  const {
+    roomTypeName,
+    occupancyAdult,
+    occupancyChild,
+    price,
+    description,
+  } = req.body;
+  const dbResult = await dbStandard.addSingleRecordDB(roomtypes, {
+    room_type_name: roomTypeName,
+    max_adult: occupancyAdult,
+    max_child: occupancyChild,
+    price: price,
+    description: description,
+});
+  return res.json(dbResult);
+}
+
+
+async function editRoomType(req, res, next) {
+  const {
+    roomTypeId,
+    roomTypeName,
+    occupancyAdult,
+    occupancyChild,
+    price,
+    description,
+  } = req.body;
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    roomtypes,
+    { id: roomTypeId },
+    {
+      room_type_name: roomTypeName,
+      max_adult: occupancyAdult,
+      max_child: occupancyChild,
+      price: price,
+      description: description,
+    }
+  );
+  return res.json(dbResult);
+}
+
+async function deactivateRoomType(req, res, next) {
+  const { roomTypeId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    roomtypes,
+    { id: roomTypeId },
+    {
+      is_live: false,
+    }
+  );
+  return res.json(dbResult);
+}
+
 async function deactivateRoom(req, res, next) {
   const { roomId } = req.body;
 
@@ -348,7 +403,7 @@ async function fetchServiceTypes(req, res, next) {
 }
 
 async function fetchRoomTypes(req, res, next) {
-  const dbResult = await dbStandard.selectAllDb(roomtypes);
+  const dbResult = await dbStandard.findAllFilterDb(roomtypes, {is_live: true});
   return res.json(dbResult);
 }
 
@@ -385,4 +440,7 @@ module.exports = {
   deactivateService,
   deactivatePackage,
   activatePackage,
+  editRoomType,
+  addRoomType,
+  deactivateRoomType
 };

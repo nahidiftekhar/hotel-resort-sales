@@ -1,12 +1,12 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
-import ViewPackages from './view/view-package';
 import EditPackage from './edit/edit-package';
 import { camelCaseToCapitalizedString } from '../_functions/string-format';
 import EditPrixfixe from './edit/edit-prixfixe';
 import EditAlacarte from './edit/edit-alacarte';
 import EditRoom from './edit/edit-room';
 import EditService from './edit/edit-service';
+import EditRoomType from './edit/edit-room-type';
 
 function EditProduct({
   show,
@@ -29,7 +29,7 @@ function EditProduct({
             ? productDetail?.roomtype?.room_type_name +
               '-' +
               productDetail.room_number
-            : productDetail.name}
+            : productType === 'roomtype' ? productDetail.room_type_name : productDetail.name}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -75,7 +75,17 @@ function EditProduct({
                 />
               );
 
-            case 'service':
+              case 'roomtype':
+                return (
+                  <EditRoomType
+                    productDetail={productDetail}
+                    isNew={false}
+                    setRefresh={setRefresh}
+                    setShow={setShow}
+                  />
+                );
+  
+              case 'service':
               return (
                 <EditService
                   productDetail={productDetail}

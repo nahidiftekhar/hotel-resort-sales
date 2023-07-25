@@ -49,6 +49,8 @@ export function productDescriptionShortener(htmlString, maxCount) {
   let lastIndex = -1;
   const substring = '<br />';
 
+  if(!htmlString) return('')
+
   const string = htmlString
     .replace(/<\/?(div|p)[^>]*>/g, '\n')
     .replace(/<[^>]+>/g, '')

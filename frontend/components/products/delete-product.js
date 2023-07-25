@@ -7,6 +7,7 @@ import {
   deactivatePackageApi,
   deactivatePrixfixeApi,
   deactivateRoomApi,
+  deactivateRoomTypeApi,
   deactivateServiceApi,
 } from '@/api/products-api';
 
@@ -31,6 +32,9 @@ function DeleteProduct({
         break;
       case 'room':
         apiResult = await deactivateRoomApi(productDetail.id);
+        break;
+      case 'roomtype':
+        apiResult = await deactivateRoomTypeApi(productDetail.id);
         break;
       case 'service':
         apiResult = await deactivateServiceApi(productDetail.id);
@@ -60,7 +64,7 @@ function DeleteProduct({
             ? productDetail.roomtype?.room_type_name +
               '-' +
               productDetail.room_number
-            : productDetail.name}
+            : productType === 'roomtype' ? productDetail.room_type_name : productDetail.name}
         </p>
         <div className="d-flex justify-content-center mt-4 mb-2">
           <div className="mx-2">

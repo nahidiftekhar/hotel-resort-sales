@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     max_adult: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.INTEGER, 
       allowNull: false,
     },
     max_child: {
@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
     price: {
       type: Sequelize.DECIMAL(10, 2),
       allowNull: false,
+    },
+    is_live: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true,
     },
   });
 

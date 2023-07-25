@@ -7,6 +7,7 @@ import ListPrixfixe from '@/components/products/list/list-prixfixe';
 import ListAlacarte from '@/components/products/list/list-alacarte';
 import ListRoom from '@/components/products/list/list-room';
 import ListService from '@/components/products/list/list-service';
+import ListRoomTypes from '@/components/products/list/list-room-types';
 
 function List() {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +45,10 @@ function List() {
           case 'room':
             return <ListRoom />;
 
-          case 'service':
+            case 'roomtypes':
+              return <ListRoomTypes />;
+
+            case 'service':
             return <ListService />;
 
           default:
