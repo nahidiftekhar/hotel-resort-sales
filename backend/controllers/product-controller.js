@@ -15,12 +15,18 @@ router.post('/activate-package', productServices.activatePackage);
 router.post('/deactivate-package', productServices.deactivatePackage);
 router.get('/package-categories', productServices.fetchPackagesTypes);
 
-// Add single room
+// Room
 router.post('/add-room', productServices.addRoom);
 router.post('/edit-room', productServices.editRoom);
 router.post('/deactivate-room', productServices.deactivateRoom);
 router.get('/room-categories', productServices.fetchRoomTypes);
 router.get('/room-list', productServices.fetchRooms);
+
+// Venue
+router.post('/add-venue', productServices.addVenue);
+router.post('/edit-venue', productServices.editVenue);
+router.post('/deactivate-venue', productServices.deactivateVenue);
+router.get('/venue-list', productServices.fetchVenues);
 
 // Room type
 router.get('/room-categories', productServices.fetchRoomTypes);

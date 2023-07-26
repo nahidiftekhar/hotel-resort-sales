@@ -8,6 +8,7 @@ import ListAlacarte from '@/components/products/list/list-alacarte';
 import ListRoom from '@/components/products/list/list-room';
 import ListService from '@/components/products/list/list-service';
 import ListRoomTypes from '@/components/products/list/list-room-types';
+import ListVenues from '@/components/products/list/list-venue';
 
 function List() {
   const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +52,10 @@ function List() {
             case 'service':
             return <ListService />;
 
-          default:
+            case 'venues':
+            return <ListVenues />;
+
+            default:
             setTimeout(() => {
               return <div className="error-message">Something went wrong</div>;
             }, 1000);

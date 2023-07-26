@@ -13,6 +13,7 @@ export const DatePickerField = ({ ...props }) => {
       onChange={(val) => {
         setFieldValue(field.name, val);
       }}
+      dateFormat="yyyy/MM/dd"
     />
   );
 };

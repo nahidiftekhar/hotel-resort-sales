@@ -49,6 +49,18 @@ export const listAllRoomsApi = async () => {
   return apiResult.data;
 };
 
+export const listAllVenuesApi = async () => {
+  const apiResult = await axios.get(
+    `${beConfig.host}/product-management/venue-list`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
+  );
+  return apiResult.data;
+};
+
 export const listAllServicesApi = async () => {
   const apiResult = await axios.get(
     `${beConfig.host}/product-management/fetch-services`,
@@ -100,6 +112,18 @@ export const listPackageTypesApi = async () => {
 export const listRoomTypesApi = async () => {
   const apiResult = await axios.get(
     `${beConfig.host}/product-management/room-categories`,
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
+  );
+  return apiResult.data;
+};
+
+export const listVenuesApi = async () => {
+  const apiResult = await axios.get(
+    `${beConfig.host}/product-management/venues`,
     {
       headers: {
         'X-CM-API-KEY': beConfig.key,
@@ -254,6 +278,43 @@ export const editRoomTypeApi = async (
   return apiResult.data;
 };
 
+
+export const editVenueApi = async (
+  productDetails,
+  description,
+  imageUrl,
+  isNew
+) => {
+  const apiResult = isNew
+    ? await axios.post(
+        `${beConfig.host}/product-management/add-venue`,
+        {
+          ...productDetails,
+          description,
+          imageUrl
+        },
+        {
+          headers: {
+            'X-CM-API-KEY': beConfig.key,
+          },
+        }
+      )
+    : await axios.post(
+        `${beConfig.host}/product-management/edit-venue`,
+        {
+          ...productDetails,
+          description,
+          imageUrl
+        },
+        {
+          headers: {
+            'X-CM-API-KEY': beConfig.key,
+          },
+        }
+      );
+  return apiResult.data;
+};
+
 export const editServiceApi = async (
   packageDetails,
   description,
@@ -346,6 +407,19 @@ export const deactivateRoomTypeApi = async (roomTypeId) => {
   const apiResult = await axios.post(
     `${beConfig.host}/product-management/deactivate-room-type`,
     { roomTypeId },
+    {
+      headers: {
+        'X-CM-API-KEY': beConfig.key,
+      },
+    }
+  );
+  return apiResult.data;
+};
+
+export const deactivateVenueApi = async (venueId) => {
+  const apiResult = await axios.post(
+    `${beConfig.host}/product-management/deactivate-venue`,
+    { venueId },
     {
       headers: {
         'X-CM-API-KEY': beConfig.key,

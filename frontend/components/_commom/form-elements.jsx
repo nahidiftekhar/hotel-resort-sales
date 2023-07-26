@@ -88,6 +88,7 @@ export const FormDatePicker = ({ label, name, dateDistance, ...props }) => {
                 )}
                 filterDate={(date) => filteredDay(date, toDay)}
                 timezone="Asia/Dhaka"
+                dateFormat="yyyy/MM/dd"
               />
               {meta.touched && meta.error ? (
                 <div className="error-message">{meta.error}</div>

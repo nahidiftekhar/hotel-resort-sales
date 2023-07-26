@@ -7,6 +7,7 @@ import EditAlacarte from './edit/edit-alacarte';
 import EditRoom from './edit/edit-room';
 import EditService from './edit/edit-service';
 import EditRoomType from './edit/edit-room-type';
+import EditVenue from './edit/edit-venue';
 
 function EditProduct({
   show,
@@ -75,7 +76,17 @@ function EditProduct({
                 />
               );
 
-              case 'roomtype':
+              case 'venues':
+                return (
+                  <EditVenue
+                    productDetail={productDetail}
+                    isNew={false}
+                    setRefresh={setRefresh}
+                    setShow={setShow}
+                  />
+                );
+
+                case 'roomtype':
                 return (
                   <EditRoomType
                     productDetail={productDetail}

@@ -38,6 +38,10 @@ function AddNewPackage() {
         <ReactiveButton buttonState="idle" idleText="Room Categories" size="large" />
       </Link>
 
+      <Link href="/products/list?type=venues">
+        <ReactiveButton buttonState="idle" idleText="Venues" size="large" />
+      </Link>
+
     </div>
   );
 }

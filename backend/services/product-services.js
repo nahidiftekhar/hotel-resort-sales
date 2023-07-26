@@ -10,6 +10,7 @@ const {
   prixfixecategories,
   alacartecategories,
   servicecategories,
+  venues
 } = require('../database/models');
 
 async function fetchAllPackages(req, res, next) {
@@ -412,6 +413,81 @@ async function fetchRooms(req, res, next) {
   return res.json(dbResult);
 }
 
+
+async function addVenue(req, res, next) {
+  const {
+    venueName,
+    venueLocation,
+    description,
+    price,
+    imageUrl,
+  } = req.body;
+
+  try {
+    await dbStandard.addSingleRecordDB(venues, {
+      venue_name: `${venueName}-morning`,
+      venue_location: venueLocation,
+      description,
+      price: price,
+      image_url: imageUrl,
+    });
+    await dbStandard.addSingleRecordDB(venues, {
+      venue_name: `${venueName}-evening`,
+      venue_location: venueLocation,
+      description,
+      price: price,
+      image_url: imageUrl,
+    });
+    return res.json({success: true});
+  } catch (error) {
+    console.log('Error occured. ' + error );
+    return res.json({success: false, message: error})
+  }
+}
+
+async function editVenue(req, res, next) {
+  const {
+    venueId,
+    venueName,
+    venueLocation,
+    description,
+    price,
+    imageUrl,
+  } = req.body;
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    venues,
+    { id: venueId },
+    {
+      venue_name: venueName,
+      venue_location: venueLocation,
+      description,
+      price: price,
+      image_url: imageUrl,
+      }
+  );
+  return res.json(dbResult);
+}
+
+async function deactivateVenue(req, res, next) {
+  const { venueId } = req.body;
+
+  const dbResult = await dbStandard.modifySingleRecordDb(
+    venues,
+    { id: venueId },
+    {
+      is_live: false,
+    }
+  );
+  return res.json(dbResult);
+}
+
+async function fetchVenues(req, res, next) {
+  const dbResult = await dbStandard.findAllFilterDb(venues, {
+    is_live: true,
+  });
+  return res.json(dbResult);
+}
+
 module.exports = {
   fetchPackagesTypes,
   fetchAlacarteTypes,
@@ -442,5 +518,9 @@ module.exports = {
   activatePackage,
   editRoomType,
   addRoomType,
-  deactivateRoomType
+  deactivateRoomType,
+  addVenue,
+  editVenue,
+  deactivateVenue,
+  fetchVenues
 };

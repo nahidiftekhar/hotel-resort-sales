@@ -81,8 +81,6 @@ function BookingManagement({ bookingId, isNew, session }) {
   const [componentType, setComponentType] = useState(
     localStorage.getItem('selectedRoom') ? 'room' : ''
   );
-  // const [showEditModal, setShowEditModal] = useState(false);
-  // const [componentType, setComponentType] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [editable, setEditable] = useState(false);

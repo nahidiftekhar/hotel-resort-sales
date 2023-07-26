@@ -6,6 +6,7 @@ import ViewAlacarte from './view/view-alacarte';
 import ViewRoom from './view/view-room';
 import ViewService from './view/view-service';
 import ViewRoomType from './view/view-room-type';
+import ViewVenue from './view/view-venue';
 
 function ViewProduct({ show, setShow, productDetail, productType }) {
   return (
@@ -39,6 +40,9 @@ function ViewProduct({ show, setShow, productDetail, productType }) {
 
             case 'service':
               return <ViewService productDetail={productDetail} />;
+
+            case 'venues':
+              return <ViewVenue productDetail={productDetail} />;
 
             default:
               return <div className="error-message">Something went wrong</div>;
