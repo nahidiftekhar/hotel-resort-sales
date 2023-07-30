@@ -258,6 +258,7 @@ function BookingHome({ session }) {
       cell: (row) =>
         row.booking_status === 'cancelled' ? (
           <div className="reactive-button-wauto">
+            <a href={`booking/show-booking?id=${row.id}`} className="my-1">
             <ReactiveButton
               buttonState="idle"
               idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
@@ -269,6 +270,7 @@ function BookingHome({ session }) {
                 setCurrentBookingId(row.id);
               }}
             />
+            </a>
           </div>
         ) : (
           <div className="d-flex flex-column">
@@ -307,7 +309,7 @@ function BookingHome({ session }) {
                 </div>
               )}
 
-            <div className="reactive-button-wauto">
+            {/* <div className="reactive-button-wauto">
               <ReactiveButton
                 buttonState="idle"
                 idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
@@ -319,7 +321,7 @@ function BookingHome({ session }) {
                   setCurrentBookingId(row.id);
                 }}
               />
-            </div>
+            </div> */}
 
             <a href={`booking/show-booking?id=${row.id}`} className="my-1">
               <div className="reactive-button-wauto">

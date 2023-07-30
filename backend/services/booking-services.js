@@ -91,6 +91,49 @@ async function addBooking(req, res, next) {
     discount_notes,
   } = req.body;
 
+  // check if any room is already booked by other booking id
+  if (components.roomDetails) {
+    for (const singleVenue of components?.roomDetails) {
+      const bookedRoom = await dbStandard.findAllFilterDb(roomreservations, {
+        room_id: singleVenue.roomId,
+        reservation_date: {
+          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
+        },
+        status: {
+          [Op.not]: '',
+        },
+      });
+      console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
+      if (bookedRoom.length) {
+        return res.json({
+          success: false,
+          message: 'Conflict found with room: ' + singleVenue.room_number,
+        });
+      }
+    }
+  }
+
+  // check if any venue is already booked by other booking id
+  if (components.venueDetails) {
+    for (const singleVenue of components?.venueDetails) {
+      const bookedVenue = await dbStandard.findAllFilterDb(venuereservations, {
+        venue_id: singleVenue.venueId,
+        reservation_date: {
+          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
+        },
+        status: {
+          [Op.not]: '',
+        },
+      });
+      console.log('bookedVenue: ' + JSON.stringify(bookedVenue));
+      if (bookedVenue.length) {
+        return res.json({
+          success: false,
+          message: 'Conflict found with venue: ' + singleVenue.venue_name,
+        });
+      }
+    }
+  }
   const highestDiscount = await dbStandard.findOneFilterDb(discountslabs, {
     user_type_id: 1,
   });
@@ -162,25 +205,6 @@ async function addBooking(req, res, next) {
   }
 
   if (components.roomDetails) {
-    // check if any room is already booked by other booking id
-    for (const singleVenue of components?.roomDetails) {
-      const bookedRoom = await dbStandard.findAllFilterDb(roomreservations, {
-        room_id: singleVenue.roomId,
-        reservation_date: {
-          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
-        },
-        status: {
-          [Op.not]: '',
-        },
-      });
-      console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
-      if (bookedRoom.length) {
-        return res.json({
-          success: false,
-          message: 'Conflict found with room: ' + singleVenue.room_number,
-        });
-      }
-    }
     components.roomDetails.map(async (singleRoom) => {
       const currentDate = new Date(singleRoom.checkInDate);
       const lastDate = new Date(singleRoom.checkOutDate);
@@ -200,25 +224,6 @@ async function addBooking(req, res, next) {
   }
 
   if (components.venueDetails) {
-    // check if any venue is already booked by other booking id
-    for (const singleVenue of components?.venueDetails) {
-      const bookedVenue = await dbStandard.findAllFilterDb(venuereservations, {
-        venue_id: singleVenue.venueId,
-        reservation_date: {
-          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
-        },
-        status: {
-          [Op.not]: '',
-        },
-      });
-      console.log('bookedVenue: ' + JSON.stringify(bookedVenue));
-      if (bookedVenue.length) {
-        return res.json({
-          success: false,
-          message: 'Conflict found with venue: ' + singleVenue.venue_name,
-        });
-      }
-    }
     components.venueDetails.map(async (singleVenue) => {
       const currentDate = new Date(singleVenue.checkInDate);
       const lastDate = new Date(singleVenue.checkOutDate);

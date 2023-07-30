@@ -151,7 +151,14 @@ function BookingManagement({ bookingId, isNew, session }) {
         values.checkOutDate
       );
 
-      if (apiResult.dbBooking.success) {
+      if(apiResult.success === false) {
+        setIsLoading(false);
+        setErrorMessage(apiResult.message);
+        setButtonState('error');
+        return false;
+      }
+
+      if (apiResult.dbBooking.success === true) {
         setIsLoading(true);
         setErrorMessage('');
         removeStorage('GUEST_KEY');
