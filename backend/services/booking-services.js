@@ -7,18 +7,18 @@ const {
   guests,
   payments,
   credentials,
-  packages,
-  prixfixeitems,
-  alacarteitems,
-  rooms,
-  serviceitems,
   usertypes,
   roomreservations,
+  venuereservations,
 } = require('../database/models');
 const helper = require('../services/utils/helper');
 
 const { Op, Sequelize } = require('sequelize');
 const { sendSingleEmail } = require('./utils/send-email');
+const getRoomBookingModifications =
+  require('./utils/room-booking-modifications').getRoomBookingModifications;
+const getVenueBookingModifications =
+  require('./utils/venue-booking-modifications').getVenueBookingModifications;
 
 async function fetchAllDiscountRequests(req, res, next) {
   const dbResult = await dbStandard.findAllFilterDb(discounts, {
@@ -49,7 +49,7 @@ async function listAllBookingAfterToday(req, res, next) {
     guests,
     discounts,
     {
-      [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }],
+      [Op.or]: [{ checkout_date: { [Op.gte]: new Date() } }],
       // [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }, { id: 4 }],
     }
   );
@@ -162,17 +162,75 @@ async function addBooking(req, res, next) {
   }
 
   if (components.roomDetails) {
+    // check if any room is already booked by other booking id
+    for (const singleVenue of components?.roomDetails) {
+      const bookedRoom = await dbStandard.findAllFilterDb(roomreservations, {
+        room_id: singleVenue.roomId,
+        reservation_date: {
+          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
+        },
+        status: {
+          [Op.not]: '',
+        },
+      });
+      console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
+      if (bookedRoom.length) {
+        return res.json({
+          success: false,
+          message: 'Conflict found with room: ' + singleVenue.room_number,
+        });
+      }
+    }
     components.roomDetails.map(async (singleRoom) => {
-      const currentDate = new Date(checkInDate);
-      const lastDate = new Date(checkOutDate);
+      const currentDate = new Date(singleRoom.checkInDate);
+      const lastDate = new Date(singleRoom.checkOutDate);
       while (currentDate <= lastDate) {
         await manageRoomBooking({
-          roomId: singleRoom.id,
+          roomId: singleRoom.roomId,
           reservationDate: currentDate,
           status: 'booked',
           notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
           bookingId: dbBooking.dbResult.id,
           visitId: null,
+          userId: user_id,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+  }
+
+  if (components.venueDetails) {
+    // check if any venue is already booked by other booking id
+    for (const singleVenue of components?.venueDetails) {
+      const bookedVenue = await dbStandard.findAllFilterDb(venuereservations, {
+        venue_id: singleVenue.venueId,
+        reservation_date: {
+          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
+        },
+        status: {
+          [Op.not]: '',
+        },
+      });
+      console.log('bookedVenue: ' + JSON.stringify(bookedVenue));
+      if (bookedVenue.length) {
+        return res.json({
+          success: false,
+          message: 'Conflict found with venue: ' + singleVenue.venue_name,
+        });
+      }
+    }
+    components.venueDetails.map(async (singleVenue) => {
+      const currentDate = new Date(singleVenue.checkInDate);
+      const lastDate = new Date(singleVenue.checkOutDate);
+      while (currentDate <= lastDate) {
+        await manageVenueBooking({
+          venueId: singleVenue.venueId,
+          reservationDate: currentDate,
+          status: 'booked',
+          notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+          bookingId: dbBooking.dbResult.id,
+          visitId: null,
+          userId: user_id,
         });
         currentDate.setDate(currentDate.getDate() + 1);
       }
@@ -203,32 +261,115 @@ async function editBooking(req, res, next) {
   } = req.body;
 
   const existingRecord = await dbStandard.findOneFilterDb(bookings, { id });
-  // All these for removed rooms
-  if (existingRecord.components?.roomDetails) {
-    const previousRooms = existingRecord.components.roomDetails.map(
-      (obj) => obj.id
-    );
-    const currentRooms = components?.roomDetails?.map((obj) => obj.id);
-    const removedRooms = previousRooms.filter(
-      (element) => !currentRooms.includes(element)
+
+  // All these for rooms
+  if (components?.roomDetails) {
+    // check if any room is already booked by other booking id
+    for (const singleVenue of components?.roomDetails) {
+      const bookedRoom = await dbStandard.findAllFilterDb(roomreservations, {
+        room_id: singleVenue.roomId,
+        booking_id: {
+          [Op.not]: id,
+        },
+        reservation_date: {
+          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
+        },
+        status: {
+          [Op.not]: '',
+        },
+      });
+      console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
+      if (bookedRoom.length) {
+        return res.json({
+          success: false,
+          message: 'Conflict found with room: ' + singleVenue.room_number,
+        });
+      }
+    }
+
+    const roomModifications = getRoomBookingModifications(
+      existingRecord.components.roomDetails,
+      components.roomDetails
     );
 
-    removedRooms.map(async (singleRoom) => {
-      const currentDate = new Date(checkin_date);
-      const lastDate = new Date(checkout_date);
-      while (currentDate <= lastDate) {
-        await manageRoomBooking({
-          roomId: singleRoom,
-          reservationDate: currentDate,
-          status: '',
-          notes: 'Released',
-          bookingId: id,
-          visitId: null,
-          userId: user_id,
+    for (const roomModification of roomModifications.removedDatesBookings) {
+      await manageRoomBooking({
+        roomId: roomModification.roomId,
+        reservationDate: roomModification.removedDate,
+        status: '',
+        notes: 'Released by user: ' + user_id,
+        bookingId: id,
+        visitId: null,
+        userId: user_id,
+      });
+    }
+
+    for (const roomModification of roomModifications.addedDatesBookings) {
+      await manageRoomBooking({
+        roomId: roomModification.roomId,
+        reservationDate: roomModification.addedDate,
+        status: 'booked',
+        notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+        bookingId: id,
+        visitId: null,
+        userId: user_id,
+      });
+    }
+  }
+
+  // All these for venues
+  if (components?.venueDetails) {
+    // check if any venue is already booked by other booking id
+    for (const singleVenue of components?.venueDetails) {
+      const bookedVenue = await dbStandard.findAllFilterDb(venuereservations, {
+        venue_id: singleVenue.venueId,
+        booking_id: {
+          [Op.not]: id,
+        },
+        reservation_date: {
+          [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
+        },
+        status: {
+          [Op.not]: '',
+        },
+      });
+      console.log('bookedVenue: ' + JSON.stringify(bookedVenue));
+      if (bookedVenue.length) {
+        return res.json({
+          success: false,
+          message: 'Conflict found with venue: ' + singleVenue.venue_name,
         });
-        currentDate.setDate(currentDate.getDate() + 1);
       }
-    });
+    }
+
+    const venueModifications = getVenueBookingModifications(
+      existingRecord.components.venueDetails,
+      components.venueDetails
+    );
+
+    for (const venueModification of venueModifications.removedDatesBookings) {
+      await manageVenueBooking({
+        venueId: venueModification.venueId,
+        reservationDate: venueModification.removedDate,
+        status: '',
+        notes: 'Released by user: ' + user_id,
+        bookingId: id,
+        visitId: null,
+        userId: user_id,
+      });
+    }
+
+    for (const venueModification of venueModifications.addedDatesBookings) {
+      await manageVenueBooking({
+        venueId: venueModification.venueId,
+        reservationDate: venueModification.addedDate,
+        status: 'booked',
+        notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+        bookingId: id,
+        visitId: null,
+        userId: user_id,
+      });
+    }
   }
 
   const highestDiscount = await dbStandard.findOneFilterDb(discountslabs, {
@@ -310,24 +451,43 @@ async function editBooking(req, res, next) {
     }
   }
 
-  if (components.roomDetails) {
-    components.roomDetails.map(async (singleRoom) => {
-      const currentDate = new Date(checkin_date);
-      const lastDate = new Date(checkout_date);
-      while (currentDate <= lastDate) {
-        await manageRoomBooking({
-          roomId: singleRoom.id,
-          reservationDate: currentDate,
-          status: 'booked',
-          notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
-          bookingId: id,
-          visitId: null,
-          userId: user_id,
-        });
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-    });
-  }
+  // if (components.roomDetails) {
+  //   components.roomDetails.map(async (singleRoom) => {
+  //     const currentDate = new Date(singleRoom.checkin_date);
+  //     const lastDate = new Date(singleRoom.checkout_date);
+  //     while (currentDate <= lastDate) {
+  //       await manageRoomBooking({
+  //         roomId: singleRoom.roomId,
+  //         reservationDate: currentDate,
+  //         status: 'booked',
+  //         notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+  //         bookingId: id,
+  //         visitId: null,
+  //         userId: user_id,
+  //       });
+  //       currentDate.setDate(currentDate.getDate() + 1);
+  //     }
+  //   });
+  // }
+
+  // if (components.venueDetails) {
+  //   components.venueDetails.map(async (singleVenue) => {
+  //     const currentDate = new Date(singleVenue.checkin_date);
+  //     const lastDate = new Date(singleVenue.checkout_date);
+  //     while (currentDate <= lastDate) {
+  //       await manageVenueBooking({
+  //         venueId: singleVenue.venueId,
+  //         reservationDate: currentDate,
+  //         status: 'booked',
+  //         notes: 'User: ' + user_id + '\nGuest: ' + guest_id,
+  //         bookingId: id,
+  //         visitId: null,
+  //         userId: user_id,
+  //       });
+  //       currentDate.setDate(currentDate.getDate() + 1);
+  //     }
+  //   });
+  // }
 
   return res.json({ dbBooking, dbDiscount });
 }
@@ -554,6 +714,9 @@ async function manageRoomBooking({
   visitId,
   userId,
 }) {
+  console.log(
+    '\n\n\nroomId: ' + roomId + ' reservationDate: ' + reservationDate
+  );
   const roomsStatusUpdate = await dbStandard.addOrUpdateSingleDb(
     roomreservations,
     {
@@ -572,6 +735,33 @@ async function manageRoomBooking({
   return roomsStatusUpdate;
 }
 
+async function manageVenueBooking({
+  venueId,
+  reservationDate,
+  status,
+  notes,
+  bookingId,
+  visitId,
+  userId,
+}) {
+  const venueStatusUpdate = await dbStandard.addOrUpdateSingleDb(
+    venuereservations,
+    {
+      venue_id: venueId,
+      reservation_date: reservationDate,
+    },
+    {
+      booking_id: bookingId,
+      visit_id: visitId,
+      user_id: userId,
+      status: status,
+      notes: notes,
+    }
+  );
+
+  return venueStatusUpdate;
+}
+
 module.exports = {
   addNewBooking,
   editBooking,
@@ -587,4 +777,5 @@ module.exports = {
   listAllBookingAfterToday,
   eidtRoomBooking,
   manageRoomBooking,
+  manageVenueBooking,
 };

@@ -6,7 +6,7 @@ import { BDTFormat } from '@/components/_functions/number-format';
 function ViewServices({ selectedProducts, priceDetails }) {
   return (
     <Row className="border border-grey m-0 py-2">
-      <h4 className="mb-3 bg-light">À la carte Items</h4>
+      <h4 className="mb-3 bg-light">Service Items</h4>
       <Col sm={6}>
         {selectedProducts.map((singlePackage, index) => (
           <div key={index} className="border-top">

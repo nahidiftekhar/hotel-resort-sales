@@ -1,188 +1,150 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
 import ReactiveButton from 'reactive-button';
 
 import { Icon } from '@/components/_commom/Icon';
 
-import { listAllRoomsApi } from '@/api/products-api';
+import { listAllVenuesApi } from '@/api/products-api';
 import {
   roundUptoFixedDigits,
   sumOfKey,
+  updateStateArray,
   updateStateObject,
 } from '@/components/_functions/common-functions';
 import { BDTFormat } from '@/components/_functions/number-format';
 import { getMaxDiscountSlab } from '@/api/booking-api';
-import axios from 'axios';
 import { FormDatePicker } from '../_commom/form-elements';
-import { Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { formatDate } from '../_functions/date-functions';
-
 const toDay = new Date();
 
-function EditRoom({
-  setBookingData,
-  bookingData,
-  setShow,
-  daysCount,
-  session,
-}) {
+function EditVenue({ setBookingData, bookingData, setShow }) {
   const [productList, setProductList] = useState([]);
-  const [roomItems, setRoomItems] = useState(
-    bookingData?.components?.roomDetails?.length
-      ? bookingData?.components?.roomDetails
+  const [venueItems, setVenueItems] = useState(
+    bookingData?.components?.venueDetails?.length
+      ? bookingData?.components?.venueDetails
       : []
   );
-  const [roomPrice, setRoomPrice] = useState(
-    bookingData?.price_components?.roomPrice
-      ? bookingData?.price_components?.roomPrice
+  const [venuePrice, setVenuePrice] = useState(
+    bookingData?.price_components?.venuePrice
+      ? bookingData?.price_components?.venuePrice
       : []
   );
   const [customError, setCustomError] = useState('');
 
   useEffect(() => {
-    const handlePreselectedRoom = async () => {
-      const preselectedRoom = JSON.parse(localStorage.getItem('selectedRoom'));
-      localStorage.removeItem('selectedRoom');
-      // Get the room data and include to bookingData.components.roomDetails
-      const singleRoomApi = await axios.get(
-        `/api/booking/get-room-data-api?roomId=${preselectedRoom.roomId}`
-      );
-      const singleRoomData = singleRoomApi.data;
-      singleRoomData.value = singleRoomData.id;
-      singleRoomData.label =
-        singleRoomData.roomtype?.room_type_name +
-        ': ' +
-        singleRoomData.room_number;
-      singleRoomData.price = singleRoomData.roomtype?.price;
-
-      singleRoomData.room_count = 1;
-      singleRoomData.room_cost = Math.max(
-        daysCount > 0
-          ? singleRoomData.roomtype?.price * daysCount
-          : singleRoomData.roomtype?.price,
-        0
-      );
-
-      handleSelect(singleRoomData);
-    };
-
     const fetchPackageList = async () => {
-      const allProductList = await listAllRoomsApi();
+      const allProductList = await listAllVenuesApi();
       const filteredExistingItems = allProductList.filter(
-        (item) => !roomItems.some((existingItem) => existingItem.id === item.id)
+        (item) =>
+          !venueItems.some((existingItem) => existingItem.id === item.id)
       );
       setProductList(
         filteredExistingItems.map((obj, index) => {
-          return {
-            ...obj,
-            value: obj.id,
-            label: obj.roomtype?.room_type_name + ': ' + obj.room_number,
-            price: obj.roomtype?.price,
-          };
+          return { ...obj, value: obj.id, label: obj.venue_name };
         })
       );
     };
     fetchPackageList();
-    if (localStorage.getItem('selectedRoom')) handlePreselectedRoom();
   }, []);
 
-  const handleDeleteItem = async (index) => {
-    setRoomItems(
-      roomItems.filter((item, currentIndex) => currentIndex !== index)
+  const handleDeleteItem = (index) => {
+    setVenueItems(
+      venueItems.filter((item, currentIndex) => currentIndex !== index)
     );
 
     updateStateObject(
-      setRoomPrice,
+      setVenuePrice,
       'rackPrice',
       sumOfKey(
-        roomItems.filter((item, currentIndex) => currentIndex !== index),
-        'room_cost'
+        venueItems.filter((item, currentIndex) => currentIndex !== index),
+        'venue_cost'
       )
     );
 
     updateStateObject(
-      setRoomPrice,
+      setVenuePrice,
       'priceAfterDiscount',
       Math.floor(
         sumOfKey(
-          roomItems.filter((item, currentIndex) => currentIndex !== index),
-          'room_cost'
+          venueItems.filter((item, currentIndex) => currentIndex !== index),
+          'venue_cost'
         )
       ) || 0
     );
     setProductList([
       ...productList,
-      ...roomItems.filter((item, currentIndex) => currentIndex === index),
+      ...venueItems.filter((item, currentIndex) => currentIndex === index),
     ]);
   };
 
-  const handleDiscountChange = (e) => {
-    updateStateObject(setRoomPrice, 'priceAfterDiscount', e.target.value);
-    updateStateObject(
-      setRoomPrice,
-      'discount',
-      roundUptoFixedDigits(
-        ((roomPrice.rackPrice - e.target.value) * 100) / roomPrice.rackPrice,
-        2
-      )
-    );
-  };
-
-  const handleAddRoom = (value) => {
-    if(!value.roomId) {
-      setCustomError('Please select a room');
+  const handleAddVenue = (value) => {
+    if(!value.venueId) {
+      setCustomError('Please select a venue');
       return false;
     }
     if(value.checkInDate > value.checkOutDate) {
       setCustomError('Check-in date cannot be greater than check-out date');
       return false;
     }
-
     const bookingDuration = Math.floor(
       (value.checkOutDate - value.checkInDate) /
         (1000 * 60 * 60 * 24)
-    )
-    value.room_count = 1;
-    value.room_cost = Math.max(
-      bookingDuration > 0 ? value.roomtype?.price * bookingDuration : value.roomtype?.price,
+    ) + 1;
+    value.venue_count = 1;
+    value.venue_cost = Math.max(
+      bookingDuration > 0 ? value.price * bookingDuration : value.price,
       0
     );
-    setRoomItems((currentData) => [...currentData, value]);
+    setVenueItems((currentData) => [...currentData, value]);
     setProductList(productList.filter((item) => item.id !== value.roomId));
 
     updateStateObject(
-      setRoomPrice,
+      setVenuePrice,
       'rackPrice',
-      (roomPrice.rackPrice || 0) + value.room_cost
+      (venuePrice.rackPrice || 0) + value.venue_cost
     );
     updateStateObject(
-      setRoomPrice,
+      setVenuePrice,
       'discount',
       roundUptoFixedDigits(
-        (((roomPrice.rackPrice || 0) +
-          value.room_cost -
-          Math.floor((roomPrice.rackPrice || 0) + value.room_cost)) *
+        (((venuePrice.rackPrice || 0) +
+          value.venue_cost -
+          Math.floor((venuePrice.rackPrice || 0) + value.venue_cost)) *
           100) /
-          (roomPrice.rackPrice || 0) +
-          value.room_cost,
+          (venuePrice.rackPrice || 0) +
+          value.venue_cost,
         2
       ) || 0
     );
     updateStateObject(
-      setRoomPrice,
+      setVenuePrice,
       'priceAfterDiscount',
-      Math.floor((roomPrice.rackPrice || 0) + value.room_cost) || 0
+      Math.floor((venuePrice.rackPrice || 0) + value.venue_cost) || 0
     );
-    updateStateObject(setRoomPrice, 'discountNotes', '-');
+    updateStateObject(setVenuePrice, 'discountNotes', '-');
+  };
+
+  const handleDiscountChange = (e) => {
+    updateStateObject(setVenuePrice, 'priceAfterDiscount', e.target.value);
+    updateStateObject(
+      setVenuePrice,
+      'discount',
+      roundUptoFixedDigits(
+        ((venuePrice.rackPrice - e.target.value) * 100) /
+          venuePrice.rackPrice,
+        2
+      )
+    );
   };
 
   const handleSubmit = async () => {
     //If discount over threshold
     const maxDiscountSlab = await getMaxDiscountSlab();
     if (
-      ((roomPrice.rackPrice - roomPrice.priceAfterDiscount) * 100) /
-        roomPrice.rackPrice >
+      ((venuePrice.rackPrice - venuePrice.priceAfterDiscount) * 100) /
+        venuePrice.rackPrice >
       maxDiscountSlab
     ) {
       alert(`Discount is above maximum allowed percentage`);
@@ -192,15 +154,16 @@ function EditRoom({
       ...currentData,
       components: {
         ...currentData.components,
-        roomDetails: roomItems,
+        venueDetails: venueItems,
       },
       price_components: {
         ...currentData.price_components,
-        roomPrice: {
-          ...roomPrice,
+        venuePrice: {
+          ...venuePrice,
           discount: roundUptoFixedDigits(
-            ((roomPrice.rackPrice - roomPrice.priceAfterDiscount) * 100) /
-              roomPrice.rackPrice,
+            ((venuePrice.rackPrice - venuePrice.priceAfterDiscount) *
+              100) /
+              venuePrice.rackPrice,
             2
           ),
         },
@@ -219,10 +182,8 @@ function EditRoom({
           checkOutDate: new Date(bookingData?.checkout_date || toDay),
           notes: bookingData?.booking_notes,
           currency: 'BDT',
-          roomtype: {},
-          roomId: 0,
-          room_name: '',
-          room_number: '',
+          venueId: 0,
+          venue_name: '',
         }}>
         {(formik) => {
           const { values, setValues } = formik;
@@ -230,17 +191,16 @@ function EditRoom({
             <Form>
               <Row className="py-2 custom-form">
                 <Col md={5}>
-                  <label>Select room</label>
+                  <label>Select Venue</label>
                   <Select
-                    name="roomId"
+                    name="venueId"
                     options={productList}
                     onChange={(obj) => {
                       setValues({
                         ...values,
-                        roomId: obj.value,
-                        roomtype: obj.roomtype,
-                        room_name: obj.room_name,
-                        room_number: obj.room_number,
+                        venueId: obj.value,
+                        venue_name: obj.venue_name,
+                        price: obj.price,
                       });
                       setCustomError('');
                     }}
@@ -274,7 +234,7 @@ function EditRoom({
                         />
                       }
                       onClick={() => {
-                        handleAddRoom(values);
+                        handleAddVenue(values);
                       }}
                     />
                   </div>
@@ -285,10 +245,10 @@ function EditRoom({
         }}
       </Formik>
 
-      {roomItems?.length > 0 && (
+      {venueItems?.length > 0 && (
         <Row
           className="fw-bold custom-form arrow-hidden mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
-          <Col md={4} xs={6}>Room</Col>
+          <Col md={4} xs={6}>Venue</Col>
           {/* Input for laptop */}
           <Col md={2} className="d-none d-sm-block">Check-in</Col>
           <Col md={2} className="d-none d-sm-block">Check-out</Col>
@@ -296,15 +256,14 @@ function EditRoom({
         </Row>
       )}
 
-      {roomItems.map(
+      {venueItems.map(
         (
           {
             name,
             price,
-            room_number,
-            room_count,
-            room_cost,
-            roomtype,
+            venue_name,
+            venue_count,
+            venue_cost,
             checkInDate,
             checkOutDate,
           },
@@ -315,7 +274,7 @@ function EditRoom({
             className="custom-form arrow-hidden mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
             <Col md={4} xs={6}>
               {/* {name} */}
-              {roomtype.room_type_name}: {room_number}
+              {venue_name}
               <div className="d-sm-none smaller-label">
                 {formatDate(checkInDate)} to {formatDate(checkOutDate)}
               </div>
@@ -328,7 +287,7 @@ function EditRoom({
               {formatDate(checkOutDate)}
             </Col>
             <Col md={3} xs={5} className="text-end">
-              {BDTFormat.format(room_cost || 0)}
+              {BDTFormat.format(venue_cost || 0)}
             </Col>
             <Col md={1} xs={1}>
               <div className="circular-button-wrapper">
@@ -366,7 +325,7 @@ function EditRoom({
             <input
               name="packageCost"
               type="text"
-              value={BDTFormat.format(sumOfKey(roomItems, 'room_cost') || 0)}
+              value={BDTFormat.format(sumOfKey(venueItems, 'venue_cost') || 0)}
               disabled
               className="font-small my-0 py-1 fw-bold text-end rounded-0"
             />
@@ -385,9 +344,9 @@ function EditRoom({
             <input
               name="discountedPrice"
               type="number"
-              max={Math.round(sumOfKey(roomItems, 'room_cost')) || 0}
-              min={Math.round(sumOfKey(roomItems, 'room_cost') * 0.5) || 0}
-              value={Math.floor(roomPrice.priceAfterDiscount) || 0}
+              max={Math.round(sumOfKey(venueItems, 'venue_cost')) || 0}
+              min={Math.round(sumOfKey(venueItems, 'venue_cost') * 0.5) || 0}
+              value={Math.floor(venuePrice.priceAfterDiscount) || 0}
               onChange={(e) => {
                 handleDiscountChange(e);
               }}
@@ -399,8 +358,8 @@ function EditRoom({
             xs={1}
             className="label-text p-0 d-flex align-items-center">
             {roundUptoFixedDigits(
-              ((roomPrice.rackPrice - roomPrice.priceAfterDiscount) * 100) /
-                roomPrice.rackPrice,
+              ((venuePrice.rackPrice - venuePrice.priceAfterDiscount) * 100) /
+                venuePrice.rackPrice,
               2
             )}
             %
@@ -416,10 +375,10 @@ function EditRoom({
           </Col>
           <Col md={5} xs={8} className="">
             <textarea
-              value={roomPrice.discountNotes}
+              value={venuePrice.discountNotes}
               onChange={(e) => {
                 updateStateObject(
-                  setRoomPrice,
+                  setVenuePrice,
                   'discountNotes',
                   e.target.value
                 );
@@ -431,17 +390,17 @@ function EditRoom({
 
       <Row>
         <Col md={11} className="d-flex justify-content-end mt-4">
-          {customError && <p className="error-message">{customError}</p>}
           <ReactiveButton
             buttonState="idle"
             idleText="Submit"
             color="green"
             onClick={handleSubmit}
-          />
+            />
         </Col>
+        {customError && <p className="error-message text-center">{customError}</p>}
       </Row>
     </div>
   );
 }
 
-export default EditRoom;
+export default EditVenue;

@@ -6,6 +6,7 @@ import { camelCaseToCapitalizedString } from '../_functions/string-format';
 import EditAlacarte from './edit-alacarte';
 import EditRoom from './edit-room';
 import EditService from './edit-service';
+import EditVenue from './edit-venue';
 
 function AddBookingComponent({
   show,
@@ -69,6 +70,15 @@ function AddBookingComponent({
                 />
               );
 
+              case 'venue':
+                return (
+                  <EditVenue
+                    setBookingData={setBookingData}
+                    bookingData={bookingData}
+                    setShow={setShow}
+                  />
+                );
+  
             case 'service':
               return (
                 <EditService

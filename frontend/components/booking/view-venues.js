@@ -4,24 +4,23 @@ import { Row, Col } from 'react-bootstrap';
 import { BDTFormat } from '@/components/_functions/number-format';
 import { dateStringToMONDD } from '../_functions/date-functions';
 
-function ViewRooms({ selectedProducts, priceDetails }) {
+function ViewVenues({ selectedProducts, priceDetails }) {
   return (
     <Row className="border border-grey m-0 py-2">
-      <h4 className="mb-3 bg-light">Rooms</h4>
+      <h4 className="mb-3 bg-light">Venues</h4>
       <Col sm={6}>
         {selectedProducts.map((singlePackage, index) => (
           <div key={index} className="border-top">
-            {/* <div>{singlePackage.name}</div> */}
-            <div>
-              {singlePackage.roomtype.room_type_name}:{' '}
-              {singlePackage.room_number}
-            </div>
+            <div>{singlePackage.venue_name}</div>
             <div className="font-small">
-              <span className="text-muted">{dateStringToMONDD(singlePackage.checkInDate)} - {dateStringToMONDD(singlePackage.checkOutDate)}</span>
+              <span className="text-muted">
+                {dateStringToMONDD(singlePackage.checkInDate)} -{' '}
+                {dateStringToMONDD(singlePackage.checkOutDate)}
+              </span>
             </div>
             <div className="font-small">
               <span className="me-2">
-                {BDTFormat.format(singlePackage.room_cost || 0)}
+                {BDTFormat.format(singlePackage.venue_cost || 0)}
               </span>
             </div>
           </div>
@@ -56,4 +55,4 @@ function ViewRooms({ selectedProducts, priceDetails }) {
   );
 }
 
-export default ViewRooms;
+export default ViewVenues;

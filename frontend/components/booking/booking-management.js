@@ -36,12 +36,12 @@ import { camelCaseToCapitalizedString } from '@/components/_functions/string-for
 import { updateStateObject } from '@/components/_functions/common-functions';
 import CancelBooking from './cancel-booking';
 import axios from 'axios';
+import ViewVenues from './view-venues';
 
 const validationRules = Yup.object({
   checkInDate: Yup.date()
     .nullable()
     .required('Check-in Date is required')
-    // .min(new Date(), 'Check-in Date must be later than today')
     .test(
       'is-greater',
       'Check-in date cannot be lower than today',
@@ -69,18 +69,15 @@ const componentList = [
   { id: 3, name: 'À la carte', icon: 'FaUtensilSpoon', type: 'alacarte' },
   { id: 4, name: 'Room', icon: 'MdLocalHotel', type: 'room' },
   { id: 5, name: 'Services', icon: 'FaTableTennis', type: 'service' },
+  { id: 6, name: 'Venue', icon: 'MdMeetingRoom', type: 'venue' },
 ];
 
 function BookingManagement({ bookingId, isNew, session }) {
   const [bookingData, setBookingData] = useState({});
   const [guestData, setGuestData] = useState({});
   const [discountData, setDiscountData] = useState({});
-  const [showEditModal, setShowEditModal] = useState(
-    localStorage.getItem('selectedRoom') ? true : false
-  );
-  const [componentType, setComponentType] = useState(
-    localStorage.getItem('selectedRoom') ? 'room' : ''
-  );
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [componentType, setComponentType] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [editable, setEditable] = useState(false);
@@ -112,11 +109,14 @@ function BookingManagement({ bookingId, isNew, session }) {
       setIsLoading(false);
     };
 
+    setShowEditModal(localStorage.getItem('selectedRoom') ? true : false)
+    setComponentType(localStorage.getItem('selectedRoom') ? 'room' : '')
+
     if (!isNew && bookingId) getBookingData();
     if (isNew) getGuestInfo();
 
     setReferesh(false);
-  }, [bookingId, isNew, referesh]);
+  }, [bookingId, isNew, referesh, session.user.id]);
 
   const handleSubmitBooking = async (values) => {
     if (!bookingData.price_components) {
@@ -128,17 +128,21 @@ function BookingManagement({ bookingId, isNew, session }) {
     if (!isNew) {
       const apiResult = await modifyBookingApi(bookingData, discountData);
       alert(
-        apiResult
+        apiResult.success
           ? `Booking modified. Current status: "${camelCaseToCapitalizedString(
               apiResult.dbBooking.result[1][0].booking_status
             )}"`
           : 'Something went wrong'
       );
 
-      if (apiResult) {
+      if (apiResult.dbBooking.success) {
         setErrorMessage('');
         router.push(`show-booking?id=${apiResult.dbBooking.result[1][0].id}`);
         setButtonState('idle');
+      } else {
+        setIsLoading(false);
+        setErrorMessage(apiResult.message);
+        setButtonState('error');
       }
     } else {
       const apiResult = await addBookingApi(
@@ -147,12 +151,16 @@ function BookingManagement({ bookingId, isNew, session }) {
         values.checkOutDate
       );
 
-      if (apiResult) {
+      if (apiResult.dbBooking.success) {
         setIsLoading(true);
         setErrorMessage('');
         removeStorage('GUEST_KEY');
         router.push(`show-booking?id=${apiResult.dbBooking.dbResult.id}`);
         setButtonState('idle');
+      } else {
+        setIsLoading(false);
+        setErrorMessage(apiResult.message);
+        setButtonState('error');
       }
     }
   };
@@ -186,7 +194,6 @@ function BookingManagement({ bookingId, isNew, session }) {
             currency: 'BDT',
           }}
           validationSchema={validationRules}
-          // onSubmit={(values) => handleSubmit(values)}>
           onSubmit={(values) => handleSubmitBooking(values)}>
           {(formik) => {
             const { values } = formik;
@@ -430,7 +437,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
                 {/* Package details */}
                 <div className="my-2">
-                  {bookingData?.components?.packageDetails?.length && (
+                  {bookingData?.components?.packageDetails?.length >0 && (
                     <ViewPackages
                       selectedPackages={bookingData.components.packageDetails}
                       priceDetails={bookingData.price_components?.packagePrice}
@@ -440,7 +447,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
                 {/* Room details */}
                 <div className="my-2">
-                  {bookingData?.components?.roomDetails?.length && (
+                  {bookingData?.components?.roomDetails?.length > 0 && (
                     <ViewRooms
                       selectedProducts={bookingData.components.roomDetails}
                       priceDetails={bookingData.price_components?.roomPrice}
@@ -448,9 +455,19 @@ function BookingManagement({ bookingId, isNew, session }) {
                   )}
                 </div>
 
+                {/* Venue details */}
+                <div className="my-2">
+                  {bookingData?.components?.venueDetails?.length > 0 && (
+                    <ViewVenues
+                      selectedProducts={bookingData.components.venueDetails}
+                      priceDetails={bookingData.price_components?.venuePrice}
+                    />
+                  )}
+                </div>
+
                 {/* Prixfixe details */}
                 <div className="my-2">
-                  {bookingData?.components?.prixfixeDetails?.length && (
+                  {bookingData?.components?.prixfixeDetails?.length > 0 && (
                     <ViewPrixfixe
                       selectedProducts={bookingData.components?.prixfixeDetails}
                       priceDetails={bookingData.price_components?.prixfixePrice}
@@ -460,7 +477,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
                 {/* Alacarte details */}
                 <div className="my-2">
-                  {bookingData?.components?.alacarteDetails?.length && (
+                  {bookingData?.components?.alacarteDetails?.length >0 && (
                     <ViewAlacarte
                       selectedProducts={bookingData.components.alacarteDetails}
                       priceDetails={bookingData.price_components?.alacartePrice}
@@ -470,7 +487,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
                 {/* Services details */}
                 <div className="my-2">
-                  {bookingData?.components?.serviceDetails?.length && (
+                  {bookingData?.components?.serviceDetails?.length >0 && (
                     <ViewServices
                       selectedProducts={bookingData.components.serviceDetails}
                       priceDetails={bookingData.price_components?.servicePrice}

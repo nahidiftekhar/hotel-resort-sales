@@ -88,3 +88,11 @@ export const dateArrayForChart = (refDate, duration) => {
   }
   return dateArray;
 };
+
+export function dateStringToMONDD(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'long' });
+
+  return `${day} ${month}`;
+}
