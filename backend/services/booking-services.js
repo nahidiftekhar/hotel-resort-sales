@@ -382,6 +382,9 @@ async function editBooking(req, res, next) {
   });
   const DiscountLoa = await checkDiscountLoa(requester_id);
 
+  console.log('DiscountLoa: ' + DiscountLoa);
+  console.log('discount : ' + ((amount - discounted_amount) * 100) / amount);
+
   // 0: over MD's discount limit. 1: within MD's limit, over personal limit. 2: within personal discount limit
   const discountStatus =
     highestDiscount.discount_percentage <

@@ -42,9 +42,12 @@ function TopNavbar({ session }) {
               <Nav.Link className="mx-3" href="/actions">
                 Actions
               </Nav.Link>
-              <Nav.Link className="mx-3" href="/hospitality">
-                Hospitality
+              <Nav.Link className="mx-3" href="/products">
+                Products
               </Nav.Link>
+              {/* <Nav.Link className="mx-3" href="/hospitality">
+                Hospitality
+              </Nav.Link> */}
               <div className="center-flex mx-3">
                 <a
                   href="/settings"

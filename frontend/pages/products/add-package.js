@@ -27,7 +27,6 @@ function AddNewPackage() {
   const handleSubmit = async (productData) => {
     if (productData) {
       const apiResult = await addNewPackageApi(productData, value);
-      console.log('apiResult: ' + JSON.stringify(apiResult));
     }
     if (!value) {
       setError(true);

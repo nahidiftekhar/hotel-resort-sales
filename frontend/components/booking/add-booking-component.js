@@ -7,6 +7,7 @@ import EditAlacarte from './edit-alacarte';
 import EditRoom from './edit-room';
 import EditService from './edit-service';
 import EditVenue from './edit-venue';
+import EditCustomizations from './edit-customizations';
 
 function AddBookingComponent({
   show,
@@ -70,18 +71,27 @@ function AddBookingComponent({
                 />
               );
 
-              case 'venue':
-                return (
-                  <EditVenue
-                    setBookingData={setBookingData}
-                    bookingData={bookingData}
-                    setShow={setShow}
-                  />
-                );
-  
+            case 'venue':
+              return (
+                <EditVenue
+                  setBookingData={setBookingData}
+                  bookingData={bookingData}
+                  setShow={setShow}
+                />
+              );
+
             case 'service':
               return (
                 <EditService
+                  setBookingData={setBookingData}
+                  bookingData={bookingData}
+                  setShow={setShow}
+                />
+              );
+
+            case 'custom':
+              return (
+                <EditCustomizations
                   setBookingData={setBookingData}
                   bookingData={bookingData}
                   setShow={setShow}

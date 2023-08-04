@@ -37,19 +37,18 @@ import { updateStateObject } from '@/components/_functions/common-functions';
 import CancelBooking from './cancel-booking';
 import axios from 'axios';
 import ViewVenues from './view-venues';
+import ViewCustomizations from './view-customizations';
 
 const validationRules = Yup.object({
-  checkInDate: Yup.date()
-    .nullable()
-    .required('Check-in Date is required')
-    .test(
-      'is-greater',
-      'Check-in date cannot be lower than today',
-      function (value) {
-        const thisDay = new Date().setHours(0, 0, 0, 0);
-        return !thisDay || !value || value >= thisDay;
-      }
-    ),
+  checkInDate: Yup.date().nullable().required('Check-in Date is required'),
+  // .test(
+  //   'is-greater',
+  //   'Check-in date cannot be lower than today',
+  //   function (value) {
+  //     const thisDay = new Date().setHours(0, 0, 0, 0);
+  //     return !thisDay || !value || value >= thisDay;
+  //   }
+  // ),
   checkOutDate: Yup.date()
     .nullable()
     .required('Check-out Date is required')
@@ -70,6 +69,7 @@ const componentList = [
   { id: 4, name: 'Room', icon: 'MdLocalHotel', type: 'room' },
   { id: 5, name: 'Services', icon: 'FaTableTennis', type: 'service' },
   { id: 6, name: 'Venue', icon: 'MdMeetingRoom', type: 'venue' },
+  { id: 7, name: 'Custom Menu', icon: 'MdFoodBank', type: 'custom' },
 ];
 
 function BookingManagement({ bookingId, isNew, session }) {
@@ -109,8 +109,8 @@ function BookingManagement({ bookingId, isNew, session }) {
       setIsLoading(false);
     };
 
-    setShowEditModal(localStorage.getItem('selectedRoom') ? true : false)
-    setComponentType(localStorage.getItem('selectedRoom') ? 'room' : '')
+    setShowEditModal(localStorage.getItem('selectedRoom') ? true : false);
+    setComponentType(localStorage.getItem('selectedRoom') ? 'room' : '');
 
     if (!isNew && bookingId) getBookingData();
     if (isNew) getGuestInfo();
@@ -128,11 +128,11 @@ function BookingManagement({ bookingId, isNew, session }) {
     if (!isNew) {
       const apiResult = await modifyBookingApi(bookingData, discountData);
       alert(
-        apiResult.success
+        apiResult.dbBooking.success
           ? `Booking modified. Current status: "${camelCaseToCapitalizedString(
               apiResult.dbBooking.result[1][0].booking_status
             )}"`
-          : 'Something went wrong'
+          : 'Something went wrong: ' + apiResult.message || 'Unknown error'
       );
 
       if (apiResult.dbBooking.success) {
@@ -151,7 +151,7 @@ function BookingManagement({ bookingId, isNew, session }) {
         values.checkOutDate
       );
 
-      if(apiResult.success === false) {
+      if (apiResult.success === false) {
         setIsLoading(false);
         setErrorMessage(apiResult.message);
         setButtonState('error');
@@ -399,13 +399,13 @@ function BookingManagement({ bookingId, isNew, session }) {
                 <Row className="m-0 py-2 border border-grey">
                   <h4 className="mb-3 bg-light">Visit Date</h4>
                   <Col md={6}>
-                    {editable ? (
-                      <FormDatePicker
-                        name="checkInDate"
-                        label="Check-in Date"
-                        dateDistance={1}
-                      />
-                    ) : (
+                    {/* {editable ? ( */}
+                    <FormDatePicker
+                      name="checkInDate"
+                      label="Check-in Date"
+                      dateDistance={1}
+                    />
+                    {/* ) : (
                       <div>
                         <CustomTextInput
                           type="text"
@@ -416,18 +416,18 @@ function BookingManagement({ bookingId, isNew, session }) {
                           disabled
                         />
                       </div>
-                    )}
+                    )} */}
                   </Col>
 
                   <Col md={6}>
-                    {editable ? (
-                      <FormDatePicker
-                        name="checkOutDate"
-                        label="Check-out Date"
-                        dateDistance={7}
-                        startDate={values.checkInDate?.setHours(0, 0, 0, 0)}
-                      />
-                    ) : (
+                    {/* {editable ? ( */}
+                    <FormDatePicker
+                      name="checkOutDate"
+                      label="Check-out Date"
+                      dateDistance={7}
+                      startDate={values.checkInDate?.setHours(0, 0, 0, 0)}
+                    />
+                    {/* ) : (
                       <div>
                         <CustomTextInput
                           type="text"
@@ -438,13 +438,13 @@ function BookingManagement({ bookingId, isNew, session }) {
                           disabled
                         />
                       </div>
-                    )}
+                    )} */}
                   </Col>
                 </Row>
 
                 {/* Package details */}
                 <div className="my-2">
-                  {bookingData?.components?.packageDetails?.length >0 && (
+                  {bookingData?.components?.packageDetails?.length > 0 && (
                     <ViewPackages
                       selectedPackages={bookingData.components.packageDetails}
                       priceDetails={bookingData.price_components?.packagePrice}
@@ -484,7 +484,7 @@ function BookingManagement({ bookingId, isNew, session }) {
 
                 {/* Alacarte details */}
                 <div className="my-2">
-                  {bookingData?.components?.alacarteDetails?.length >0 && (
+                  {bookingData?.components?.alacarteDetails?.length > 0 && (
                     <ViewAlacarte
                       selectedProducts={bookingData.components.alacarteDetails}
                       priceDetails={bookingData.price_components?.alacartePrice}
@@ -494,10 +494,20 @@ function BookingManagement({ bookingId, isNew, session }) {
 
                 {/* Services details */}
                 <div className="my-2">
-                  {bookingData?.components?.serviceDetails?.length >0 && (
+                  {bookingData?.components?.serviceDetails?.length > 0 && (
                     <ViewServices
                       selectedProducts={bookingData.components.serviceDetails}
                       priceDetails={bookingData.price_components?.servicePrice}
+                    />
+                  )}
+                </div>
+
+                {/* Customization details */}
+                <div className="my-2">
+                  {bookingData?.components?.customDetails && (
+                    <ViewCustomizations
+                      selectedProducts={bookingData.components.customDetails}
+                      priceDetails={bookingData.price_components?.customPrice}
                     />
                   )}
                 </div>

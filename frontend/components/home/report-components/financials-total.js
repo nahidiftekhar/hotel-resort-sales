@@ -96,7 +96,6 @@ function FinancialsTotal({ session }) {
 
   return (
     <section className="my-3 border rounded-1 px-0 py-2 w-100">
-      {/* {JSON.stringify(reportData)} */}
       <Pie data={data} options={options} />
     </section>
   );

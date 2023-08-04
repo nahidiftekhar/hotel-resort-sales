@@ -63,7 +63,6 @@ function AdvancedCreations({
       </Modal.Header>
       <Modal.Body>
         <div className="custom-form arrow-hidden">
-          {JSON.stringify(session.user)}
           <div className="d-flex justify-content-between bg-light rounded px-2 py-1 my-2">
             <p className="my-0">Price after discont (BDT) </p>
             <p className="my-0 fw-bold">

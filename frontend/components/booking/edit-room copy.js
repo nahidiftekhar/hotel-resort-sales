@@ -175,7 +175,6 @@ function EditRoom({ setBookingData, bookingData, setShow, daysCount }) {
   return (
     <div>
       {/* Dropdown element for all items */}
-      {JSON.stringify(productList)}
       <div className="py-2">
         <label>Select room</label>
         <Select
