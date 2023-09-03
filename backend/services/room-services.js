@@ -37,6 +37,16 @@ async function roomReservationStatusCurrentMonth(req, res, next) {
   );
   const dbResult = await dbRooms.roomStatusMonthWise(startOfMonth, endOfMonth);
 
+  const venueResult = await dbRooms.venueStatusMonthWise(
+    startOfMonth,
+    endOfMonth
+  );
+
+  dbResult.push({ room_type_name: 'Venue', rooms: venueResult });
+
+  console.log('dbResult: ' + JSON.stringify(dbResult));
+  console.log('venueResult: ' + JSON.stringify(venueResult));
+
   // Generate column headers (dates)
   const calendarDates = [];
   for (let i = 1; i <= daysInMonth; i++) {
@@ -57,7 +67,7 @@ async function roomReservationStatusCurrentMonth(req, res, next) {
     room_type_name: roomType.room_type_name,
     rooms: roomType.rooms.map((singleRoom) => {
       const roomId = singleRoom.id;
-      const roomNumber = singleRoom.room_number;
+      const roomNumber = singleRoom.room_number || singleRoom.venue_name;
       const reservation = calendarDates.map((date) => {
         const reservation = singleRoom.roomreservations.find(
           (res) => res.reservation_date === date
@@ -71,6 +81,7 @@ async function roomReservationStatusCurrentMonth(req, res, next) {
       };
     }),
   }));
+
   return res.json({ calendarDates, reservationData: formattedOutput });
 }
 

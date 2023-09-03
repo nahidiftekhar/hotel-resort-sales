@@ -259,17 +259,17 @@ function BookingHome({ session }) {
         row.booking_status === 'cancelled' ? (
           <div className="reactive-button-wauto">
             <a href={`booking/show-booking?id=${row.id}`} className="my-1">
-            <ReactiveButton
-              buttonState="idle"
-              idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
-              outline
-              color="violet"
-              className="rounded-1 py-1 px-3"
-              onClick={() => {
-                setShowBooking(true);
-                setCurrentBookingId(row.id);
-              }}
-            />
+              <ReactiveButton
+                buttonState="idle"
+                idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
+                outline
+                color="violet"
+                className="rounded-1 py-1 px-3"
+                onClick={() => {
+                  setShowBooking(true);
+                  setCurrentBookingId(row.id);
+                }}
+              />
             </a>
           </div>
         ) : (
@@ -369,7 +369,103 @@ function BookingHome({ session }) {
   const subHeaderComponent = () => {
     return (
       <Row className="w-100">
-        <Col md={6} className="d-none d-md-block"></Col>
+        {/* <Col md={6} className="d-none d-md-block"></Col> */}
+        <Col md={6} xs={12} className="d-flex my-2">
+          <div className="mx-1 reactive-button-wauto">
+            <ReactiveButton
+              buttonState="idle"
+              idleText={
+                <div>
+                  <span className="d-none d-md-block center-flex">All</span>
+                  <Icon
+                    nameIcon="FaList"
+                    propsIcon={{ size: 15, className: 'd-md-none' }}
+                  />
+                </div>
+              }
+              size="small"
+              className="rounded-1 bg-gradient"
+              onClick={() => setFilterData(allBookings)}
+            />
+          </div>
+          <div className="mx-1 reactive-button-wauto">
+            <ReactiveButton
+              buttonState="idle"
+              idleText={
+                <div>
+                  <span className="d-none d-md-block center-flex">
+                    Cancelled
+                  </span>
+                  <Icon
+                    nameIcon="AiFillStop"
+                    propsIcon={{ size: 15, className: 'd-md-none' }}
+                  />
+                </div>
+              }
+              size="small"
+              className="rounded-1 bg-gradient"
+              onClick={() =>
+                setFilterData(
+                  allBookings.filter(
+                    (booking) => booking.booking_status === 'cancelled'
+                  )
+                )
+              }
+            />
+          </div>
+          <div className="mx-1 reactive-button-wauto">
+            <ReactiveButton
+              buttonState="idle"
+              idleText={
+                <div>
+                  <span className="d-none d-md-block center-flex">
+                    Confirmation Pending
+                  </span>
+                  <Icon
+                    nameIcon="BsHourglassTop"
+                    propsIcon={{ size: 15, className: 'd-md-none' }}
+                  />
+                </div>
+              }
+              size="small"
+              className="rounded-1 bg-gradient"
+              onClick={() =>
+                setFilterData(
+                  allBookings.filter(
+                    (booking) =>
+                      booking.booking_status === 'advancedPaymentPending'
+                  )
+                )
+              }
+            />
+          </div>
+          <div className="mx-1 reactive-button-wauto">
+            <ReactiveButton
+              buttonState="idle"
+              idleText={
+                <div>
+                  <span className="d-none d-md-block center-flex">
+                    Approval Pending
+                  </span>
+                  <Icon
+                    nameIcon="FaPause"
+                    propsIcon={{ size: 15, className: 'd-md-none' }}
+                  />
+                </div>
+              }
+              size="small"
+              className="rounded-1 bg-gradient"
+              onClick={() =>
+                setFilterData(
+                  allBookings.filter(
+                    (booking) =>
+                      booking.booking_status === 'discountApprovalPending'
+                  )
+                )
+              }
+            />
+          </div>
+        </Col>
         <Col md={6} xs={12}>
           <Form className="w-100">
             <Form.Group className="mb-3" controlId="searchString">

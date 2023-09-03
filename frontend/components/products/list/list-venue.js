@@ -39,7 +39,7 @@ function ListVenues() {
   const headerResponsive = [
     {
       name: 'ID',
-      selector: (row) => row?.id,
+      selector: (row, index) => index + 1,
       width: '50px',
     },
     {
@@ -51,7 +51,8 @@ function ListVenues() {
     },
     {
       name: 'Description',
-      selector: (row) => parse(productDescriptionShortener(row?.description, 5)),
+      selector: (row) =>
+        parse(productDescriptionShortener(row?.description, 5)),
       sortable: false,
       wrap: true,
       grow: 2,

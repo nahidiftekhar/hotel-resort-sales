@@ -10,6 +10,7 @@ const {
   usertypes,
   roomreservations,
   venuereservations,
+  sequelize,
 } = require('../database/models');
 const helper = require('../services/utils/helper');
 
@@ -49,7 +50,10 @@ async function listAllBookingAfterToday(req, res, next) {
     guests,
     discounts,
     {
-      [Op.or]: [{ checkout_date: { [Op.gte]: new Date() } }],
+      // [Op.or]: [{ checkout_date: { [Op.gte]: new Date() } }],
+      checkout_date: {
+        [Op.gt]: sequelize.literal(`NOW() - INTERVAL '30 days'`),
+      },
       // [Op.or]: [{ checkin_date: { [Op.gte]: new Date() } }, { id: 4 }],
     }
   );
@@ -100,7 +104,7 @@ async function addBooking(req, res, next) {
           [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
         },
         status: {
-          [Op.not]: '',
+          [Op.not]: ['', 'cancelled'],
         },
       });
       console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
@@ -122,7 +126,7 @@ async function addBooking(req, res, next) {
           [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
         },
         status: {
-          [Op.not]: '',
+          [Op.not]: ['', 'cancelled'],
         },
       });
       console.log('bookedVenue: ' + JSON.stringify(bookedVenue));
@@ -280,7 +284,7 @@ async function editBooking(req, res, next) {
           [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
         },
         status: {
-          [Op.not]: '',
+          [Op.not]: ['', 'cancelled'],
         },
       });
       console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
@@ -335,7 +339,7 @@ async function editBooking(req, res, next) {
           [Op.between]: [singleVenue.checkInDate, singleVenue.checkOutDate],
         },
         status: {
-          [Op.not]: '',
+          [Op.not]: ['', 'cancelled'],
         },
       });
       console.log('bookedVenue: ' + JSON.stringify(bookedVenue));
@@ -381,9 +385,6 @@ async function editBooking(req, res, next) {
     user_type_id: 1,
   });
   const DiscountLoa = await checkDiscountLoa(requester_id);
-
-  console.log('DiscountLoa: ' + DiscountLoa);
-  console.log('discount : ' + ((amount - discounted_amount) * 100) / amount);
 
   // 0: over MD's discount limit. 1: within MD's limit, over personal limit. 2: within personal discount limit
   const discountStatus =

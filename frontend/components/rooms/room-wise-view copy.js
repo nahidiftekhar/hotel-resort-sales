@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 import React, { useState, useEffect } from 'react';
 import {
   dateStringFormattedToDate,
@@ -7,16 +6,20 @@ import {
 } from '../_functions/date-functions';
 import axios from 'axios';
 import { Icon } from '../_commom/Icon';
+import BookingView from '../booking/booking-view';
 import { Container, Modal } from 'react-bootstrap';
 import ReactiveButton from 'reactive-button';
+import AddReservation from './add-reservation';
 import { PropagateLoader, RiseLoader } from 'react-spinners';
-import ListAllGuests from '../guests/list-all-guests';
 
 function RoomWiseView({ session }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [roomData, setRoomData] = useState([]);
+  const [showExistingBooking, setShowExistingBooking] = useState(false);
+  const [bookingId, setBookingId] = useState(0);
+  const [showBooking, setShowBooking] = useState(false);
+  const [existingRecord, setExistingRecord] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [showGuestModal, setShowGuestModal] = useState(false);
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -107,9 +110,7 @@ function RoomWiseView({ session }) {
         <div className="scrolling-container">
           <div className="date-container">
             <div className="component-header">Date</div>
-            <div className="room-header bg-light gap-100 ps-2 position-sticky start-0">
-              Room
-            </div>
+            <div className="gap-100 ps-2">Room</div>
             {roomData?.calendarDates?.map((calendarDate, id) => (
               <div className="date-header fw-bold" key={id}>
                 {formatDateMONDD(dateStringFormattedToDate(calendarDate, '-'))}
@@ -134,6 +135,7 @@ function RoomWiseView({ session }) {
                           <div
                             key={id3}
                             className={`room-status ${
+                              // Object.keys(singleReservation).length === 0
                               Object.keys(singleReservation).length === 1 ||
                               singleReservation.status === ''
                                 ? 'room-available'
@@ -141,40 +143,53 @@ function RoomWiseView({ session }) {
                                 ? 'room-provisioned'
                                 : 'room-booked'
                             }`}>
-                            {Object.keys(singleReservation).length === 1 ||
-                            singleReservation.status === '' ? (
-                              <button
-                                className="btn-available"
-                                href="/booking/add-booking"
-                                // target="_blank"
-                                // rel="noreferrer"
-                                onClick={() => {
-                                  setShowGuestModal(true);
-                                }}>
-                                <Icon
-                                  nameIcon="FaCalendarPlus"
-                                  propsIcon={{ color: '#1e3c72' }}
-                                />
-                              </button>
-                            ) : singleReservation.status === 'provisioned' ? (
-                              <button className="btn-provisioned">
-                                <Icon
-                                  nameIcon="FaCalendarPlus"
-                                  propsIcon={{ color: '#1e3c72' }}
-                                />
-                              </button>
-                            ) : (
-                              <a
-                                className="btn-booked"
-                                href={`/booking/show-booking?id=${singleReservation.booking_id}`}
-                                target="_blank"
-                                rel="noreferrer">
-                                <Icon
-                                  nameIcon="FaRegCalendarCheck"
-                                  propsIcon={{ color: '#ffffff' }}
-                                />
-                              </a>
-                            )}
+                            {
+                              // Object.keys(singleReservation).length === 0
+                              Object.keys(singleReservation).length === 1 ||
+                              singleReservation.status === '' ? (
+                                <button
+                                  className="btn-available"
+                                  onClick={() => {
+                                    setShowBooking(true);
+                                    setExistingRecord({
+                                      ...singleReservation,
+                                      ...room,
+                                    });
+                                  }}>
+                                  <Icon
+                                    nameIcon="FaCalendarPlus"
+                                    propsIcon={{ color: '#1e3c72' }}
+                                  />
+                                </button>
+                              ) : singleReservation.status === 'provisioned' ? (
+                                <button
+                                  className="btn-provisioned"
+                                  onClick={() => {
+                                    setShowBooking(true);
+                                    setExistingRecord({
+                                      ...singleReservation,
+                                      ...room,
+                                    });
+                                  }}>
+                                  <Icon
+                                    nameIcon="FaCalendarPlus"
+                                    propsIcon={{ color: '#1e3c72' }}
+                                  />
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn-booked"
+                                  onClick={() => {
+                                    setShowExistingBooking(true);
+                                    setBookingId(singleReservation.booking_id);
+                                  }}>
+                                  <Icon
+                                    nameIcon="FaRegCalendarCheck"
+                                    propsIcon={{ color: '#ffffff' }}
+                                  />
+                                </button>
+                              )
+                            }
                           </div>
                         ))}
                       </div>
@@ -189,17 +204,46 @@ function RoomWiseView({ session }) {
         </div>
       )}
 
-      <Modal
-        show={showGuestModal}
-        size="xl"
-        onHide={() => setShowGuestModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Select Guest</Modal.Title>
-        </Modal.Header>
+      {/* Existing booking view */}
+      {/* <Modal
+        show={showExistingBooking}
+        onHide={() => setShowExistingBooking(false)}
+        size="xl">
         <Modal.Body>
-          <ListAllGuests />
+          <BookingView bookingId={bookingId} isNew={false} />
+          <div className="center-flex">
+            <div className="mx-1">
+              <ReactiveButton
+                buttonState="idle"
+                idleText="Close"
+                outline
+                color="red"
+                className="rounded-1"
+                onClick={() => setShowExistingBooking(false)}
+              />
+            </div>
+
+            <a href={`/booking/show-booking?id=${bookingId}`} className="mx-1">
+              <ReactiveButton
+                buttonState="idle"
+                idleText="Edit"
+                outline
+                color="blue"
+                className="rounded-1"
+                onClick={() => setShowExistingBooking(false)}
+              />
+            </a>
+          </div>
         </Modal.Body>
-      </Modal>
+      </Modal> */}
+
+      {/* New booking/existing provisions */}
+      <AddReservation
+        show={showBooking}
+        setShow={setShowBooking}
+        existingRecord={existingRecord}
+        session={session}
+      />
     </div>
   );
 }

@@ -48,7 +48,7 @@ function CancelBooking({ show, setShow, bookingData, setReferesh }) {
       keyboard={false}>
       <Modal.Body>
         <h5 className="text-danger">
-          Are you sure you want to cancel booking {bookingData.id}?
+          Are you sure you want to cancel booking {bookingData.booking_ref}?
         </h5>
         <div className="custom-form arrow-hidden">
           <label for="newNotes" className="mt-3">

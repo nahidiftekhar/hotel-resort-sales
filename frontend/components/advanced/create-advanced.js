@@ -125,6 +125,16 @@ function AdvancedCreations({
           <div className="mx-2">
             <ReactiveButton
               buttonState="idle"
+              idleText="Confirm"
+              size="small"
+              color="green"
+              outline
+              onClick={handleSubmit}
+            />
+          </div>
+          <div className="mx-2">
+            <ReactiveButton
+              buttonState="idle"
               idleText="Submit"
               size="small"
               color="blue"

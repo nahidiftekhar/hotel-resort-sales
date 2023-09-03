@@ -25,6 +25,8 @@ export const authOptions = {
         );
         const user = apiResult.successStatus ? apiResult : null;
 
+        console.log('apiResult: ' + JSON.stringify(apiResult));
+
         if (user) {
           return {
             id: user.id,

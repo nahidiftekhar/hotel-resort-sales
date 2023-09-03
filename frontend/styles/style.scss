@@ -1144,6 +1144,7 @@ body {
   .scrolling-container {
     width: 100%;
     overflow-x: auto;
+    position: relative;
 
     .date-container {
       display: flex;
@@ -1164,7 +1165,7 @@ body {
       }
 
       .gap-100 {
-        flex-basis: 100px;
+        flex-basis: 200px;
         flex-grow: 0;
         flex-shrink: 0;
         border-right: 5px #acacac solid;
@@ -1191,12 +1192,17 @@ body {
         border-bottom: 1px #cecece solid;
         display: flex;
         width: 100%;
+        // position: relative;
 
         .room-header {
-          flex-basis: 100px;
+          flex-basis: 200px;
           flex-grow: 0;
           flex-shrink: 0;
           border-right: 5px #acacac solid;
+          border-bottom: 2px #acacac solid;
+          position: sticky;
+          left: 0;
+          background-color: #ececec;
         }
 
         .room-status {
@@ -1209,10 +1215,11 @@ body {
         }
 
         .room-booked {
-          background-color: #fff2b1;
+          // background-color: #93f4ff;
+          background-color: #ffffff;
         }
         .room-provisioned {
-          background-color: #93f4ff;
+          background-color: #fff2b1;
         }
         .room-available {
           background-color: #ffffff;

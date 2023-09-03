@@ -39,7 +39,7 @@ function ListRoomTypes() {
   const headerResponsive = [
     {
       name: 'ID',
-      selector: (row) => row.id,
+      selector: (row, index) => index + 1,
       width: '50px',
     },
     {
@@ -136,7 +136,7 @@ function ListRoomTypes() {
       if (e.target.value === '') {
         return product;
       } else if (
-        (product.room_type_name)
+        product.room_type_name
           .toLowerCase()
           .includes(e.target.value.toLowerCase())
       )

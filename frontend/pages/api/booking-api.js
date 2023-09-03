@@ -86,7 +86,7 @@ export const modifyBookingApi = async (bookingData, discountData) => {
       accumulator + Number(priceAfterDiscount),
     0
   );
-  bookingData.requester_id = discountData?.requester_id;
+  bookingData.requester_id = bookingData.user_id;
   bookingData.discount_id = discountData?.id;
   bookingData.approver_id = discountData?.approver_id;
   bookingData.discount_notes = Object.values(bookingData?.price_components)

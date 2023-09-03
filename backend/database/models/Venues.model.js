@@ -33,7 +33,10 @@ module.exports = (sequelize, DataTypes) => {
 
   // Class Method
   Venues.associate = function (models) {
-    Venues.hasMany(models.venuereservations, { foreignKey: 'venue_id' });
+    Venues.hasMany(models.venuereservations, {
+      foreignKey: 'venue_id',
+      as: 'roomreservations',
+    });
   };
 
   return Venues;

@@ -44,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
     booking_status: {
       type: Sequelize.STRING,
       allowNull: false,
+      // discountApprovalPending, advancedPaymentPending, negotiationPending, approvalPending, discountRejected, bookingConfirmed, advancedPaymentConfirmed, checkedin, checkedOut, cancelled
     },
     booking_notes: {
       type: Sequelize.TEXT,

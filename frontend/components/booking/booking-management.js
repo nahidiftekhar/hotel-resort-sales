@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Formik, Form } from 'formik';
-import { Container, Row, Col, Dropdown } from 'react-bootstrap';
+import { Container, Row, Col, Dropdown, Modal } from 'react-bootstrap';
 import { PropagateLoader, RiseLoader } from 'react-spinners';
 import * as Yup from 'yup';
 
@@ -38,17 +38,10 @@ import CancelBooking from './cancel-booking';
 import axios from 'axios';
 import ViewVenues from './view-venues';
 import ViewCustomizations from './view-customizations';
+import ListAllGuests from '../guests/list-all-guests';
 
 const validationRules = Yup.object({
   checkInDate: Yup.date().nullable().required('Check-in Date is required'),
-  // .test(
-  //   'is-greater',
-  //   'Check-in date cannot be lower than today',
-  //   function (value) {
-  //     const thisDay = new Date().setHours(0, 0, 0, 0);
-  //     return !thisDay || !value || value >= thisDay;
-  //   }
-  // ),
   checkOutDate: Yup.date()
     .nullable()
     .required('Check-out Date is required')
@@ -85,6 +78,7 @@ function BookingManagement({ bookingId, isNew, session }) {
   const [referesh, setReferesh] = useState(false);
   const [buttonState, setButtonState] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  // const [showGuestModal, setShowGuestModal] = useState(false);
 
   const router = useRouter();
   const toDay = new Date();
@@ -95,16 +89,24 @@ function BookingManagement({ bookingId, isNew, session }) {
       setBookingData(bookingDataTemp.bookingData);
       setGuestData(bookingDataTemp.guestData);
       setDiscountData(bookingDataTemp.discountData);
+      const userId = session.user.id;
+      updateStateObject(setBookingData, 'user_id', userId);
+      updateStateObject(setDiscountData, 'requester_id', userId);
       setIsLoading(false);
     };
 
     const getGuestInfo = async () => {
       const guestId = readFromStorage('GUEST_KEY');
+      // if (guestId) {
+      //   setShowGuestModal(true);
+      // return false;
+      // }
       const userId = session.user.id;
       const guestDataTemp = await fetchGuestApi(guestId);
       setGuestData(guestDataTemp);
       updateStateObject(setBookingData, 'guest_id', guestId);
       updateStateObject(setBookingData, 'user_id', userId);
+      updateStateObject(setDiscountData, 'requester_id', userId);
       setEditable(true);
       setIsLoading(false);
     };
@@ -605,6 +607,18 @@ function BookingManagement({ bookingId, isNew, session }) {
         bookingData={bookingData}
         setReferesh={setReferesh}
       />
+
+      {/* <Modal
+        show={showGuestModal}
+        size="xl"
+        onHide={() => setShowGuestModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Select Guest</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ListAllGuests />
+        </Modal.Body>
+      </Modal> */}
     </div>
   );
 }
