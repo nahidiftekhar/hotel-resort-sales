@@ -8,6 +8,7 @@ import { Icon } from '@/components/_commom/Icon';
 import PrModal from '@/components/purchase/add-pr-modal';
 import ProcessPr from '@/components/purchase/process-pr';
 import { Export, downloadCSV } from '@/components/_functions/table-export';
+import { PuffLoader } from 'react-spinners';
 
 const ItemPurchase = ({ session }) => {
   const [allRequisitions, setAllRequisitions] = useState([]);
@@ -167,7 +168,19 @@ const ItemPurchase = ({ session }) => {
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Pending"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaClock" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Pending</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('pendingApproval');
             }}
@@ -179,7 +192,19 @@ const ItemPurchase = ({ session }) => {
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Approved"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaCheckCircle" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Approved</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('approved');
             }}
@@ -192,7 +217,19 @@ const ItemPurchase = ({ session }) => {
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Rejected"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaTimesCircle" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Rejected</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('rejected');
             }}
@@ -204,11 +241,26 @@ const ItemPurchase = ({ session }) => {
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Released"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon
+                    nameIcon="HiOutlineCurrencyBangladeshi"
+                    propsIcon={{}}
+                  />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Released</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('released');
             }}
-            disabled={requisitionStatus === 'purchased' ? true : false}
+            disabled={requisitionStatus === 'released' ? true : false}
           />
         </div>
 
@@ -216,7 +268,19 @@ const ItemPurchase = ({ session }) => {
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Purchased"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaTag" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Purchased</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('purchased');
             }}

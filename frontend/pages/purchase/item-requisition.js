@@ -7,6 +7,7 @@ import RequisitionModal from '@/components/purchase/add-requisition-modal';
 import { datetimeStringToDate } from '@/components/_functions/string-format';
 import ProcessRequisition from '@/components/purchase/process-requisition';
 import { Icon } from '@/components/_commom/Icon';
+import { PuffLoader } from 'react-spinners';
 
 const ItemRequisition = ({ session }) => {
   const [allRequisitions, setAllRequisitions] = useState([]);
@@ -130,11 +131,23 @@ const ItemRequisition = ({ session }) => {
   const subHeaderComponent = () => {
     return (
       <div className="d-flex justify-content-between">
-        <div className="mx-1">
+        <div className="mx-1 reactive-button-wauto">
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Pending"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaClock" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Pending</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('pending');
             }}
@@ -142,11 +155,23 @@ const ItemRequisition = ({ session }) => {
           />
         </div>
 
-        <div className="mx-1">
+        <div className="mx-1 reactive-button-wauto">
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Rejected"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaTimesCircle" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Rejected</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('rejected');
             }}
@@ -154,11 +179,23 @@ const ItemRequisition = ({ session }) => {
           />
         </div>
 
-        <div className="mx-1">
+        <div className="mx-1 reactive-button-wauto">
           <ReactiveButton
             buttonState={buttonState}
             color="secondary"
-            idleText="Fullfilled"
+            idleText={
+              <div>
+                <div className="d-block d-md-none">
+                  <Icon nameIcon="FaTag" propsIcon={{}} />
+                </div>
+                <div className="d-none d-md-block my-0 mx-1">Fullfilled</div>
+              </div>
+            }
+            loadingText={
+              <div className="center-flex">
+                <PuffLoader size={16} color="#fff" />
+              </div>
+            }
             onClick={() => {
               setRequisitionStatus('fullfilled');
             }}
