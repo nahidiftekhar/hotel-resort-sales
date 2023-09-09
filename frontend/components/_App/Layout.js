@@ -19,11 +19,12 @@ const Layout = ({ children, staticContent, session }) => {
       <NextAuthProvider>
         {session && <TopNavbar session={session} />}
         {session && (
-          <Container className="d-flex align-items-center justify-content-between my-1">
-            <h3>Chhuti Gazipur</h3>
-            <p className="mx-1 my-0 text-muted smaller-label fw-bold">
-              Logged in user: {session.user.username}
-            </p>
+          <Container className="d-flex align-items-end justify-content-between mb-3">
+            <h4 className="my-0">Chhuti Gazipur</h4>
+            <div className="mx-1 my-0 text-muted smaller-label fw-bold">
+              {/* <p className="my-0">Logged in user: </p> */}
+              <p className="my-0">{session.user.username}</p>
+            </div>
           </Container>
         )}
 

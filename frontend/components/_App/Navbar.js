@@ -25,8 +25,8 @@ function TopNavbar({ session }) {
             id="responsive-navbar-nav"
             className="justify-content-end">
             <Nav>
-              <Nav.Link className="mx-3" href="/">
-                Home
+              <Nav.Link className="mx-3" href="/purchase">
+                Purchase
               </Nav.Link>
               <Nav.Link className="mx-3" href="/booking">
                 Booking

@@ -42,6 +42,22 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'approver_id',
     });
     Credentials.hasMany(models.roomreservations, { foreignKey: 'user_id' });
+    Credentials.hasMany(models.productpurchases, {
+      as: 'purchase_requester',
+      foreignKey: 'requester_id',
+    });
+    Credentials.hasMany(models.productpurchases, {
+      as: 'purchase_approver',
+      foreignKey: 'approver_id',
+    });
+    Credentials.hasMany(models.productrequisitions, {
+      as: 'requisition_requester',
+      foreignKey: 'requester_id',
+    });
+    Credentials.hasMany(models.productrequisitions, {
+      as: 'requisition_approver',
+      foreignKey: 'approver_id',
+    });
   };
 
   return Credentials;

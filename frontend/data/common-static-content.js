@@ -2,11 +2,6 @@ export const layoutContent = {
   navbarContent: {
     navItems: [
       {
-        name: 'Home',
-        path: '/',
-        subnavs: [],
-      },
-      {
         name: 'About me',
         path: '/about-me',
         subnavs: [],

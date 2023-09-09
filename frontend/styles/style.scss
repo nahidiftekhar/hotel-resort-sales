@@ -100,8 +100,9 @@ body {
   }
 
   .label-text {
-    font-size: 0.8em;
-    color: v.$grey-color;
+    font-size: 0.6em;
+    font-weight: 600;
+    color: v.$grey-color1;
   }
 
   label {
@@ -243,6 +244,10 @@ body {
 
   .w-200px {
     width: 200px !important;
+  }
+
+  .w-300px {
+    width: 300px !important;
   }
 
   .w-75px {

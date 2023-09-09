@@ -10,5 +10,6 @@ router.use('/services', require('./standard-controllers'));
 router.use('/payments', require('./payment-controller'));
 router.use('/reports', require('./report-controller'));
 router.use('/rooms', require('./room-controller'));
+router.use('/purchase', require('./purchase-controller'));
 
 module.exports = router;
