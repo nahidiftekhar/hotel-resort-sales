@@ -184,26 +184,31 @@ function BookingHome({ session }) {
             <div className="mt-2">
               {' '}
               <strong>Rooms:</strong>
+              {row.components.roomDetails?.map((singlePackage, index) => (
+                <OverlayTrigger
+                  key={index}
+                  trigger="click"
+                  overlay={
+                    <Popover id="popover-basic">
+                      <Popover.Header as="h3">
+                        {singlePackage.roomtype.room_type_name}-
+                        {singlePackage.room_number}
+                      </Popover.Header>
+                      <Popover.Body>
+                        <p className="my-1">
+                          Price: {singlePackage.room_cost || 0}
+                        </p>
+                      </Popover.Body>
+                    </Popover>
+                  }>
+                  <p className="mb-1 pointer-div">
+                    {singlePackage.roomtype.room_type_name}-
+                    {singlePackage.room_number}
+                  </p>
+                </OverlayTrigger>
+              ))}
             </div>
           )}
-          {row.components.roomDetails?.map((singlePackage, index) => (
-            <OverlayTrigger
-              key={index}
-              trigger="click"
-              overlay={
-                <Popover id="popover-basic">
-                  <Popover.Header as="h3">{singlePackage.name}</Popover.Header>
-                  <Popover.Body>
-                    <p className="my-1">Count: {singlePackage.room_count}</p>
-                    <p className="my-1">
-                      Price: {singlePackage.room_cost || 0}
-                    </p>
-                  </Popover.Body>
-                </Popover>
-              }>
-              <p className="mb-1 pointer-div">{singlePackage.name}</p>
-            </OverlayTrigger>
-          ))}
         </div>
       ),
       wrap: true,

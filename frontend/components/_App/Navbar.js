@@ -45,29 +45,34 @@ function TopNavbar({ session }) {
               <Nav.Link className="mx-3" href="/products">
                 Products
               </Nav.Link>
-              {/* <Nav.Link className="mx-3" href="/hospitality">
-                Hospitality
-              </Nav.Link> */}
-              <div className="center-flex mx-3">
-                <a
-                  href="/settings"
-                  className={`reactive-button-wauto ms-md-5 ${
-                    session.user.passChangePending ? 'placeholder-glow' : ''
-                  }`}>
-                  <ReactiveButton
-                    buttonState="idle"
-                    idleText={
-                      <Icon nameIcon="AiFillSetting" propsIcon={{ size: 12 }} />
-                    }
-                    animation={true}
-                    rounded
-                    color="dark"
-                    className="p-2 bg-gradient placeholder"
-                  />
-                </a>
-              </div>
-              <div className="center-flex ">
-                <LogOutButton />{' '}
+              <Nav.Link className="mx-3" href="/hospitality">
+                Visit
+              </Nav.Link>
+              <div className="d-flex">
+                <div className="center-flex mx-3">
+                  <a
+                    href="/settings"
+                    className={`reactive-button-wauto ms-md-5 ${
+                      session.user.passChangePending ? 'placeholder-glow' : ''
+                    }`}>
+                    <ReactiveButton
+                      buttonState="idle"
+                      idleText={
+                        <Icon
+                          nameIcon="AiFillSetting"
+                          propsIcon={{ size: 12 }}
+                        />
+                      }
+                      animation={true}
+                      rounded
+                      color="dark"
+                      className="p-2 bg-gradient placeholder"
+                    />
+                  </a>
+                </div>
+                <div className="center-flex ">
+                  <LogOutButton />{' '}
+                </div>
               </div>
             </Nav>
           </Navbar.Collapse>

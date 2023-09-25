@@ -20,7 +20,7 @@ const Layout = ({ children, staticContent, session }) => {
         {session && <TopNavbar session={session} />}
         {session && (
           <Container className="d-flex align-items-end justify-content-between mb-3">
-            <h4 className="my-0">Chhuti Gazipur</h4>
+            <h4 className="my-0">Chuti Gazipur</h4>
             <div className="mx-1 my-0 text-muted smaller-label fw-bold">
               {/* <p className="my-0">Logged in user: </p> */}
               <p className="my-0">{session.user.username}</p>
