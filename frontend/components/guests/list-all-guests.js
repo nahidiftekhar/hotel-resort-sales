@@ -49,7 +49,7 @@ function ListAllGuests() {
     {
       name: 'SL',
       selector: (row, index) => index + 1,
-      width: '50px',
+      width: '80px',
     },
     {
       name: 'Name',
@@ -177,6 +177,7 @@ function ListAllGuests() {
         columns={headerResponsive}
         data={filterData}
         pagination
+        paginationPerPage={100}
         paginationComponentOptions={paginationComponentOptions}
         defaultSortFieldId={1}
         subHeader
