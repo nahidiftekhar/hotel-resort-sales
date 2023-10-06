@@ -5,7 +5,7 @@ import { RiseLoader } from 'react-spinners';
 import { addPaymentApi } from '@/api/visit-api';
 import { Icon } from '@/components/_commom/Icon';
 
-import { paymentReceivers } from '@/data/paymentOptions';
+import { paymentOptions, paymentReceivers } from '@/data/paymentOptions';
 
 function AddPayment({ show, setShow, visitId, setRefresh, session }) {
   const [paymentRecord, setPaymentRecord] = useState({
@@ -74,6 +74,27 @@ function AddPayment({ show, setShow, visitId, setRefresh, session }) {
                 })
               }>
               {paymentReceivers.map((value, index) => (
+                <option key={index} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </Col>
+
+          <Col md={6}>
+            <label for="paymentMethod" className="mt-3">
+              Payment Method
+            </label>
+            <select
+              name="paymentMethod"
+              id="paymentMethod"
+              onChange={(e) =>
+                setPaymentRecord({
+                  ...paymentRecord,
+                  paymentMethod: e.target.value,
+                })
+              }>
+              {paymentOptions.map((value, index) => (
                 <option key={index} value={value}>
                   {value}
                 </option>

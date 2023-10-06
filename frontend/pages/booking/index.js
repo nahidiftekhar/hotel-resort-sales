@@ -37,7 +37,10 @@ function BookingHome({ session }) {
     const fetchAllBooking = async () => {
       const apiResult = await listAllBookingApi();
       setAllBookings(apiResult);
-      setFilterData(apiResult);
+      setFilterData(
+        apiResult.filter((booking) => booking.booking_status !== 'cancelled')
+      );
+      // setFilterData(apiResult);
       setIsLoading(false);
       setReferesh(false);
     };
@@ -390,7 +393,14 @@ function BookingHome({ session }) {
               }
               size="small"
               className="rounded-1 bg-gradient"
-              onClick={() => setFilterData(allBookings)}
+              // onClick={() => setFilterData(allBookings)}
+              onClick={() =>
+                setFilterData(
+                  allBookings.filter(
+                    (booking) => booking.booking_status !== 'cancelled'
+                  )
+                )
+              }
             />
           </div>
           <div className="mx-1 reactive-button-wauto">

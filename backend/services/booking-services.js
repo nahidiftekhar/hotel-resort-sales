@@ -287,7 +287,6 @@ async function editBooking(req, res, next) {
           [Op.not]: ['', 'cancelled'],
         },
       });
-      console.log('bookedRoom: ' + JSON.stringify(bookedRoom));
       if (bookedRoom.length) {
         return res.json({
           success: false,
@@ -384,7 +383,7 @@ async function editBooking(req, res, next) {
   const highestDiscount = await dbStandard.findOneFilterDb(discountslabs, {
     user_type_id: 1,
   });
-  const DiscountLoa = await checkDiscountLoa(requester_id);
+  const DiscountLoa = await checkDiscountLoa(user_id);
 
   // 0: over MD's discount limit. 1: within MD's limit, over personal limit. 2: within personal discount limit
   const discountStatus =
@@ -422,14 +421,15 @@ async function editBooking(req, res, next) {
   );
 
   const dbDiscount = dbBooking.success
-    ? await dbStandard.modifySingleRecordDb(
+    ? // ? await dbStandard.modifySingleRecordDb(
+      await dbStandard.addOrUpdateSingleDb(
         discounts,
         {
-          id: discount_id,
+          id: discount_id || 0,
         },
         {
           booking_id: id,
-          requester_id: requester_id,
+          requester_id: user_id,
           approver_id: approver_id,
           percentage_value: ((amount - discounted_amount) * 100) / amount,
           rack_price: amount,
@@ -670,6 +670,22 @@ async function cancelBooking(req, res, next) {
     {
       booking_status: 'cancelled',
       booking_notes: notes,
+    }
+  );
+  await dbStandard.modifySingleRecordDb(
+    roomreservations,
+    { booking_id: bookingId },
+    {
+      status: '',
+      notes: notes,
+    }
+  );
+  await dbStandard.modifySingleRecordDb(
+    venuereservations,
+    { booking_id: bookingId },
+    {
+      status: '',
+      notes: notes,
     }
   );
   return res.json(modifyBooking);

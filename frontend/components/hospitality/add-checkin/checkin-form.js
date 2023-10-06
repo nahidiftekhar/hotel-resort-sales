@@ -20,11 +20,12 @@ function CheckinForm({ checkInData, setCheckinData }) {
       const apiRes = await listAllBookingApi();
       const bookingListTemp = [
         ...apiRes,
-        { id: 0, advanced_amount: 0, value: 0, guest: { name: 'Walk-in' } },
+        { id: 0, advanced_amount: 0, value: 0, booking_ref: 'Walk-in' },
       ];
       setBookingList(
         bookingListTemp.map((obj, index) => {
-          return { ...obj, value: obj.id, label: obj.guest.name };
+          // return { ...obj, value: obj.id, label: obj.guest.name };
+          return { ...obj, value: obj.id, label: obj.booking_ref };
         })
       );
     };

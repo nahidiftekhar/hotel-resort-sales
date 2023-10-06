@@ -88,7 +88,8 @@ export const modifyBookingApi = async (bookingData, discountData) => {
   );
   bookingData.requester_id = bookingData.user_id;
   bookingData.discount_id = discountData?.id;
-  bookingData.approver_id = discountData?.approver_id;
+  bookingData.approver_id =
+    discountData?.approver_id || organizationConfigs.APPROVER_ID;
   bookingData.discount_notes = Object.values(bookingData?.price_components)
     .map((obj) => obj.discountNotes)
     .join('\n');

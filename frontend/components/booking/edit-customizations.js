@@ -1,19 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import Select from 'react-select';
 import ReactiveButton from 'reactive-button';
 
-import { Icon } from '@/components/_commom/Icon';
-
-import { listAllServicesApi } from '@/api/products-api';
-import {
-  roundUptoFixedDigits,
-  sumOfKey,
-  updateStateArray,
-  updateStateObject,
-} from '@/components/_functions/common-functions';
-import { BDTFormat } from '@/components/_functions/number-format';
-import { getMaxDiscountSlab } from '@/api/booking-api';
 import { CustomTextInput } from '../_commom/form-elements';
 import QuillComponent from '../_commom/quill-component';
 

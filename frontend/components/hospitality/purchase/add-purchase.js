@@ -7,6 +7,7 @@ import AddAlacarte from './add-alacarte';
 import AddRoom from './add-room';
 import AddService from './add-service';
 import AddPackage from './add-package';
+import AddLumpSum from './add-lumpsum';
 
 function AddPurchase({
   show,
@@ -80,6 +81,16 @@ function AddPurchase({
             case 'package':
               return (
                 <AddPackage
+                  componentType={componentType}
+                  visitId={visitId}
+                  setRefresh={setRefresh}
+                  setShow={setShow}
+                  session={session}
+                />
+              );
+            case 'custom':
+              return (
+                <AddLumpSum
                   componentType={componentType}
                   visitId={visitId}
                   setRefresh={setRefresh}

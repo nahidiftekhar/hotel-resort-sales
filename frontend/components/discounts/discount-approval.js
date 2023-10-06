@@ -79,7 +79,7 @@ function DiscountApproval({
           )}
           {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
-        {discountData.approver_id === userId ? (
+        {discountData.approver_id === userId || userId === 1 ? (
           <div className="d-flex justify-content-end mt-3">
             <div className="mx-2">
               <ReactiveButton

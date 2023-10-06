@@ -7,6 +7,7 @@ const {
   usertypes,
   visits,
   visitorexpenses,
+  productpurchases,
 } = require('../../database/models');
 
 async function revenueTotal(startDate, endDate) {
@@ -44,6 +45,30 @@ async function revenueDaily(startDate, endDate) {
       },
       group: [Sequelize.fn('DATE', Sequelize.col('createdAt'))],
       order: [Sequelize.fn('DATE', Sequelize.col('createdAt'))],
+    });
+
+    return result;
+  } catch (error) {
+    console.log('Error executing query: ' + error);
+    return 0;
+  }
+}
+
+async function expenseDaily(startDate, endDate) {
+  try {
+    const result = await productpurchases.findAll({
+      attributes: [
+        [Sequelize.fn('DATE', Sequelize.col('updatedAt')), 'day'],
+        [Sequelize.literal('SUM(actual_cost)'), 'totalExpense'],
+      ],
+      where: {
+        updatedAt: {
+          [Op.gte]: startDate,
+          [Op.lt]: endDate,
+        },
+      },
+      group: [Sequelize.fn('DATE', Sequelize.col('updatedAt'))],
+      order: [Sequelize.fn('DATE', Sequelize.col('updatedAt'))],
     });
 
     return result;
@@ -106,5 +131,6 @@ async function salesPerformanceDb(startDate, endDate) {
 module.exports = {
   revenueTotal,
   revenueDaily,
+  expenseDaily,
   salesPerformanceDb,
 };

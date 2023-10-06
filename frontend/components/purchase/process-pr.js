@@ -42,7 +42,7 @@ const ProcessPr = ({
       onHide={() => setOpenProcessModal(false)}
       size="xl">
       <Modal.Header closeButton>
-        <Modal.Title>Process Item Requisition</Modal.Title>
+        <Modal.Title>Process Purchase Requisition</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Row>

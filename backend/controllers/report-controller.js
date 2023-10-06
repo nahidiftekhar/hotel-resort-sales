@@ -55,6 +55,12 @@ router.get(
   reportServices.revenueDailyInDuration
 );
 
+// Daily expense in days
+router.get(
+  '/expenseDaily/:dateString/:duration',
+  reportServices.expenseDailyInDuration
+);
+
 // Total payment in days
 router.get(
   '/paymentSum/:dateString/:duration',

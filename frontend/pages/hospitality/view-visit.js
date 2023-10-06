@@ -27,7 +27,7 @@ const componentList = [
   { id: 4, name: 'Room', icon: 'MdLocalHotel', type: 'room' },
   { id: 5, name: 'Services', icon: 'FaTableTennis', type: 'service' },
   { id: 6, name: 'Venue', icon: 'MdMeetingRoom', type: 'venue' },
-  { id: 7, name: 'Custom Menu', icon: 'MdFoodBank', type: 'custom' },
+  { id: 7, name: 'Lump Sum', icon: 'MdFoodBank', type: 'custom' },
 ];
 
 function ViewVisit({ session }) {

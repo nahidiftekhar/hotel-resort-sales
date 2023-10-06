@@ -75,7 +75,10 @@ function parseDateString(dateString) {
   const month = dateString.substring(4, 6) - 1;
   const day = dateString.substring(6, 8);
 
-  return new Date(year, month, day);
+  // return new Date(year, month, day);
+  const date = new Date(year, month, day);
+  date.setDate(date.getDate() + 1);
+  return date;
 }
 
 function formatDateYYYYMMDDwithDash(date) {

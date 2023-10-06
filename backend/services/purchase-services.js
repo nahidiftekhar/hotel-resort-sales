@@ -207,7 +207,7 @@ async function editProductPurchase(req, res, next) {
 
   if (
     ['approved', 'rejected'].includes(status) &&
-    orgConfig.orgConfig.APPOVER_USER_ID.indexOf(userId) === -1
+    orgConfig.orgConfig.APPROVER_USER_TYPE.indexOf(usertypeId) === -1
   ) {
     return res.json({
       success: false,

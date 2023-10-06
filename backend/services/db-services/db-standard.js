@@ -52,7 +52,7 @@ async function addMultipleRecorsdDB(tableName, recordToAdd) {
     return { success: true, dbResult };
   } catch (error) {
     console.log('Error executing query: ' + error);
-    return { success: false };
+    return { success: false, error };
   }
 }
 

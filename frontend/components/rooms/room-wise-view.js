@@ -156,14 +156,7 @@ function RoomWiseView({ session }) {
                                   propsIcon={{ color: '#1e3c72' }}
                                 />
                               </button>
-                            ) : singleReservation.status === 'provisioned' ? (
-                              <button className="btn-provisioned">
-                                <Icon
-                                  nameIcon="FaCalendarPlus"
-                                  propsIcon={{ color: '#1e3c72' }}
-                                />
-                              </button>
-                            ) : (
+                            ) : singleReservation.status === 'booked' ? (
                               <a
                                 className="btn-booked"
                                 href={`/booking/show-booking?id=${singleReservation.booking_id}`}
@@ -174,6 +167,13 @@ function RoomWiseView({ session }) {
                                   propsIcon={{ color: '#ffffff' }}
                                 />
                               </a>
+                            ) : (
+                              <button className="btn-provisioned">
+                                <Icon
+                                  nameIcon="FaCalendarPlus"
+                                  propsIcon={{ color: '#1e3c72' }}
+                                />
+                              </button>
                             )}
                           </div>
                         ))}

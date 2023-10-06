@@ -10,6 +10,7 @@ const {
   visits,
   visitorexpenses,
   payments,
+  productpurchases,
 } = require('../database/models');
 const { Op } = require('sequelize');
 
@@ -227,6 +228,41 @@ async function revenueTotalInDuration(req, res, next) {
   return res.json(dbResult);
 }
 
+async function revenueDailyInDuration(req, res, next) {
+  const { dateString, duration } = req.params;
+  const refDate = helper.parseDateString(dateString);
+
+  const startDate =
+    Number(duration) > 0
+      ? refDate
+      : helper.getEndDateWithDuration(refDate, duration);
+  const endDate =
+    Number(duration) > 0
+      ? helper.getEndDateWithDuration(refDate, duration)
+      : refDate;
+
+  const dbResult = await dbReports.revenueDaily(startDate, endDate);
+
+  return res.json(dbResult);
+}
+
+async function expenseDailyInDuration(req, res, next) {
+  const { dateString, duration } = req.params;
+  const refDate = helper.parseDateString(dateString);
+
+  const startDate =
+    Number(duration) > 0
+      ? refDate
+      : helper.getEndDateWithDuration(refDate, duration);
+  const endDate =
+    Number(duration) > 0
+      ? helper.getEndDateWithDuration(refDate, duration)
+      : refDate;
+
+  const dbResult = await dbReports.expenseDaily(startDate, endDate);
+  return res.json(dbResult);
+}
+
 async function paymentTotalInDuration(req, res, next) {
   const { dateString, duration } = req.params;
   const refDate = helper.parseDateString(dateString);
@@ -325,23 +361,24 @@ async function financialsTotalInDuration(req, res, next) {
     }
   );
 
+  const expenseTotal = await dbStandard.sumWithFilterDb(
+    productpurchases,
+    'actual_cost',
+    {
+      createdAt: {
+        [Op.gte]: startDate,
+        [Op.lt]: endDate,
+      },
+    }
+  );
+
   return res.json({
     revenueTotal,
     paymentTotal,
     adjustmentTotal,
     discountTotal,
+    expenseTotal,
   });
-}
-
-async function revenueDailyInDuration(req, res, next) {
-  const { dateString, duration } = req.params;
-
-  const startDate = helper.parseDateString(dateString);
-  const endDate = helper.getEndDateWithDuration(startDate, duration);
-
-  const dbResult = await dbReports.revenueDaily(startDate, endDate);
-
-  return res.json(dbResult);
 }
 
 async function paymentAllRecords(req, res, next) {
@@ -413,6 +450,7 @@ module.exports = {
   discountTotalInDuration,
   revenueTotalInDuration,
   revenueDailyInDuration,
+  expenseDailyInDuration,
   paymentTotalInDuration,
   adjustmentTotalInDuration,
   paymentAllRecords,
