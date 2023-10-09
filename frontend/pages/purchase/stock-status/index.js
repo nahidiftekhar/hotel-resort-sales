@@ -4,9 +4,11 @@ import DataTable from 'react-data-table-component';
 import { datetimeStringToDate } from '@/components/_functions/date-functions';
 import { Icon } from '@/components/_commom/Icon';
 import RequisitionByProduct from './requisition-by-product';
+import { Form } from 'react-bootstrap';
 
 const StockStatus = () => {
   const [fullStock, setFullStock] = useState([]);
+  const [filterData, setFilterData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [singleItemData, setSingleItemData] = useState({});
 
@@ -14,6 +16,7 @@ const StockStatus = () => {
     const getStockStatus = async () => {
       const stockStatus = await axios.get('/api/purchase/stock/full-stock');
       setFullStock(stockStatus.data);
+      setFilterData(stockStatus.data);
     };
     getStockStatus();
   }, []);
@@ -63,29 +66,51 @@ const StockStatus = () => {
     },
   ];
 
+  const handleFilter = (e) => {
+    const filterTemp = fullStock.filter((item) => {
+      if (e.target.value === '') {
+        return item;
+      } else if (
+        item.product?.name?.toLowerCase().includes(e.target.value.toLowerCase())
+      )
+        return item;
+    });
+    setFilterData((current) => [...filterTemp]);
+  };
+
+  const subHeaderComponent = () => {
+    return (
+      <Form className="w-50">
+        <Form.Group className="mb-3" controlId="searchString">
+          <Form.Control
+            size="sm"
+            type="text"
+            placeholder="Enter item name to filter"
+            onChange={(e) => handleFilter(e)}
+          />
+        </Form.Group>
+      </Form>
+    );
+  };
+
   return (
     <div>
       <DataTable
         title="Stock Status"
         columns={headerResponsive}
-        data={fullStock}
+        data={filterData}
         pagination
         highlightOnHover
         responsive
         striped
         dense
-        defaultSortField="name"
+        defaultSortField={2}
         sortIcon={<i className="fas fa-arrow-down"></i>}
-        paginationComponentOptions={{
-          rowsPerPageText: 'Rows per page:',
-          rangeSeparatorText: 'of',
-          rowsPerPageOptions: [50, 100],
-          rowsPerPage: 100,
-          noRowsPerPage: false,
-          selectAllRowsItem: false,
-          selectAllRowsItemText: 'All',
-        }}
+        paginationPerPage={100}
+        paginationRowsPerPageOptions={[50, 100, 500]}
         progressPending={fullStock.length === 0}
+        subHeader
+        subHeaderComponent={subHeaderComponent()}
       />
 
       <RequisitionByProduct
