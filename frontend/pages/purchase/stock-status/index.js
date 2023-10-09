@@ -93,6 +93,10 @@ const StockStatus = () => {
     );
   };
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+  };
+
   return (
     <div>
       <DataTable
@@ -108,6 +112,7 @@ const StockStatus = () => {
         sortIcon={<i className="fas fa-arrow-down"></i>}
         paginationPerPage={100}
         paginationRowsPerPageOptions={[50, 100, 500]}
+        paginationComponentOptions={paginationComponentOptions}
         progressPending={fullStock.length === 0}
         subHeader
         subHeaderComponent={subHeaderComponent()}
