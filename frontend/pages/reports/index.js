@@ -1,19 +1,59 @@
-import { formatDateYYYYMMDD } from '@/components/_functions/date-functions';
-import ExpenseReport from '@/components/reports/expense-report';
-import RevenueReport from '@/components/reports/revenue-report';
+import Link from 'next/link';
 import React from 'react';
+import { Row, Col } from 'react-bootstrap';
+import ReactiveButton from 'reactive-button';
 
-const date = new Date();
-const dateString = formatDateYYYYMMDD(date);
-const duration = -30;
-
-const ReportsHome = () => {
+const PurchaseHome = () => {
   return (
-    <div>
-      <ExpenseReport dateString={dateString} duration={duration} />
-      <RevenueReport dateString={dateString} duration={duration} />
+    <div className="min-vh-50 center-flex">
+      <Row className="w-100 text-center">
+        <Col md={12} className="my-3">
+          <Link href="/reports/revenue-expense">
+            <ReactiveButton
+              buttonState="idle"
+              color="indigo"
+              idleText="Revenue & Expense Report"
+              size="large"
+              className="w-300px"
+            />
+          </Link>
+        </Col>
+        <Col md={12} className="my-3">
+          <Link href="/purchase/stock-status">
+            <ReactiveButton
+              buttonState="idle"
+              color="indigo"
+              idleText="Stock Status"
+              size="large"
+              className="w-300px"
+            />
+          </Link>
+        </Col>
+        <Col md={12} className="my-3">
+          <Link href="/reports/daily-stock">
+            <ReactiveButton
+              buttonState="idle"
+              color="indigo"
+              idleText="Items Report"
+              size="large"
+              className="w-300px"
+            />
+          </Link>
+        </Col>
+        <Col md={12} className="my-3">
+          <Link href="/purchase/stock-status">
+            <ReactiveButton
+              buttonState="idle"
+              color="indigo"
+              idleText="Stock Status"
+              size="large"
+              className="w-300px"
+            />
+          </Link>
+        </Col>
+      </Row>
     </div>
   );
 };
 
-export default ReportsHome;
+export default PurchaseHome;

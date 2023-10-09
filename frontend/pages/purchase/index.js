@@ -12,7 +12,7 @@ const PurchaseHome = () => {
             <ReactiveButton
               buttonState="idle"
               color="indigo"
-              idleText="Item Requisition"
+              idleText="Store Requisition"
               size="large"
               className="w-300px"
             />
@@ -40,17 +40,17 @@ const PurchaseHome = () => {
             />
           </Link>
         </Col>
-        {/* <Col md={6} className="my-3">
-          <Link href="/purchase/item-list">
+        <Col md={12} className="my-3">
+          <Link href="/purchase/stock-status">
             <ReactiveButton
               buttonState="idle"
               color="indigo"
-              idleText="Item List"
+              idleText="Stock Status"
               size="large"
               className="w-300px"
             />
           </Link>
-        </Col> */}
+        </Col>
       </Row>
     </div>
   );

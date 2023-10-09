@@ -8,11 +8,61 @@ const {
   credentials,
   usertypes,
 } = require('../../database/models');
+const { parseDateString } = require('../utils/helper');
 
 async function listProductRequisitionsDb(status) {
   const res = await productrequisitions.findAll({
     where: {
       status: status,
+    },
+    include: [
+      {
+        model: products,
+        include: [
+          {
+            model: productsubcategories,
+            include: [
+              {
+                model: productcategories,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        model: credentials,
+        as: 'requisition_requester',
+        attributes: ['username'],
+        include: [
+          {
+            model: usertypes,
+          },
+        ],
+      },
+      {
+        model: credentials,
+        as: 'requisition_approver',
+        attributes: ['username'],
+        include: [
+          {
+            model: usertypes,
+          },
+        ],
+      },
+    ],
+    order: [['updatedAt', 'DESC']],
+  });
+  return res;
+}
+
+async function listProductRequisitionsByProductIdDb(productId) {
+  const res = await productrequisitions.findAll({
+    where: {
+      product_id: productId,
+      updatedAt: {
+        [Op.gte]: new Date(new Date() - 60 * 60 * 24 * 1000 * 60),
+      },
+      status: 'fullfilled',
     },
     include: [
       {
@@ -99,7 +149,70 @@ async function listProductPurchasesDb(status) {
   return res;
 }
 
+async function itemWiseDailyFulfilled(dateString) {
+  const res = await productrequisitions.findAll({
+    where: {
+      updatedAt: {
+        [Op.gte]: parseDateString(dateString),
+        [Op.lt]: new Date(
+          parseDateString(dateString).getTime() + 60 * 60 * 24 * 1000
+        ),
+      },
+      status: 'fullfilled',
+    },
+    attributes: [
+      'product_id',
+      [Sequelize.fn('sum', Sequelize.col('quantity')), 'total_quantity'],
+    ],
+    group: ['product_id', 'product.id'],
+    include: [
+      {
+        model: products,
+        attributes: ['name'],
+      },
+    ],
+  });
+  return res;
+}
+
+async function itemWiseDailyPurchased(dateString) {
+  const res = await productpurchases.findAll({
+    where: {
+      updatedAt: {
+        [Op.gte]: parseDateString(dateString),
+        [Op.lt]: new Date(
+          parseDateString(dateString).getTime() + 60 * 60 * 24 * 1000
+        ),
+      },
+      status: 'purchased',
+    },
+    attributes: [
+      'product_id',
+      [Sequelize.fn('sum', Sequelize.col('quantity')), 'total_quantity'],
+    ],
+    group: ['product_id', 'product.id'],
+    include: [
+      {
+        model: products,
+        attributes: ['name'],
+      },
+    ],
+  });
+  return res;
+}
+
+async function listProductsDb() {
+  const res = await products.findAll({
+    order: [['name', 'ASC']],
+  });
+  return res;
+}
+
 module.exports = {
   listProductRequisitionsDb,
   listProductPurchasesDb,
+  listProductRequisitionsByProductIdDb,
+  itemWiseDailyFulfilled,
+  itemWiseDailyPurchased,
+  listProductsDb,
 };

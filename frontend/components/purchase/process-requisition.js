@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Col, Modal, Row } from 'react-bootstrap';
 import { datetimeStringToDate } from '../_functions/string-format';
 import ReactiveButton from 'reactive-button';
@@ -15,6 +15,11 @@ const ProcessRequisition = ({
     Number(currentItem?.quantity) || 0
   );
   const [fullfillmentNotes, setFullfillmentNotes] = useState('');
+
+  useEffect(() => {
+    setDeliveredQuantity(Number(currentItem?.quantity) || 0);
+    setFullfillmentNotes('');
+  }, [currentItem]);
 
   const handleProcess = async (status) => {
     const quantityNote =
@@ -40,6 +45,7 @@ const ProcessRequisition = ({
       notes: quantityNote + fullfillmentNotes,
       approverId: user.id,
       usertypeId: user.usertype,
+      productId: currentItem.product_id,
     });
     if (processResult.data.success) {
       alert('Requisition processed successfully');
@@ -53,7 +59,11 @@ const ProcessRequisition = ({
   return (
     <Modal
       show={openProcessModal}
-      onHide={() => setOpenProcessModal(false)}
+      onHide={() => {
+        setOpenProcessModal(false);
+        setFullfillmentNotes('');
+        setDeliveredQuantity(0);
+      }}
       size="xl">
       <Modal.Header closeButton>
         <Modal.Title>Process Item Requisition</Modal.Title>

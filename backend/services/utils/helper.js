@@ -72,12 +72,12 @@ function getEndDateWithDuration(startDate, duration) {
 function parseDateString(dateString) {
   if (!dateString) return new Date();
   const year = dateString.substring(0, 4);
-  const month = dateString.substring(4, 6) - 1;
+  const month = Number(dateString.substring(4, 6)) - 1;
   const day = dateString.substring(6, 8);
 
   // return new Date(year, month, day);
   const date = new Date(year, month, day);
-  date.setDate(date.getDate() + 1);
+  // date.setDate(date.getDate() + 1);
   return date;
 }
 

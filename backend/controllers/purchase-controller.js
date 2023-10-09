@@ -40,6 +40,12 @@ router.put('/requisition', purchaseServices.editProductRequisition);
 // Get all product requisitions by status
 router.get('/requisition/:status', purchaseServices.listProductRequisitions);
 
+// Get all product requisitions by product id
+router.get(
+  '/requisition/product/:productId',
+  purchaseServices.listProductRequisitionsById
+);
+
 // Add product purchase
 router.post('/pr', purchaseServices.addProductPurchase);
 
@@ -48,5 +54,14 @@ router.put('/pr', purchaseServices.editProductPurchase);
 
 // Get all product purchases by status
 router.get('/pr/:status', purchaseServices.listProductPurchases);
+
+// Get stock status of a product
+router.get('/stock/:productId', purchaseServices.getStockStatus);
+
+// Get stock status of all products
+router.get('/stock', purchaseServices.getFullStockStatus);
+
+// Itemwise daily purchase report
+router.get('/daywise/:dateForReport', purchaseServices.daywiseItemReport);
 
 module.exports = router;

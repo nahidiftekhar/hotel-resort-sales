@@ -39,9 +39,12 @@ function TopNavbar({ session }) {
                   Products
                 </Nav.Link>
               )}
-              <Nav.Link className="mx-3" href="/actions">
-                Actions
+              <Nav.Link className="mx-3" href="/reports">
+                Reports
               </Nav.Link>
+              {/* <Nav.Link className="mx-3" href="/actions">
+                Actions
+              </Nav.Link> */}
               <Nav.Link className="mx-3" href="/products">
                 Products
               </Nav.Link>

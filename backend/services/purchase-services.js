@@ -8,7 +8,9 @@ const {
   productrequisitions,
   productpurchases,
   credentials,
+  storestocks,
 } = require('../database/models');
+const { parseDateString } = require('./utils/helper');
 
 async function listAllProductCategories(req, res, next) {
   const productCategories = await dbStandard.joinFilterDb(
@@ -79,7 +81,7 @@ async function editProductSubcategories(req, res, next) {
 }
 
 async function listProducts(req, res, next) {
-  const productsList = await dbStandard.selectAllDb(products);
+  const productsList = await dbPurchase.listProductsDb();
   return res.json(productsList);
 }
 
@@ -129,7 +131,8 @@ async function addProductRequisition(req, res, next) {
 }
 
 async function editProductRequisition(req, res, next) {
-  const { id, status, approverId, quantity, notes, usertypeId } = req.body;
+  const { id, status, approverId, quantity, notes, usertypeId, productId } =
+    req.body;
   if (!id || !status || !approverId)
     return res.json({ success: false, error: 'Missing required fields' });
 
@@ -140,17 +143,44 @@ async function editProductRequisition(req, res, next) {
     });
   }
 
-  const editProductRes = await dbStandard.modifySingleRecordDb(
-    productrequisitions,
-    { id },
-    {
-      status: status,
-      approver_id: approverId,
-      quantity: quantity,
-      notes: notes,
+  try {
+    const stockStatus = await dbStandard.findOneFilterDb(storestocks, {
+      product_id: productId,
+    });
+
+    if (
+      Number(stockStatus.quantity) < Number(quantity) &&
+      status === 'fullfilled'
+    ) {
+      return res.json({
+        success: false,
+        message: 'Insufficient stock',
+      });
     }
-  );
-  return res.json(editProductRes);
+
+    const editProductRes = await dbStandard.modifySingleRecordDb(
+      productrequisitions,
+      { id },
+      {
+        status: status,
+        approver_id: approverId,
+        quantity: quantity,
+        notes: notes,
+      }
+    );
+
+    if (status === 'fullfilled') {
+      await dbStandard.modifySingleRecordDb(
+        storestocks,
+        { id: stockStatus.id },
+        { quantity: stockStatus.quantity - quantity }
+      );
+    }
+    return res.json(editProductRes);
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false, error: error.message });
+  }
 }
 
 async function listProductRequisitions(req, res, next) {
@@ -158,6 +188,13 @@ async function listProductRequisitions(req, res, next) {
   const productRequisitions = await dbPurchase.listProductRequisitionsDb(
     status
   );
+  return res.json(productRequisitions);
+}
+
+async function listProductRequisitionsById(req, res, next) {
+  const { productId } = req.params;
+  const productRequisitions =
+    await dbPurchase.listProductRequisitionsByProductIdDb(productId);
   return res.json(productRequisitions);
 }
 
@@ -215,26 +252,47 @@ async function editProductPurchase(req, res, next) {
     });
   }
 
-  const editProductRes = ['approved', 'rejected'].includes(status)
-    ? await dbStandard.modifySingleRecordDb(
-        productpurchases,
-        { id },
+  try {
+    const editProductRes = ['approved', 'rejected'].includes(status)
+      ? await dbStandard.modifySingleRecordDb(
+          productpurchases,
+          { id },
+          {
+            notes: notes,
+            approver_id: userId,
+            status: status,
+          }
+        )
+      : await dbStandard.modifySingleRecordDb(
+          productpurchases,
+          { id },
+          {
+            notes: notes,
+            status: status,
+            actual_cost: cost,
+          }
+        );
+
+    if (['purchased'].includes(status)) {
+      const stockStatus = await dbStandard.findOneFilterDb(storestocks, {
+        product_id: editProductRes.result[1][0].product_id,
+      });
+
+      await dbStandard.modifySingleRecordDb(
+        storestocks,
+        { id: stockStatus.id },
         {
-          notes: notes,
-          approver_id: userId,
-          status: status,
-        }
-      )
-    : await dbStandard.modifySingleRecordDb(
-        productpurchases,
-        { id },
-        {
-          notes: notes,
-          status: status,
-          actual_cost: cost,
+          quantity:
+            Number(stockStatus.quantity) +
+            Number(editProductRes.result[1][0].quantity),
         }
       );
-  return res.json(editProductRes);
+    }
+    return res.json(editProductRes);
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false, error: error.message });
+  }
 }
 
 async function listProductPurchases(req, res, next) {
@@ -242,6 +300,40 @@ async function listProductPurchases(req, res, next) {
   const productPurchases = await dbPurchase.listProductPurchasesDb(status);
 
   return res.json(productPurchases);
+}
+
+async function getStockStatus(req, res, next) {
+  const { productId } = req.params;
+  // const stockStatus = await dbStandard.findOneFilterDb(storestocks, {
+  //   product_id: productId,
+  // });
+  const stockStatus = await dbStandard.joinFilterDb(
+    storestocks,
+    products,
+    { product_id: productId },
+    'product_id'
+  );
+  return res.json(stockStatus);
+}
+
+async function getFullStockStatus(req, res, next) {
+  const stockStatus = await storestocks.findAll({
+    include: [
+      {
+        model: products,
+        attributes: ['name', 'unit'],
+      },
+    ],
+  });
+  return res.json(stockStatus);
+}
+
+async function daywiseItemReport(req, res, next) {
+  const dateForReport = req.params.dateForReport;
+  const itemFullfilled = await dbPurchase.itemWiseDailyFulfilled(dateForReport);
+  const itemsPurchase = await dbPurchase.itemWiseDailyPurchased(dateForReport);
+
+  return res.json({ itemFullfilled, itemsPurchase });
 }
 
 module.exports = {
@@ -258,7 +350,11 @@ module.exports = {
   addProductRequisition,
   editProductRequisition,
   listProductRequisitions,
+  listProductRequisitionsById,
   addProductPurchase,
   editProductPurchase,
   listProductPurchases,
+  getStockStatus,
+  getFullStockStatus,
+  daywiseItemReport,
 };

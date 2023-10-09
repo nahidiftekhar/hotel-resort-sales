@@ -14,10 +14,11 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
 
   useEffect(() => {
     const fetchProductCategories = async () => {
-      const productCategories = await axios.get(
+      const productSubCategories = await axios.get(
         '/api/purchase/list-all-categories'
       );
-      setProductCategories(productCategories.data);
+      // setProductCategories(productCategories.data);
+      setProductSubCategories(productSubCategories.data);
     };
 
     const fetchAllItems = async () => {
@@ -75,7 +76,7 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
             return (
               <Form className="custom-form arrow-hidden">
                 <Row>
-                  <Col md={6}>
+                  {/* <Col md={6}>
                     <div className="my-2">
                       <CustomSelect
                         label="Select Category"
@@ -100,7 +101,7 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
                         ))}
                       </CustomSelect>
                     </div>
-                  </Col>
+                  </Col> */}
 
                   <Col md={6}>
                     <div className="my-2">
@@ -108,7 +109,7 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
                         label="Select Subcategory"
                         name="productSubCategory"
                         value={values.productSubCategory}
-                        disabled={productSubCategories.length === 0}
+                        // disabled={productSubCategories.length === 0}
                         onChange={(e) => {
                           formik.handleChange(e);
                           setFilteredItems(
@@ -133,21 +134,6 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
 
                   <Col md={6}>
                     <div className="my-2">
-                      {/* <CustomSelect
-                        label="Select Item"
-                        name="productId"
-                        value={values.productId}
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                        }}>
-                        <option value={0}>Select Item</option>
-                        {filteredItems?.map(({ id, name }) => (
-                          <option key={id} value={id}>
-                            {name}
-                          </option>
-                        ))}
-                      </CustomSelect> */}
-
                       <label>Select Item</label>
                       <Select
                         name="productId"
@@ -162,8 +148,10 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
                     </div>
                   </Col>
 
-                  <Col md={5} xs={10}>
-                    <div className="my-2">
+                  <Col
+                    md={6}
+                    className="d-flex justify-content-between align-items-center">
+                    <div className="my-2 flex-grow-1">
                       <CustomTextInput
                         label="Required Quantity"
                         name="quantity"
@@ -172,11 +160,8 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
                         placeholder="Quantity"
                       />
                     </div>
-                  </Col>
-
-                  <Col md={1} xs={2} className="d-flex align-items-end">
-                    <div className="my-2">
-                      <p className="text-secondary">
+                    <div className="align-self-end my-2 d-flex justify-content-between align-items-end">
+                      <p className="text-secondary mx-1 mb-1">
                         {values.productId
                           ? allItems.find(
                               (item) => item.id === parseInt(values.productId)

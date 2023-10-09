@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Col, Modal, Row } from 'react-bootstrap';
 import { datetimeStringToDate } from '../_functions/string-format';
 import ReactiveButton from 'reactive-button';
@@ -12,7 +12,16 @@ const ProcessPr = ({
   setRefresh,
 }) => {
   const [actualCost, setActualCost] = useState(Number(currentItem.price) || 0);
+  const [actualQuantity, setActualQuantity] = useState(
+    Number(currentItem.quantity) || 0
+  );
   const [fullfillmentNotes, setFullfillmentNotes] = useState('');
+
+  useEffect(() => {
+    setActualCost(Number(currentItem.price) || 0);
+    setActualQuantity(Number(currentItem.quantity) || 0);
+    setFullfillmentNotes('');
+  }, [currentItem]);
 
   const handleProcess = async (status) => {
     if (status === 'rejected' && !fullfillmentNotes) {
@@ -26,6 +35,7 @@ const ProcessPr = ({
       userId: user.id,
       usertypeId: user.usertype,
       cost: actualCost,
+      actualQuantity: actualQuantity,
     });
     if (processResult.data.success) {
       alert('PR processed successfully');
@@ -123,18 +133,36 @@ const ProcessPr = ({
             )}
 
             {['released'].includes(currentItem.status) && (
-              <div className="my-2 custom-form arrow-hidden">
-                <p className="mt-3 my-0 label-text">Actual Cost</p>
-                <input
-                  className="form-control"
-                  type="number"
-                  name="quantity"
-                  id="quantity"
-                  placeholder="Enter actual cost"
-                  value={actualCost}
-                  onChange={(e) => setActualCost(e.target.value)}
-                />
-              </div>
+              <Row>
+                <Col md={6}>
+                  <div className="my-2 custom-form arrow-hidden">
+                    <p className="mt-3 my-0 label-text">Actual Total Cost</p>
+                    <input
+                      className="form-control"
+                      type="number"
+                      name="actualCost"
+                      id="actualCost"
+                      placeholder="Enter actual cost"
+                      value={actualCost}
+                      onChange={(e) => setActualCost(e.target.value)}
+                    />
+                  </div>
+                </Col>
+                <Col md={6}>
+                  <div className="my-2 custom-form arrow-hidden">
+                    <p className="mt-3 my-0 label-text">Actual Quantity</p>
+                    <input
+                      className="form-control"
+                      type="number"
+                      name="quantity"
+                      id="quantity"
+                      placeholder="Enter actual quantity"
+                      value={actualQuantity}
+                      onChange={(e) => setActualQuantity(e.target.value)}
+                    />
+                  </div>
+                </Col>
+              </Row>
             )}
           </Col>
 

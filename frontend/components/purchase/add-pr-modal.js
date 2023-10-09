@@ -14,10 +14,11 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
 
   useEffect(() => {
     const fetchProductCategories = async () => {
-      const productCategories = await axios.get(
+      const productSubCategories = await axios.get(
         '/api/purchase/list-all-categories'
       );
-      setProductCategories(productCategories.data);
+      // setProductCategories(productCategories.data);
+      setProductSubCategories(productSubCategories.data);
     };
 
     const fetchAllItems = async () => {
@@ -39,6 +40,7 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
   }, []);
 
   const handleSubmit = async (values) => {
+    values.price = values.quantity * values.unitPrice;
     if (!values.productId || !values.quantity || !values.price) {
       alert('Please select an item, price and quantity.');
       return;
@@ -68,16 +70,19 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
             productSubCategory: 0,
             productId: 0,
             quantity: 0,
+            unitPrice: 0,
             price: 0,
           }}
           // validationSchema={validationRules}
-          onSubmit={(values) => handleSubmit(values)}>
+          onSubmit={(values) => {
+            handleSubmit(values);
+          }}>
           {(formik) => {
             const { values, setValues } = formik;
             return (
               <Form className="custom-form arrow-hidden">
                 <Row>
-                  <Col md={6}>
+                  {/* <Col md={6}>
                     <div className="my-2">
                       <CustomSelect
                         label="Select Category"
@@ -102,7 +107,7 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
                         ))}
                       </CustomSelect>
                     </div>
-                  </Col>
+                  </Col> */}
 
                   <Col md={6}>
                     <div className="my-2">
@@ -110,7 +115,7 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
                         label="Select Subcategory"
                         name="productSubCategory"
                         value={values.productSubCategory}
-                        disabled={productSubCategories.length === 0}
+                        // disabled={productSubCategories.length === 0}
                         onChange={(e) => {
                           formik.handleChange(e);
                           setFilteredItems(
@@ -135,21 +140,6 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
 
                   <Col md={6}>
                     <div className="my-2">
-                      {/* <CustomSelect
-                        label="Select Item"
-                        name="productId"
-                        value={values.productId}
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                        }}>
-                        <option value={0}>Select Item</option>
-                        {filteredItems?.map(({ id, name }) => (
-                          <option key={id} value={id}>
-                            {name}
-                          </option>
-                        ))}
-                      </CustomSelect> */}
-
                       <label>Select Item</label>
                       <Select
                         name="productId"
@@ -164,8 +154,10 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
                     </div>
                   </Col>
 
-                  <Col md={5} xs={10}>
-                    <div className="my-2">
+                  <Col
+                    md={4}
+                    className="d-flex justify-content-between align-items-center">
+                    <div className="my-2 flex-grow-1">
                       <CustomTextInput
                         label="Required Quantity"
                         name="quantity"
@@ -174,11 +166,9 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
                         placeholder="Quantity"
                       />
                     </div>
-                  </Col>
 
-                  <Col md={1} xs={2} className="d-flex align-items-end">
-                    <div className="my-2">
-                      <p className="text-secondary">
+                    <div className="align-self-end my-2 d-flex justify-content-between align-items-end">
+                      <p className="text-secondary mx-1 mb-1">
                         {values.productId
                           ? allItems.find(
                               (item) => item.id === parseInt(values.productId)
@@ -188,21 +178,38 @@ const PrModal = ({ setOpenModal, setRefresh, userId }) => {
                     </div>
                   </Col>
 
-                  <Col md={5} xs={10}>
-                    <div className="my-2">
+                  <Col
+                    md={4}
+                    className="d-flex justify-content-between align-items-center">
+                    <div className="my-2 flex-grow-1">
                       <CustomTextInput
-                        label="Purchase Price"
-                        name="price"
+                        label="Unit Price"
+                        name="unitPrice"
                         type="number"
                         min={0}
-                        placeholder="Price"
+                        placeholder="Unit Price"
                       />
+                    </div>
+                    <div className="align-self-end my-2 d-flex justify-content-between align-items-end">
+                      <p className="text-secondary mx-1 mb-1">BDT</p>
                     </div>
                   </Col>
 
-                  <Col md={1} xs={2} className="d-flex align-items-end">
-                    <div className="my-2">
-                      <p className="text-secondary">BDT</p>
+                  <Col
+                    md={4}
+                    className="d-flex justify-content-between align-items-center">
+                    <div className="my-2 flex-grow-1">
+                      <CustomTextInput
+                        label="Total Price"
+                        name="price"
+                        type="number"
+                        disabled
+                        value={values.quantity * values.unitPrice || 0}
+                        placeholder="Unit Price"
+                      />
+                    </div>
+                    <div className="align-self-end my-2 d-flex justify-content-between align-items-end">
+                      <p className="text-secondary mx-1 mb-1">BDT</p>
                     </div>
                   </Col>
 
