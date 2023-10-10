@@ -36,7 +36,8 @@ const RequisitionByProduct = ({ singleItemData, showModal, setShowModal }) => {
       }}>
       <Modal.Header closeButton>
         <Modal.Title>
-          Requition of <b>{singleItemData[0]?.product?.name}</b> in last 60 days
+          Requisition of <b>{singleItemData[0]?.product?.name}</b> in last 60
+          days
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>

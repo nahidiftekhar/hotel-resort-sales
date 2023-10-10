@@ -33,7 +33,11 @@ function AddRoom({ componentType, visitId, setRefresh, setShow, session }) {
       );
       setProductList(
         filteredExistingItems.map((obj, index) => {
-          return { ...obj, value: index, label: obj.room_type_name };
+          return {
+            ...obj,
+            value: index,
+            label: obj.roomtype?.room_type_name + '-' + obj.room_number,
+          };
         })
       );
     };
@@ -43,9 +47,9 @@ function AddRoom({ componentType, visitId, setRefresh, setShow, session }) {
   const handleSelect = (value) => {
     const newItem = {
       item_type: componentType,
-      item_name: value.room_type_name,
+      item_name: value.roomtype?.room_type_name + '-' + value.room_number,
       item_count: 1,
-      unit_price: value.price,
+      unit_price: value.roomtype?.price,
       visit_id: visitId,
     };
     setPurchaseItems((currentData) => [...currentData, newItem]);
