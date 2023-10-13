@@ -10,16 +10,15 @@ import ReactiveButton from 'reactive-button';
 import axios from 'axios';
 
 const NewItem = () => {
-  const [productCategories, setProductCategories] = useState([]);
   const [productSubCategories, setProductSubCategories] = useState([]);
   const [productToAdd, setProductToAdd] = useState({});
 
   useEffect(() => {
     const fetchProductCategories = async () => {
-      const productCategories = await axios.get(
+      const productSubCategories = await axios.get(
         '/api/purchase/list-all-categories'
       );
-      setProductCategories(productCategories.data);
+      setProductSubCategories(productSubCategories.data);
     };
     fetchProductCategories();
   }, []);
@@ -55,41 +54,9 @@ const NewItem = () => {
                 <Col md={6}>
                   <div className="my-2">
                     <CustomSelect
-                      label="Select Category"
-                      name="productCategory"
-                      value={values.productCategory}
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        setProductToAdd({
-                          ...productToAdd,
-                          category_id: e.target.value,
-                        });
-                        setProductSubCategories(
-                          e.target.value > 0
-                            ? productCategories.find(
-                                (category) =>
-                                  category.id === parseInt(e.target.value)
-                              ).productsubcategories
-                            : []
-                        );
-                      }}>
-                      <option value={0}>Select Category</option>
-                      {productCategories?.map(({ id, category }) => (
-                        <option key={id} value={id}>
-                          {category}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-                </Col>
-
-                <Col md={6}>
-                  <div className="my-2">
-                    <CustomSelect
                       label="Select Subcategory"
                       name="productSubCategory"
                       value={values.productSubCategory}
-                      disabled={productSubCategories.length === 0}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setProductToAdd({

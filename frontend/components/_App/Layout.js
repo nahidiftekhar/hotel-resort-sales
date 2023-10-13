@@ -9,10 +9,6 @@ import { NextAuthProvider } from 'provider';
 import ChangePassword from 'pages/auth/change-password';
 
 const Layout = ({ children, staticContent, session }) => {
-  // if (session?.user?.passChangePending) {
-  //   return <ChangePassword session={session} />;
-  // }
-
   return (
     <>
       <Meta metaContent={staticContent.metaContent} />

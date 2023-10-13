@@ -11,6 +11,7 @@ const {
   visitorexpenses,
   payments,
   productpurchases,
+  productrequisitions,
 } = require('../database/models');
 const { Op } = require('sequelize');
 
@@ -437,6 +438,49 @@ async function pendingActions(req, res, next) {
   return res.json({ pendingDiscountApprovals });
 }
 
+async function bookingByUser(req, res, next) {
+  const { userId, dateString, duration } = req.params;
+  const { startDate, endDate } = helper.getStartAndEndDateWithDuration(
+    helper.parseDateString(dateString),
+    Number(duration)
+  );
+
+  const dbResult = await dbReports.bookingByUserDb(userId, startDate, endDate);
+  return res.json(dbResult);
+}
+
+async function itemsRequisitionByUser(req, res, next) {
+  const { userId, dateString, duration } = req.params;
+  const { startDate, endDate } = helper.getStartAndEndDateWithDuration(
+    helper.parseDateString(dateString),
+    Number(duration)
+  );
+
+  const dbResult = await dbReports.itemsRequisitionByUserDb(
+    userId,
+    startDate,
+    endDate
+  );
+
+  return res.json(dbResult);
+}
+
+async function purchaseRequisitionByUser(req, res, next) {
+  const { userId, dateString, duration } = req.params;
+  const { startDate, endDate } = helper.getStartAndEndDateWithDuration(
+    helper.parseDateString(dateString),
+    Number(duration)
+  );
+
+  const dbResult = await dbReports.purchaseRequisitionByUserDb(
+    userId,
+    startDate,
+    endDate
+  );
+
+  return res.json(dbResult);
+}
+
 module.exports = {
   testService,
   dailyBooking,
@@ -459,4 +503,7 @@ module.exports = {
   salesPerformance,
   financialsTotalInDuration,
   pendingActions,
+  bookingByUser,
+  itemsRequisitionByUser,
+  purchaseRequisitionByUser,
 };

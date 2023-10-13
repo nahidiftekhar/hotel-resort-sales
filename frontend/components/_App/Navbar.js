@@ -25,14 +25,17 @@ function TopNavbar({ session }) {
             id="responsive-navbar-nav"
             className="justify-content-end">
             <Nav>
-              <Nav.Link className="mx-3" href="/purchase">
-                Purchase
+              <Nav.Link className="mx-3" href="/actions">
+                Actions
               </Nav.Link>
               <Nav.Link className="mx-3" href="/booking">
                 Booking
               </Nav.Link>
               <Nav.Link className="mx-3" href="/guests">
                 Guests
+              </Nav.Link>
+              <Nav.Link className="mx-3" href="/purchase">
+                Purchase
               </Nav.Link>
               {session.user.usertype === 2 && (
                 <Nav.Link className="mx-3" href="/products">
@@ -41,12 +44,6 @@ function TopNavbar({ session }) {
               )}
               <Nav.Link className="mx-3" href="/reports">
                 Reports
-              </Nav.Link>
-              {/* <Nav.Link className="mx-3" href="/actions">
-                Actions
-              </Nav.Link> */}
-              <Nav.Link className="mx-3" href="/products">
-                Products
               </Nav.Link>
               <Nav.Link className="mx-3" href="/hospitality">
                 Visit

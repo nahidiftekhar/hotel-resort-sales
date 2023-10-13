@@ -97,4 +97,22 @@ router.get(
 // Pending approval inbox
 router.get('/pending-actions/:userId', reportServices.pendingActions);
 
+// Userwise booking records
+router.get(
+  '/userwise-bookings/:userId/:dateString/:duration',
+  reportServices.bookingByUser
+);
+
+// Userwise requisition records
+router.get(
+  '/userwise-items/:userId/:dateString/:duration',
+  reportServices.itemsRequisitionByUser
+);
+
+// Userwise purchase records
+router.get(
+  '/userwise-purchases/:userId/:dateString/:duration',
+  reportServices.purchaseRequisitionByUser
+);
+
 module.exports = router;

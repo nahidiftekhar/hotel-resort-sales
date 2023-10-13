@@ -63,10 +63,16 @@ function getDateWithOffset(offset) {
 
 function getEndDateWithDuration(startDate, duration) {
   const startDateObj = new Date(startDate);
-  startDateObj.setDate(startDateObj.getDate() + Number(duration));
+  startDateObj.setDate(startDateObj.getDate() + duration);
   return startDateObj;
-  date.setDate(date.getDate() + Number(duration));
-  return date;
+}
+
+function getStartAndEndDateWithDuration(refDate, duration) {
+  const dateObj = new Date(refDate);
+  dateObj.setDate(dateObj.getDate() + duration);
+  const startDate = duration < 0 ? dateObj : new Date(refDate);
+  const endDate = duration < 0 ? new Date(refDate) : dateObj;
+  return { startDate, endDate };
 }
 
 function parseDateString(dateString) {
@@ -93,11 +99,24 @@ function formatDateYYYYMMDDwithDash(date) {
   return [year, month, day].join('-');
 }
 
+function camelCaseToCapitalizedString(text) {
+  if (!text) return '';
+  // Add a space before any uppercase letter preceded by a lowercase letter
+  const spacedText = text.replace(/([a-z])([A-Z])/g, '$1 $2');
+  // Capitalize the first letter of each word
+  const capitalizedText = spacedText.replace(/\b\w/g, (match) =>
+    match.toUpperCase()
+  );
+  return capitalizedText;
+}
+
 module.exports = {
   generateRandomString,
   generateReference,
   getDateWithOffset,
   parseDateString,
   getEndDateWithDuration,
+  getStartAndEndDateWithDuration,
   formatDateYYYYMMDDwithDash,
+  camelCaseToCapitalizedString,
 };

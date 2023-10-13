@@ -13,6 +13,7 @@ const {
   sequelize,
 } = require('../database/models');
 const helper = require('../services/utils/helper');
+const config = require('../configs/config').config;
 
 const { Op, Sequelize } = require('sequelize');
 const { sendSingleEmail } = require('./utils/send-email');
@@ -191,21 +192,34 @@ async function addBooking(req, res, next) {
     : { success: false };
 
   if (dbDiscount.success && discountStatus === 1) {
-    const mailSubject = 'System generated email: Discount approval request';
-    const mailBody =
-      'You have received a request for discount approval. Please log in to booking management system for necessary action.';
-    const approverDetail = await dbStandard.joinFilterDb(
-      usertypes,
-      credentials,
-      {
-        id: 1,
-      }
-    );
-    if (approverDetail.length) {
-      approverDetail.map((approver) =>
-        sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
-      );
-    }
+    customEmails({
+      type: 'discountApprovalRequest',
+      status: '',
+      bookingId: dbBooking.dbResult.id,
+      userIds: [user_id],
+    });
+    // const mailSubject = 'System generated email: Discount approval request';
+    // const mailBody =
+    //   'You have received a request for discount approval. Please log in to booking management system for necessary action.';
+    // const approverDetail = await dbStandard.joinFilterDb(
+    //   usertypes,
+    //   credentials,
+    //   {
+    //     id: 1,
+    //   }
+    // );
+    // if (approverDetail.length) {
+    //   approverDetail.map((approver) =>
+    //     sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
+    //   );
+    // }
+  } else if (dbDiscount.success && discountStatus === 0) {
+    customEmails({
+      type: 'newBooking',
+      status: '',
+      bookingId: dbBooking.dbResult.id,
+      userIds: [user_id],
+    });
   }
 
   if (components.roomDetails) {
@@ -443,21 +457,34 @@ async function editBooking(req, res, next) {
     : { success: false };
 
   if (dbDiscount.success && discountStatus === 1) {
-    const mailSubject = 'System generated email: Discount approval request';
-    const mailBody =
-      'You have received a request for discount approval. Please log in to booking management system for necessary action.';
-    const approverDetail = await dbStandard.joinFilterDb(
-      usertypes,
-      credentials,
-      {
-        id: 1,
-      }
-    );
-    if (approverDetail.length) {
-      approverDetail.map((approver) =>
-        sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
-      );
-    }
+    // const mailSubject = 'System generated email: Discount approval request';
+    // const mailBody =
+    //   'You have received a request for discount approval. Please log in to booking management system for necessary action.';
+    // const approverDetail = await dbStandard.joinFilterDb(
+    //   usertypes,
+    //   credentials,
+    //   {
+    //     id: 1,
+    //   }
+    // );
+    // if (approverDetail.length) {
+    //   approverDetail.map((approver) =>
+    //     sendSingleEmail(approver.credentials[0].email, mailBody, mailSubject)
+    //   );
+    // }
+    customEmails({
+      type: 'discountApprovalRequest',
+      status: 'pendingApproval',
+      bookingId: id,
+      userIds: [user_id],
+    });
+  } else if (dbDiscount.success && discountStatus === 0) {
+    customEmails({
+      type: 'editBooking',
+      status: 'bookingEdited',
+      bookingId: id,
+      userIds: [user_id],
+    });
   }
 
   // if (components.roomDetails) {
@@ -622,6 +649,15 @@ async function approveDiscount(req, res, next) {
       discounted_amount: discountedAmount,
     }
   );
+
+  if (modifyBooking.success) {
+    customEmails({
+      type: 'discountApproval',
+      status: approvalStatus ? 'discountApproved' : 'discountRejected',
+      bookingId: bookingId,
+      userIds: [modifyBooking.result.user_id],
+    });
+  }
   return res.json({ modifyDiscount, modifyBooking });
 }
 
@@ -657,9 +693,15 @@ async function confirmAdvancedReceipt(req, res, next) {
     }
   );
 
-  if (modifyBooking.success && addPayment.success)
+  if (modifyBooking.success && addPayment.success) {
+    customEmails({
+      type: 'editBooking',
+      status: 'bookingConfirmed',
+      bookingId: bookingId,
+      userIds: [modifyBooking.dbResult.user_id],
+    });
     return res.json({ success: true, addPayment, modifyBooking });
-  else return res.json({ success: false, addPayment, modifyBooking });
+  } else return res.json({ success: false, addPayment, modifyBooking });
 }
 
 async function cancelBooking(req, res, next) {
@@ -688,6 +730,12 @@ async function cancelBooking(req, res, next) {
       notes: notes,
     }
   );
+  customEmails({
+    type: 'cancelBooking',
+    status: 'cancelled',
+    bookingId: bookingId,
+    userIds: [modifyBooking.dbResult.user_id],
+  });
   return res.json(modifyBooking);
 }
 
@@ -785,6 +833,106 @@ async function manageVenueBooking({
   );
 
   return venueStatusUpdate;
+}
+
+async function customEmails({ type, status, bookingId, userIds }) {
+  const mailSettings = [
+    {
+      type: 'newBooking',
+      subject: 'Booking Created',
+      userTypes: ['Sales Manager', 'Sales executive'],
+      link: 'booking/show-booking?id=',
+    },
+    {
+      type: 'discountApprovalRequest',
+      subject: 'Discount Approval Requested',
+      userTypes: ['Sales Manager', 'Managing Director', 'Director'],
+      link: 'booking/show-booking?id=',
+    },
+    {
+      type: 'discountApproval',
+      subject: 'Discount Approval Updated',
+      userTypes: ['Sales Manager', 'Managing Director', 'Director'],
+      link: 'booking/show-booking?id=',
+    },
+    {
+      type: 'cancelBooking',
+      subject: 'Booking Cancelled',
+      userTypes: ['Sales Manager', 'Managing Director', 'Director'],
+      link: 'booking/show-booking?id=',
+    },
+    {
+      type: 'editBooking',
+      subject: 'Booking Edited',
+      userTypes: ['Sales Manager', 'Managing Director', 'Director'],
+      link: 'booking/show-booking?id=',
+    },
+  ];
+
+  const emailIdOfUser = await credentials.findAll({
+    where: {
+      id: userIds,
+    },
+    attributes: ['email', 'username'],
+  });
+
+  const emailIdOfOthers = await credentials.findAll({
+    include: [
+      {
+        model: usertypes,
+        where: {
+          user_type: mailSettings.find((mail) => mail.type === type).userTypes,
+        },
+      },
+    ],
+    attributes: ['email'],
+  });
+
+  const emailIds = [...emailIdOfUser, ...emailIdOfOthers];
+
+  const bookingRecord = await bookings.findOne({
+    where: {
+      id: bookingId,
+    },
+    attributes: [
+      'booking_ref',
+      'checkin_date',
+      'checkout_date',
+      'amount',
+      'discounted_amount',
+    ],
+  });
+
+  const emailList = emailIds.map((email) => email.email).join(',');
+  const mailSubject =
+    'FNFGZ' +
+    ': ' +
+    mailSettings.find((mail) => mail.type === type).subject +
+    ' ' +
+    helper.camelCaseToCapitalizedString(status) +
+    ': ' +
+    bookingRecord.booking_ref;
+
+  const mailBody =
+    mailSettings.find((mail) => mail.type === type).subject +
+    ' ' +
+    helper.camelCaseToCapitalizedString(status) +
+    ' for booking reference: ' +
+    bookingRecord.booking_ref +
+    '<br /><br />. Visit following link for details. <br />' +
+    '<br /><a href="' +
+    config.APP_URL +
+    '/' +
+    mailSettings.find((mail) => mail.type === type).link +
+    bookingId +
+    '" target="_blank" rel="noopener noreferrer">' +
+    config.APP_URL +
+    '/' +
+    mailSettings.find((mail) => mail.type === type).link +
+    bookingId +
+    '</a>';
+
+  await sendSingleEmail(emailList, mailBody, mailSubject);
 }
 
 module.exports = {

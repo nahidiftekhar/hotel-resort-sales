@@ -1,6 +1,7 @@
 const dbStandard = require('./db-services/db-standard');
 const dbPurchase = require('./db-services/db-purchase');
 const orgConfig = require('../configs/org.config');
+const config = require('../configs/config').config;
 const {
   products,
   productcategories,
@@ -9,8 +10,11 @@ const {
   productpurchases,
   credentials,
   storestocks,
+  usertypes,
 } = require('../database/models');
 const { parseDateString } = require('./utils/helper');
+const { Op } = require('sequelize');
+const { sendSingleEmail } = require('./utils/send-email');
 
 async function listAllProductCategories(req, res, next) {
   const productCategories = await dbStandard.joinFilterDb(
@@ -127,6 +131,12 @@ async function addProductRequisition(req, res, next) {
       status: 'pending',
     }
   );
+  customEmails({
+    type: 'itemRequisition',
+    status: 'Created',
+    itemName: productId,
+    userIds: userId,
+  });
   return res.json(addProductRes);
 }
 
@@ -147,6 +157,13 @@ async function editProductRequisition(req, res, next) {
     const stockStatus = await dbStandard.findOneFilterDb(storestocks, {
       product_id: productId,
     });
+
+    if (!stockStatus) {
+      return res.json({
+        success: false,
+        message: 'Product not available in stock',
+      });
+    }
 
     if (
       Number(stockStatus.quantity) < Number(quantity) &&
@@ -176,6 +193,12 @@ async function editProductRequisition(req, res, next) {
         { quantity: stockStatus.quantity - quantity }
       );
     }
+    customEmails({
+      type: 'itemRequisition',
+      status: status,
+      itemName: productId,
+      userIds: editProductRes.result[1][0].requester_id,
+    });
     return res.json(editProductRes);
   } catch (error) {
     console.log(error);
@@ -209,6 +232,12 @@ async function addProductPurchase(req, res, next) {
     notes: notes,
     requester_id: userId,
     status: 'pendingApproval',
+  });
+  customEmails({
+    type: 'itemPurchase',
+    status: 'Created',
+    itemName: productId,
+    userIds: userId,
   });
   return res.json(addProductRes);
 }
@@ -278,16 +307,29 @@ async function editProductPurchase(req, res, next) {
         product_id: editProductRes.result[1][0].product_id,
       });
 
-      await dbStandard.modifySingleRecordDb(
-        storestocks,
-        { id: stockStatus.id },
-        {
-          quantity:
-            Number(stockStatus.quantity) +
-            Number(editProductRes.result[1][0].quantity),
-        }
-      );
+      if (!stockStatus) {
+        await dbStandard.addSingleRecordDB(storestocks, {
+          product_id: editProductRes.result[1][0].product_id,
+          quantity: editProductRes.result[1][0].quantity,
+        });
+      } else {
+        await dbStandard.modifySingleRecordDb(
+          storestocks,
+          { id: stockStatus.id },
+          {
+            quantity:
+              Number(stockStatus.quantity) +
+              Number(editProductRes.result[1][0].quantity),
+          }
+        );
+      }
     }
+    customEmails({
+      type: 'itemPurchase',
+      status: status,
+      itemName: editProductRes.result[1][0].product_id,
+      userIds: editProductRes.result[1][0].requester_id,
+    });
     return res.json(editProductRes);
   } catch (error) {
     console.log(error);
@@ -334,6 +376,82 @@ async function daywiseItemReport(req, res, next) {
   const itemsPurchase = await dbPurchase.itemWiseDailyPurchased(dateForReport);
 
   return res.json({ itemFullfilled, itemsPurchase });
+}
+
+async function customEmails({ type, status, itemName, userIds }) {
+  const mailSettings = [
+    {
+      type: 'itemRequisition',
+      subject: 'Item Requisition',
+      userTypes: ['Store Keeper', 'Store Executive'],
+      link: 'purchase/item-requisition',
+    },
+    {
+      type: 'itemPurchase',
+      subject: 'Item Purchase',
+      userTypes: [
+        'Store Keeper',
+        'Store Executive',
+        'Managing Director',
+        'Director',
+        'Finance',
+      ],
+      link: 'purchase/item-purchase',
+    },
+  ];
+
+  const emailIdOfUser = await credentials.findAll({
+    where: {
+      id: userIds,
+    },
+    attributes: ['email'],
+  });
+
+  const emailIdOfOthers = await credentials.findAll({
+    include: [
+      {
+        model: usertypes,
+        where: {
+          user_type: mailSettings.find((mail) => mail.type === type).userTypes,
+        },
+      },
+    ],
+    attributes: ['email'],
+  });
+
+  const emailIds = [...emailIdOfUser, ...emailIdOfOthers];
+  const selectedProduct = await products.findOne({
+    where: {
+      id: itemName,
+    },
+    attributes: ['name'],
+  });
+
+  const emailList = emailIds.map((email) => email.email).join(',');
+  const mailSubject =
+    'FNFGZ' +
+    ': ' +
+    mailSettings.find((mail) => mail.type === type).subject +
+    ' - ' +
+    status;
+  const mailBody =
+    mailSettings.find((mail) => mail.type === type).subject +
+    ' for ' +
+    selectedProduct.name +
+    ' has been ' +
+    status +
+    '. You can check status in the following link. <br />' +
+    '<br /><a href="' +
+    config.APP_URL +
+    '/' +
+    mailSettings.find((mail) => mail.type === type).link +
+    '" target="_blank" rel="noopener noreferrer">' +
+    config.APP_URL +
+    '/' +
+    mailSettings.find((mail) => mail.type === type).link +
+    '</a>';
+
+  await sendSingleEmail(emailList, mailBody, mailSubject);
 }
 
 module.exports = {

@@ -256,6 +256,19 @@ async function addOrUpdateSingleDb(tableName, filterCondition, recordToMod) {
   return finalResult;
 }
 
+async function findAllFilterOrderbyUpdatedAtDb(tableName, filterCondition) {
+  try {
+    const result = await tableName.findAll({
+      where: filterCondition,
+      order: [['updatedAt', 'desc']],
+    });
+    return result;
+  } catch (error) {
+    console.log('Error executing query: ' + error);
+    return 0;
+  }
+}
+
 module.exports = {
   selectAllDb,
   findOneFilterDb,
@@ -272,4 +285,5 @@ module.exports = {
   countWithFilterDb,
   countGroupByDb,
   addOrUpdateSingleDb,
+  findAllFilterOrderbyUpdatedAtDb,
 };

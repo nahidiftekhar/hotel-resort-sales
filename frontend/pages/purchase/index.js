@@ -6,7 +6,7 @@ import ReactiveButton from 'reactive-button';
 const PurchaseHome = () => {
   return (
     <div className="min-vh-50 center-flex">
-      <Row className="w-100 text-center">
+      <Row className="text-center">
         <Col md={12} className="my-3">
           <Link href="/purchase/item-requisition">
             <ReactiveButton

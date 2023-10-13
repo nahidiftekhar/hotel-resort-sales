@@ -317,20 +317,6 @@ function BookingHome({ session }) {
                 </div>
               )}
 
-            {/* <div className="reactive-button-wauto">
-              <ReactiveButton
-                buttonState="idle"
-                idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
-                outline
-                color="violet"
-                className="rounded-1 py-1 px-3"
-                onClick={() => {
-                  setShowBooking(true);
-                  setCurrentBookingId(row.id);
-                }}
-              />
-            </div> */}
-
             <a href={`booking/show-booking?id=${row.id}`} className="my-1">
               <div className="reactive-button-wauto">
                 <ReactiveButton

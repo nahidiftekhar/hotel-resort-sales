@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const mailConfig = require('../../configs/mail.config');
 
 async function sendSingleEmail(emailId, messageBody, mailSubject) {
-  console.log('Trying mail...');
+  console.log('\n\nSending mail to: ' + emailId + '\n\n');
   const transporter = nodemailer.createTransport({
     name: mailConfig.mailConfig.SERVER_NAME,
     host: mailConfig.mailConfig.EMAIL_HOST,

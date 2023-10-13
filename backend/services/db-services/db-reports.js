@@ -8,6 +8,8 @@ const {
   visits,
   visitorexpenses,
   productpurchases,
+  productrequisitions,
+  products,
 } = require('../../database/models');
 
 async function revenueTotal(startDate, endDate) {
@@ -128,9 +130,110 @@ async function salesPerformanceDb(startDate, endDate) {
   }
 }
 
+async function purchaseRequisitionByUserDb(userId, startDate, endDate) {
+  try {
+    const result = await productpurchases.findAll({
+      where: {
+        requester_id: userId,
+        createdAt: {
+          [Op.gte]: startDate,
+          [Op.lte]: endDate,
+        },
+      },
+      include: [
+        {
+          model: credentials,
+          as: 'purchase_requester',
+          attributes: ['username'],
+        },
+        {
+          model: products,
+          attributes: ['name'],
+        },
+      ],
+    });
+
+    return result;
+  } catch (error) {
+    console.log('Error executing query: ' + error);
+    return 0;
+  }
+}
+
+async function itemsRequisitionByUserDb(userId, startDate, endDate) {
+  try {
+    const result = await productrequisitions.findAll({
+      where: {
+        requester_id: userId,
+        createdAt: {
+          [Op.gte]: startDate,
+          [Op.lte]: endDate,
+        },
+      },
+      include: [
+        {
+          model: credentials,
+          as: 'requisition_requester',
+          attributes: ['username'],
+        },
+        {
+          model: products,
+          attributes: ['name', 'unit'],
+        },
+      ],
+    });
+    return result;
+  } catch (error) {
+    console.log('Error executing query: ' + error);
+    return 0;
+  }
+}
+
+async function bookingByUserDb(userId, startDate, endDate) {
+  try {
+    const result = await bookings.findAll({
+      where: {
+        user_id: userId,
+        createdAt: {
+          [Op.gte]: startDate,
+          [Op.lte]: endDate,
+        },
+      },
+      attributes: [
+        'id',
+        'user_id',
+        'booking_ref',
+        'checkin_date',
+        'checkout_date',
+        'booking_status',
+        'amount',
+        'discounted_amount',
+        'createdAt',
+      ],
+      include: [
+        {
+          model: credentials,
+          attributes: ['username'],
+        },
+        {
+          model: discounts,
+          attributes: ['percentage_value', 'approval_status'],
+        },
+      ],
+    });
+    return result;
+  } catch (error) {
+    console.log('Error executing query: ' + error);
+    return 0;
+  }
+}
+
 module.exports = {
   revenueTotal,
   revenueDaily,
   expenseDaily,
   salesPerformanceDb,
+  purchaseRequisitionByUserDb,
+  itemsRequisitionByUserDb,
+  bookingByUserDb,
 };

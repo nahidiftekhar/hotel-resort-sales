@@ -311,7 +311,6 @@ const ItemPurchase = ({ session }) => {
         data={allRequisitions}
         subHeader
         subHeaderComponent={subHeaderComponent()}
-        // actions={actionsMemo}
         pagination
         paginationComponentOptions={paginationComponentOptions}
         defaultSortFieldId={1}
