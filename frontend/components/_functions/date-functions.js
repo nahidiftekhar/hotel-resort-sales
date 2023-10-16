@@ -96,3 +96,14 @@ export function dateStringToMONDD(dateString) {
 
   return `${day} ${month}`;
 }
+
+export const getCurrentMonthFirstAndLastDates = () => {
+  const today = new Date();
+  const firstDate = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+  return {
+    firstDate,
+    lastDate,
+  };
+};

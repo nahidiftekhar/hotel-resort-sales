@@ -30,22 +30,22 @@ const PurchaseHome = () => {
           </Link>
         </Col>
         <Col md={12} className="my-3">
-          <Link href="/purchase/new-item">
+          <Link href="/purchase/stock-status">
             <ReactiveButton
               buttonState="idle"
               color="indigo"
-              idleText="New Item"
+              idleText="Stock Status"
               size="large"
               className="w-300px"
             />
           </Link>
         </Col>
         <Col md={12} className="my-3">
-          <Link href="/purchase/stock-status">
+          <Link href="/purchase/new-item">
             <ReactiveButton
               buttonState="idle"
               color="indigo"
-              idleText="Stock Status"
+              idleText="New Item"
               size="large"
               className="w-300px"
             />

@@ -115,4 +115,7 @@ router.get(
   reportServices.purchaseRequisitionByUser
 );
 
+// Stock report
+router.post('/stock-report', reportServices.stockReportByDate);
+
 module.exports = router;

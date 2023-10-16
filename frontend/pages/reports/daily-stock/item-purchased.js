@@ -2,7 +2,7 @@ import { formatDateYYYYMMDDwithDash } from '@/components/_functions/date-functio
 import React from 'react';
 import DataTable from 'react-data-table-component';
 
-const ItemPurchased = ({ items, day }) => {
+const ItemPurchased = ({ items, day, loading }) => {
   const headerResponsive = [
     {
       name: 'Product',
@@ -30,7 +30,7 @@ const ItemPurchased = ({ items, day }) => {
         striped={true}
         highlightOnHover={true}
         responsive={true}
-        progressPending={items.length === 0}
+        progressPending={loading}
         paginationPerPage={50}
         paginationRowsPerPageOptions={[10, 20, 50, 100]}
       />

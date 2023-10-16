@@ -12,14 +12,17 @@ const DailyStock = () => {
   const [itemsFulfilled, setItemsFulfilled] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [dateString, setDateString] = useState('20231009');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getItemsPurchased = async () => {
+      setLoading(true);
       const res = await axios.post('/api/reports/daywise-items', {
         dateString: dateString,
       });
       setItemsPurchased(res.data.itemsPurchase);
       setItemsFulfilled(res.data.itemFullfilled);
+      setLoading(false);
     };
     getItemsPurchased();
   }, [dateString]);
@@ -39,8 +42,8 @@ const DailyStock = () => {
           Get Report
         </button>
       </div>
-      <ItemFulfilled items={itemsFulfilled} day={startDate} />
-      <ItemPurchased items={itemsPurchased} day={startDate} />
+      <ItemFulfilled items={itemsFulfilled} day={startDate} loading={loading} />
+      <ItemPurchased items={itemsPurchased} day={startDate} loading={loading} />
     </div>
   );
 };

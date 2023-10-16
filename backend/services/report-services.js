@@ -481,6 +481,66 @@ async function purchaseRequisitionByUser(req, res, next) {
   return res.json(dbResult);
 }
 
+async function stockReportByDate(req, res, next) {
+  const { startDate, endDate } = req.body;
+
+  try {
+    const dbResult = await dbReports.stockReportByDateDb(startDate, endDate);
+
+    const currentStock = dbResult.currentStock;
+    const purchaseAfterEndDate = dbResult.purchaseAfterEndDate;
+    const purchaseBetweenDates = dbResult.purchaseBetweenDates;
+    const requisitionBetweenDates = dbResult.requisitionBetweenDates;
+
+    const result = currentStock.map((stockItem) => {
+      const itemPurchaseAfterEndDate =
+        purchaseAfterEndDate
+          .find((purchase) => purchase.product_id === stockItem.id)
+          ?.get('total_quantity') || '0.00';
+      const itemPurchaseBetweenDates =
+        purchaseBetweenDates
+          .find((purchase) => purchase.product_id === stockItem.id)
+          ?.get('total_quantity') || '0.00';
+      const itemRequisitionBetweenDates =
+        requisitionBetweenDates
+          .find((requisition) => requisition.product_id === stockItem.id)
+          ?.get('total_quantity') || '0.00';
+
+      const currentStockQuantity =
+        parseFloat(stockItem.storestocks[0]?.quantity) || 0;
+      const purchaseAfterEndDateQuantity =
+        parseFloat(itemPurchaseAfterEndDate) || 0;
+      const purchaseBetweenDatesQuantity =
+        parseFloat(itemPurchaseBetweenDates) || 0;
+      const requisitionBetweenDatesQuantity =
+        parseFloat(itemRequisitionBetweenDates) || 0;
+
+      const openingStock =
+        currentStockQuantity -
+        purchaseAfterEndDateQuantity -
+        purchaseBetweenDatesQuantity;
+      const totalIn = purchaseBetweenDatesQuantity;
+      const totalOut = requisitionBetweenDatesQuantity;
+      const closingStock = currentStockQuantity - purchaseAfterEndDateQuantity;
+
+      return {
+        id: stockItem.id,
+        item_name: stockItem.name,
+        unit: stockItem.unit,
+        current_stock: currentStockQuantity,
+        opening_stock: openingStock,
+        total_in: totalIn,
+        total_out: totalOut,
+        closing_stock: closingStock,
+      };
+    });
+    return res.json({ success: true, result });
+  } catch (error) {
+    console.log('Error occured: ' + error);
+    return res.json({ success: false, error });
+  }
+}
+
 module.exports = {
   testService,
   dailyBooking,
@@ -506,4 +566,5 @@ module.exports = {
   bookingByUser,
   itemsRequisitionByUser,
   purchaseRequisitionByUser,
+  stockReportByDate,
 };

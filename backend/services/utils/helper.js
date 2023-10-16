@@ -63,7 +63,7 @@ function getDateWithOffset(offset) {
 
 function getEndDateWithDuration(startDate, duration) {
   const startDateObj = new Date(startDate);
-  startDateObj.setDate(startDateObj.getDate() + duration);
+  startDateObj.setDate(startDateObj.getDate() + Number(duration));
   return startDateObj;
 }
 

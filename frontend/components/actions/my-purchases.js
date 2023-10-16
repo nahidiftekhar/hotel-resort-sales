@@ -57,13 +57,13 @@ const MyPurchases = ({ session }) => {
     },
     {
       name: 'Product Name',
-      selector: (row) => row.product.name,
+      selector: (row) => row.product?.name,
       sortable: true,
       wrap: true,
     },
     {
       name: 'Quantity',
-      selector: (row) => row.quantity + ' ' + row.product.unit,
+      selector: (row) => row.quantity + ' ' + row.product?.unit,
     },
     {
       name: 'Budget',

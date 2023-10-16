@@ -76,33 +76,6 @@ const RequisitionModal = ({ setOpenModal, setRefresh, userId }) => {
             return (
               <Form className="custom-form arrow-hidden">
                 <Row>
-                  {/* <Col md={6}>
-                    <div className="my-2">
-                      <CustomSelect
-                        label="Select Category"
-                        name="productCategory"
-                        value={values.productCategory}
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                          setProductSubCategories(
-                            e.target.value > 0
-                              ? productCategories.find(
-                                  (category) =>
-                                    category.id === parseInt(e.target.value)
-                                ).productsubcategories
-                              : []
-                          );
-                        }}>
-                        <option value={0}>Select Category</option>
-                        {productCategories?.map(({ id, category }) => (
-                          <option key={id} value={id}>
-                            {category}
-                          </option>
-                        ))}
-                      </CustomSelect>
-                    </div>
-                  </Col> */}
-
                   <Col md={6}>
                     <div className="my-2">
                       <CustomSelect

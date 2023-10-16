@@ -76,7 +76,7 @@ function ListAlacarte() {
       name: 'Actions',
       cell: (row) => (
         <div className="d-flex py-1">
-          <div className="reactive-button-wauto mx-1">
+          {/* <div className="reactive-button-wauto mx-1">
             <ReactiveButton
               buttonState="idle"
               idleText={<Icon nameIcon="FaEye" propsIcon={{ size: 20 }} />}
@@ -88,7 +88,7 @@ function ListAlacarte() {
                 setSingleProduct(row);
               }}
             />
-          </div>
+          </div> */}
 
           <div className="reactive-button-wauto mx-1">
             <ReactiveButton

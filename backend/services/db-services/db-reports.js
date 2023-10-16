@@ -10,6 +10,7 @@ const {
   productpurchases,
   productrequisitions,
   products,
+  storestocks,
 } = require('../../database/models');
 
 async function revenueTotal(startDate, endDate) {
@@ -228,6 +229,85 @@ async function bookingByUserDb(userId, startDate, endDate) {
   }
 }
 
+async function stockReportByDateDb(startDate, endDate) {
+  // const currentStock = await storestocks.findAll({
+  //   attributes: ['product_id', 'quantity'],
+  //   include: [
+  //     {
+  //       model: products,
+  //       attributes: ['name', 'unit'],
+  //     },
+  //   ],
+  // });
+
+  const currentStock = await products.findAll({
+    attributes: ['id', 'name', 'unit'],
+    include: [
+      {
+        model: storestocks,
+        attributes: ['quantity'],
+      },
+    ],
+  });
+
+  const purchaseAfterEndDate = await productpurchases.findAll({
+    attributes: [
+      'product_id',
+      [Sequelize.literal('SUM(quantity)'), 'total_quantity'],
+    ],
+    include: [
+      {
+        model: products,
+        attributes: [],
+      },
+    ],
+    where: {
+      updatedAt: {
+        [Op.gte]: endDate,
+      },
+      status: 'purchased',
+    },
+    group: ['product_id'],
+  });
+
+  const purchaseBetweenDates = await productpurchases.findAll({
+    attributes: [
+      'product_id',
+      [Sequelize.literal('SUM(quantity)'), 'total_quantity'],
+    ],
+    where: {
+      updatedAt: {
+        [Op.gte]: startDate,
+        [Op.lt]: endDate,
+      },
+      status: 'purchased',
+    },
+    group: ['product_id'],
+  });
+
+  const requisitionBetweenDates = await productrequisitions.findAll({
+    attributes: [
+      'product_id',
+      [Sequelize.literal('SUM(quantity)'), 'total_quantity'],
+    ],
+    where: {
+      updatedAt: {
+        [Op.gte]: startDate,
+        [Op.lt]: endDate,
+      },
+      status: 'fullfilled',
+    },
+    group: ['product_id'],
+  });
+
+  return {
+    currentStock,
+    purchaseAfterEndDate,
+    purchaseBetweenDates,
+    requisitionBetweenDates,
+  };
+}
+
 module.exports = {
   revenueTotal,
   revenueDaily,
@@ -236,4 +316,5 @@ module.exports = {
   purchaseRequisitionByUserDb,
   itemsRequisitionByUserDb,
   bookingByUserDb,
+  stockReportByDateDb,
 };
