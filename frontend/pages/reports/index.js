@@ -41,11 +41,11 @@ const PurchaseHome = () => {
           </Link>
         </Col>
         <Col md={12} className="my-3">
-          <Link href="/purchase/stock-status">
+          <Link href="/reports/inventory-report">
             <ReactiveButton
               buttonState="idle"
               color="indigo"
-              idleText="Stock Status"
+              idleText="Inventory Report"
               size="large"
               className="w-300px"
             />
