@@ -150,9 +150,9 @@ function ListAllGuests() {
 
   const exportFileArray = guestList.map((guest) => {
     return {
-      Name: 'guest.name',
-      Phone: 'guest.phone',
-      Email: 'guest.email',
+      Name: `"${guest.name}"`,
+      Phone: `"${guest.phone}"`,
+      Email: `"${guest.email}"`,
       'ID Number': `"${guest.id_type} - ${guest.id_number}"`,
     };
   });
