@@ -189,6 +189,7 @@ async function itemWiseDailyPurchased(dateString) {
     attributes: [
       'product_id',
       [Sequelize.fn('sum', Sequelize.col('quantity')), 'total_quantity'],
+      [Sequelize.fn('sum', Sequelize.col('actual_cost')), 'total_cost'],
     ],
     group: ['product_id', 'product.id'],
     include: [

@@ -80,18 +80,18 @@ function EditVenue({ setBookingData, bookingData, setShow }) {
   };
 
   const handleAddVenue = (value) => {
-    if(!value.venueId) {
+    if (!value.venueId) {
       setCustomError('Please select a venue');
       return false;
     }
-    if(value.checkInDate > value.checkOutDate) {
+    if (value.checkInDate > value.checkOutDate) {
       setCustomError('Check-in date cannot be greater than check-out date');
       return false;
     }
-    const bookingDuration = Math.floor(
-      (value.checkOutDate - value.checkInDate) /
-        (1000 * 60 * 60 * 24)
-    ) + 1;
+    const bookingDuration =
+      Math.floor(
+        (value.checkOutDate - value.checkInDate) / (1000 * 60 * 60 * 24)
+      ) + 1;
     value.venue_count = 1;
     value.venue_cost = Math.max(
       bookingDuration > 0 ? value.price * bookingDuration : value.price,
@@ -132,8 +132,7 @@ function EditVenue({ setBookingData, bookingData, setShow }) {
       setVenuePrice,
       'discount',
       roundUptoFixedDigits(
-        ((venuePrice.rackPrice - e.target.value) * 100) /
-          venuePrice.rackPrice,
+        ((venuePrice.rackPrice - e.target.value) * 100) / venuePrice.rackPrice,
         2
       )
     );
@@ -161,8 +160,7 @@ function EditVenue({ setBookingData, bookingData, setShow }) {
         venuePrice: {
           ...venuePrice,
           discount: roundUptoFixedDigits(
-            ((venuePrice.rackPrice - venuePrice.priceAfterDiscount) *
-              100) /
+            ((venuePrice.rackPrice - venuePrice.priceAfterDiscount) * 100) /
               venuePrice.rackPrice,
             2
           ),
@@ -246,13 +244,20 @@ function EditVenue({ setBookingData, bookingData, setShow }) {
       </Formik>
 
       {venueItems?.length > 0 && (
-        <Row
-          className="fw-bold custom-form arrow-hidden mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
-          <Col md={4} xs={6}>Venue</Col>
+        <Row className="fw-bold custom-form arrow-hidden mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
+          <Col md={4} xs={6}>
+            Venue
+          </Col>
           {/* Input for laptop */}
-          <Col md={2} className="d-none d-sm-block">Check-in</Col>
-          <Col md={2} className="d-none d-sm-block">Check-out</Col>
-          <Col md={3} xs={5} className="text-end">Price</Col>
+          <Col md={2} className="d-none d-sm-block">
+            Check-in
+          </Col>
+          <Col md={2} className="d-none d-sm-block">
+            Check-out
+          </Col>
+          <Col md={3} xs={5} className="text-end">
+            Price
+          </Col>
         </Row>
       )}
 
@@ -345,7 +350,7 @@ function EditVenue({ setBookingData, bookingData, setShow }) {
               name="discountedPrice"
               type="number"
               max={Math.round(sumOfKey(venueItems, 'venue_cost')) || 0}
-              min={Math.round(sumOfKey(venueItems, 'venue_cost') * 0.5) || 0}
+              min={Math.round(sumOfKey(venueItems, 'venue_cost') * 0.01) || 0}
               value={Math.floor(venuePrice.priceAfterDiscount) || 0}
               onChange={(e) => {
                 handleDiscountChange(e);
@@ -395,9 +400,11 @@ function EditVenue({ setBookingData, bookingData, setShow }) {
             idleText="Submit"
             color="green"
             onClick={handleSubmit}
-            />
+          />
         </Col>
-        {customError && <p className="error-message text-center">{customError}</p>}
+        {customError && (
+          <p className="error-message text-center">{customError}</p>
+        )}
       </Row>
     </div>
   );

@@ -330,7 +330,7 @@ function EditPackage({ setBookingData, bookingData, setShow }) {
               type="number"
               max={Math.round(sumOfKey(packageItems, 'package_cost')) || 0}
               min={
-                Math.round(sumOfKey(packageItems, 'package_cost') * 0.5) || 0
+                Math.round(sumOfKey(packageItems, 'package_cost') * 0.01) || 0
               }
               value={Math.floor(packagePrice.priceAfterDiscount) || 0}
               onChange={(e) => {

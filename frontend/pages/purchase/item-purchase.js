@@ -148,15 +148,6 @@ const ItemPurchase = ({ session }) => {
     };
   });
 
-  // const actionsMemo = useMemo(
-  //   () => (
-  //     <Export
-  //       onExport={() => downloadCSV(exportFileArray, 'Purchase Requisitions')}
-  //     />
-  //   ),
-  //   [exportFileArray]
-  // );
-
   const paginationComponentOptions = {
     selectAllRowsItem: true,
   };

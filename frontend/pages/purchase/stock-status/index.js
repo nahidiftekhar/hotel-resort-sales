@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import { datetimeStringToDate } from '@/components/_functions/date-functions';
 import { Icon } from '@/components/_commom/Icon';
 import RequisitionByProduct from './requisition-by-product';
 import { Form } from 'react-bootstrap';
+
+import { Export, downloadCSV } from '@/components/_functions/table-export';
 
 const StockStatus = () => {
   const [fullStock, setFullStock] = useState([]);
@@ -97,6 +99,23 @@ const StockStatus = () => {
     selectAllRowsItem: true,
   };
 
+  const exportFileArray = fullStock.map((item) => {
+    return {
+      'Product Name': item.product?.name,
+      Quantity: item.quantity + ' ' + item.product?.unit,
+      'Last Updated': datetimeStringToDate(item.updatedAt),
+    };
+  });
+
+  const actionsMemo = useMemo(
+    () => (
+      <Export
+        onExport={() => downloadCSV(exportFileArray, 'Stock_Status_Report.csv')}
+      />
+    ),
+    [exportFileArray]
+  );
+
   return (
     <div>
       <DataTable
@@ -116,6 +135,7 @@ const StockStatus = () => {
         progressPending={fullStock.length === 0}
         subHeader
         subHeaderComponent={subHeaderComponent()}
+        actions={actionsMemo}
       />
 
       <RequisitionByProduct

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { PropagateLoader } from 'react-spinners';
 import DataTable, { FilterComponent } from 'react-data-table-component';
 import { Container, Button, Form } from 'react-bootstrap';
@@ -11,7 +11,7 @@ import AddGuest from '@/components/guests/add-guest';
 import EditGuest from '@/components/guests/edit-guest';
 import { writeToStorage } from '@/components/_functions/storage-variable-management';
 import ViewGuest from '@/components/guests/view-guest';
-import axios from 'axios';
+import { Export, downloadCSV } from '@/components/_functions/table-export';
 
 function ListAllGuests() {
   const [refresh, setRefresh] = useState(true);
@@ -148,6 +148,24 @@ function ListAllGuests() {
     );
   };
 
+  const exportFileArray = guestList.map((guest) => {
+    return {
+      Name: 'guest.name',
+      Phone: 'guest.phone',
+      Email: 'guest.email',
+      'ID Number': `"${guest.id_type} - ${guest.id_number}"`,
+    };
+  });
+
+  const actionsMemo = useMemo(
+    () => (
+      <Export
+        onExport={() => downloadCSV(exportFileArray, 'All_Guest_list.csv')}
+      />
+    ),
+    [exportFileArray]
+  );
+
   if (isLoading) {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-70">
@@ -185,6 +203,7 @@ function ListAllGuests() {
         responsive
         striped
         dense
+        actions={actionsMemo}
       />
 
       <AddGuest

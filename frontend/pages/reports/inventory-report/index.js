@@ -128,7 +128,7 @@ function InventoryReport() {
 
       {reportReady === true && (
         <DataTable
-          title="Daily Attendance Report"
+          title="Inventory Report"
           columns={headerResponsive}
           data={reportData}
           actions={actionsMemo}

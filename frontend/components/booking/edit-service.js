@@ -269,7 +269,7 @@ function EditService({ setBookingData, bookingData, setShow }) {
               type="number"
               max={Math.round(sumOfKey(serviceItems, 'service_cost')) || 0}
               min={
-                Math.round(sumOfKey(serviceItems, 'service_cost') * 0.5) || 0
+                Math.round(sumOfKey(serviceItems, 'service_cost') * 0.01) || 0
               }
               value={Math.floor(servicePrice.priceAfterDiscount) || 0}
               onChange={(e) => {

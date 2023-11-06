@@ -130,22 +130,23 @@ function EditRoom({
   };
 
   const handleAddRoom = (value) => {
-    if(!value.roomId) {
+    if (!value.roomId) {
       setCustomError('Please select a room');
       return false;
     }
-    if(value.checkInDate > value.checkOutDate) {
+    if (value.checkInDate > value.checkOutDate) {
       setCustomError('Check-in date cannot be greater than check-out date');
       return false;
     }
 
     const bookingDuration = Math.floor(
-      (value.checkOutDate - value.checkInDate) /
-        (1000 * 60 * 60 * 24)
-    )
+      (value.checkOutDate - value.checkInDate) / (1000 * 60 * 60 * 24)
+    );
     value.room_count = 1;
     value.room_cost = Math.max(
-      bookingDuration > 0 ? value.roomtype?.price * bookingDuration : value.roomtype?.price,
+      bookingDuration > 0
+        ? value.roomtype?.price * bookingDuration
+        : value.roomtype?.price,
       0
     );
     setRoomItems((currentData) => [...currentData, value]);
@@ -286,13 +287,20 @@ function EditRoom({
       </Formik>
 
       {roomItems?.length > 0 && (
-        <Row
-          className="fw-bold custom-form arrow-hidden mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
-          <Col md={4} xs={6}>Room</Col>
+        <Row className="fw-bold custom-form arrow-hidden mx-1 mx-sm-0 mt-3 pb-3 border-bottom font-small">
+          <Col md={4} xs={6}>
+            Room
+          </Col>
           {/* Input for laptop */}
-          <Col md={2} className="d-none d-sm-block">Check-in</Col>
-          <Col md={2} className="d-none d-sm-block">Check-out</Col>
-          <Col md={3} xs={5} className="text-end">Price</Col>
+          <Col md={2} className="d-none d-sm-block">
+            Check-in
+          </Col>
+          <Col md={2} className="d-none d-sm-block">
+            Check-out
+          </Col>
+          <Col md={3} xs={5} className="text-end">
+            Price
+          </Col>
         </Row>
       )}
 
@@ -386,7 +394,7 @@ function EditRoom({
               name="discountedPrice"
               type="number"
               max={Math.round(sumOfKey(roomItems, 'room_cost')) || 0}
-              min={Math.round(sumOfKey(roomItems, 'room_cost') * 0.5) || 0}
+              min={Math.round(sumOfKey(roomItems, 'room_cost') * 0.01) || 0}
               value={Math.floor(roomPrice.priceAfterDiscount) || 0}
               onChange={(e) => {
                 handleDiscountChange(e);

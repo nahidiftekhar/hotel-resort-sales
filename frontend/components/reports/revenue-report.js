@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
+import { Export, downloadCSV } from '@/components/_functions/table-export';
 
 const RevenueReport = ({ dateString, duration }) => {
   const [reportData, setReportData] = useState([]);
@@ -34,6 +35,19 @@ const RevenueReport = ({ dateString, duration }) => {
     },
   ];
 
+  const exportFileArray = reportData.map((item) => {
+    return {
+      Date: item.day,
+      Revenue: item.totalRevenue,
+    };
+  });
+
+  const actionsMemo = useMemo(() => {
+    return (
+      <Export onExport={() => downloadCSV(exportFileArray, 'Revenue Report')} />
+    );
+  }, [exportFileArray]);
+
   return (
     <div>
       <DataTable
@@ -43,6 +57,7 @@ const RevenueReport = ({ dateString, duration }) => {
         pagination
         progressPending={isLoading}
         persistTableHead
+        actions={actionsMemo}
       />
     </div>
   );

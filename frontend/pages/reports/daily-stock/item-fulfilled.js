@@ -1,6 +1,7 @@
-import { formatDateYYYYMMDDwithDash } from '@/components/_functions/date-functions';
-import React from 'react';
+import React, { useMemo } from 'react';
 import DataTable from 'react-data-table-component';
+import { Export, downloadCSV } from '@/components/_functions/table-export';
+import { formatDateYYYYMMDDwithDash } from '@/components/_functions/date-functions';
 
 const ItemFulfilled = ({ items, day, loading }) => {
   const headerResponsive = [
@@ -18,6 +19,22 @@ const ItemFulfilled = ({ items, day, loading }) => {
     },
   ];
 
+  const exportFileArray = items.map((item) => {
+    return {
+      Product: item.product?.name,
+      'Quantity Fulfilled': item.total_quantity,
+    };
+  });
+
+  const actionsMemo = useMemo(
+    () => (
+      <Export
+        onExport={() => downloadCSV(exportFileArray, 'Fulfilled_Report')}
+      />
+    ),
+    [exportFileArray]
+  );
+
   return (
     <div>
       <DataTable
@@ -33,6 +50,7 @@ const ItemFulfilled = ({ items, day, loading }) => {
         paginationPerPage={50}
         progressPending={loading}
         paginationRowsPerPageOptions={[10, 20, 50, 100]}
+        actions={actionsMemo}
       />
     </div>
   );
