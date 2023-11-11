@@ -136,15 +136,18 @@ const ItemPurchase = ({ session }) => {
 
   const exportFileArray = allRequisitions.map((item) => {
     return {
-      ate: `"${datetimeStringToDate(item.createdAt)}"` || '-',
-      tem: `"${item.product?.name}"` || '-',
-      uantity: `"${item.quantity + ' ' + item.product?.unit}"` || '-',
-      rice: `"${item.price}"` || '-',
-      otes: `"${item.notes}"` || '-',
-      equester: `"${item.purchase_requester?.username}"` || '-',
-      equesterept: `"${item.purchase_requester?.usertype?.user_type}"` || '-',
-      pprover: `"${item.purchase_approver?.username}"` || '-',
-      pproverept: `"${item.purchase_approver?.usertype?.user_type}"` || '-',
+      Date: `"${datetimeStringToDate(item.createdAt)}"` || '-',
+      Item: `"${item.product?.name}"` || '-',
+      Quantity: `"${item.quantity + ' ' + item.product?.unit}"` || '-',
+      Budget: `"${item.price}"` || '-',
+      Cost: `"${item.actual_cost}"` || '-',
+      Notes: `"${item.notes}"` || '-',
+      Requester: `"${item.purchase_requester?.username}"` || '-',
+      'Requester Dept':
+        `"${item.purchase_requester?.usertype?.user_type}"` || '-',
+      Approver: `"${item.purchase_approver?.username}"` || '-',
+      'Approver Dept':
+        `"${item.purchase_approver?.usertype?.user_type}"` || '-',
     };
   });
 
