@@ -20,13 +20,13 @@ const Footer = ({ pageContent }) => {
         <Row className="footer-div m-0">
           <Col lg={6} className="p-0">
             Please contact{' '}
-            <a className="footer-link" href="mailto: info@codemarshal.com">
-              info@codemarshal.com
+            <a className="footer-link" href="mailto: info@bdlancelimited.com">
+              info@bdlancelimited.com
             </a>{' '}
             in case of you need any assistance
           </Col>
           <Col lg={6} className="p-0 copyright-section text-end">
-            &copy; <em id="date"></em>CodeMarshal Systems
+            &copy; <em id="date"></em>BDLance Limited
           </Col>
         </Row>
       </footer>
