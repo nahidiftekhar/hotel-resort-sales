@@ -13,8 +13,6 @@ import {
 const DailyStock = () => {
   const [itemsPurchased, setItemsPurchased] = useState([]);
   const [itemsFulfilled, setItemsFulfilled] = useState([]);
-  // const [startDate, setStartDate] = useState(new Date());
-  const [dateString, setDateString] = useState(formatDateYYYYMMDD(new Date()));
   const [loading, setLoading] = useState(false);
 
   const [dateRange, setDateRange] = useState([
@@ -22,6 +20,10 @@ const DailyStock = () => {
     getCurrentMonthFirstAndLastDates().lastDate,
   ]);
   const [startDate, endDate] = dateRange;
+  const [dateString, setDateString] = useState({
+    startDate: startDate,
+    endDate: endDate,
+  });
 
   useEffect(() => {
     const getItemsPurchased = async () => {
