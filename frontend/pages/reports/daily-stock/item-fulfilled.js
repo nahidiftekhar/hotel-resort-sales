@@ -38,7 +38,7 @@ const ItemFulfilled = ({ items, dateString, loading }) => {
   return (
     <div>
       <DataTable
-        title={`Items Purchased from ${formatDateYYYYMMDDwithDash(
+        title={`Items Fullfilled from ${formatDateYYYYMMDDwithDash(
           dateString?.startDate
         )} to ${formatDateYYYYMMDDwithDash(dateString?.endDate)}`}
         columns={headerResponsive}
