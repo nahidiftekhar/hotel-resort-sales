@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import DataTable from 'react-data-table-component';
 import { Export, downloadCSV } from '@/components/_functions/table-export';
 
-const ItemPurchased = ({ items, day, loading }) => {
+const ItemPurchased = ({ items, dateString, loading }) => {
   const headerResponsive = [
     {
       name: 'Product',
@@ -45,7 +45,9 @@ const ItemPurchased = ({ items, day, loading }) => {
   return (
     <div>
       <DataTable
-        title={`Items Purchased on ${formatDateYYYYMMDDwithDash(day)}`}
+        title={`Items Purchased from ${formatDateYYYYMMDDwithDash(
+          dateString?.startDate
+        )} to ${formatDateYYYYMMDDwithDash(dateString?.endDate)}`}
         columns={headerResponsive}
         data={items}
         pagination={true}

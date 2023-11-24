@@ -371,9 +371,15 @@ async function getFullStockStatus(req, res, next) {
 }
 
 async function daywiseItemReport(req, res, next) {
-  const dateForReport = req.params.dateForReport;
-  const itemFullfilled = await dbPurchase.itemWiseDailyFulfilled(dateForReport);
-  const itemsPurchase = await dbPurchase.itemWiseDailyPurchased(dateForReport);
+  const { startDate, endDate } = req.params;
+  const itemFullfilled = await dbPurchase.itemWiseDailyFulfilled(
+    startDate,
+    endDate
+  );
+  const itemsPurchase = await dbPurchase.itemWiseDailyPurchased(
+    startDate,
+    endDate
+  );
 
   return res.json({ itemFullfilled, itemsPurchase });
 }

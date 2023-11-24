@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Export, downloadCSV } from '@/components/_functions/table-export';
 import { formatDateYYYYMMDDwithDash } from '@/components/_functions/date-functions';
 
-const ItemFulfilled = ({ items, day, loading }) => {
+const ItemFulfilled = ({ items, dateString, loading }) => {
   const headerResponsive = [
     {
       name: 'Product',
@@ -38,7 +38,9 @@ const ItemFulfilled = ({ items, day, loading }) => {
   return (
     <div>
       <DataTable
-        title={`Items Fulfilled on ${formatDateYYYYMMDDwithDash(day)}`}
+        title={`Items Purchased from ${formatDateYYYYMMDDwithDash(
+          dateString?.startDate
+        )} to ${formatDateYYYYMMDDwithDash(dateString?.endDate)}`}
         columns={headerResponsive}
         data={items}
         pagination={true}

@@ -62,6 +62,7 @@ router.get('/stock/:productId', purchaseServices.getStockStatus);
 router.get('/stock', purchaseServices.getFullStockStatus);
 
 // Itemwise daily purchase report
-router.get('/daywise/:dateForReport', purchaseServices.daywiseItemReport);
+// router.get('/daywise/:dateForReport', purchaseServices.daywiseItemReport);
+router.get('/daywise/:startDate/:endDate', purchaseServices.daywiseItemReport);
 
 module.exports = router;
