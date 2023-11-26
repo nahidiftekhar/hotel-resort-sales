@@ -149,14 +149,12 @@ async function listProductPurchasesDb(status) {
   return res;
 }
 
-async function itemWiseDailyFulfilled(dateString) {
+async function itemWiseDailyFulfilled(startDatestring, endDatestring) {
   const res = await productrequisitions.findAll({
     where: {
       updatedAt: {
-        [Op.gte]: parseDateString(dateString),
-        [Op.lt]: new Date(
-          parseDateString(dateString).getTime() + 60 * 60 * 24 * 1000
-        ),
+        [Op.gte]: parseDateString(startDatestring),
+        [Op.lt]: parseDateString(endDatestring),
       },
       status: 'fullfilled',
     },
@@ -175,14 +173,12 @@ async function itemWiseDailyFulfilled(dateString) {
   return res;
 }
 
-async function itemWiseDailyPurchased(dateString) {
+async function itemWiseDailyPurchased(startDatestring, endDatestring) {
   const res = await productpurchases.findAll({
     where: {
       updatedAt: {
-        [Op.gte]: parseDateString(dateString),
-        [Op.lt]: new Date(
-          parseDateString(dateString).getTime() + 60 * 60 * 24 * 1000
-        ),
+        [Op.gte]: parseDateString(startDatestring),
+        [Op.lt]: parseDateString(endDatestring),
       },
       status: 'purchased',
     },

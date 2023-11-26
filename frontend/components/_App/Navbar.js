@@ -15,7 +15,7 @@ function TopNavbar({ session }) {
     <Navbar collapseOnSelect expand="lg" bg="light" sticky="top">
       <Container>
         <Navbar.Brand href="/">
-          <img src="/logo.png" alt="Smart-Tap" height={36} />
+          <img src="/COS_1.png" alt="Smart-Tap" height={36} />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         {hideNav ? (
