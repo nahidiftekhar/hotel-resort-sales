@@ -50,11 +50,12 @@ function EditRoom({ productDetail, isNew, setRefresh, setShow }) {
         initialValues={{
           imageUrl: isNew ? '' : productDetail?.image_url,
           roomId: isNew ? 0 : productDetail?.id,
-          categoryId: isNew ? 1 : productDetail?.id,
+          categoryId: isNew ? productTypes[0]?.id : productDetail?.room_type_id,
           roomNumber: isNew ? '' : productDetail?.room_number,
           roomName: isNew ? '' : productDetail?.room_name,
           roomLocation: isNew ? '' : productDetail?.room_location,
         }}
+        enableReinitialize={true}
         // validationSchema={validationRules}
         onSubmit={(values) => handleSubmit(values)}>
         {(formik) => {
