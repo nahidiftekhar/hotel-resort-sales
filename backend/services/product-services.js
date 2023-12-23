@@ -10,7 +10,7 @@ const {
   prixfixecategories,
   alacartecategories,
   servicecategories,
-  venues
+  venues,
 } = require('../database/models');
 
 async function fetchAllPackages(req, res, next) {
@@ -271,23 +271,17 @@ async function editRoom(req, res, next) {
 }
 
 async function addRoomType(req, res, next) {
-  const {
-    roomTypeName,
-    occupancyAdult,
-    occupancyChild,
-    price,
-    description,
-  } = req.body;
+  const { roomTypeName, occupancyAdult, occupancyChild, price, description } =
+    req.body;
   const dbResult = await dbStandard.addSingleRecordDB(roomtypes, {
     room_type_name: roomTypeName,
     max_adult: occupancyAdult,
     max_child: occupancyChild,
     price: price,
     description: description,
-});
+  });
   return res.json(dbResult);
 }
-
 
 async function editRoomType(req, res, next) {
   const {
@@ -404,24 +398,25 @@ async function fetchServiceTypes(req, res, next) {
 }
 
 async function fetchRoomTypes(req, res, next) {
-  const dbResult = await dbStandard.findAllFilterDb(roomtypes, {is_live: true});
+  const dbResult = await dbStandard.findAllFilterDb(roomtypes, {
+    is_live: true,
+  });
   return res.json(dbResult);
 }
 
 async function fetchRooms(req, res, next) {
-  const dbResult = await dbStandard.joinAllDb(rooms, roomtypes);
+  // const dbResult = await dbStandard.joinFilterDb(rooms, roomtypes, {
+  //   is_live: true,
+  // });
+  const dbResult = await rooms.findAll({
+    where: { is_live: true },
+    include: [{ model: roomtypes }],
+  });
   return res.json(dbResult);
 }
 
-
 async function addVenue(req, res, next) {
-  const {
-    venueName,
-    venueLocation,
-    description,
-    price,
-    imageUrl,
-  } = req.body;
+  const { venueName, venueLocation, description, price, imageUrl } = req.body;
 
   try {
     await dbStandard.addSingleRecordDB(venues, {
@@ -438,22 +433,16 @@ async function addVenue(req, res, next) {
       price: price,
       image_url: imageUrl,
     });
-    return res.json({success: true});
+    return res.json({ success: true });
   } catch (error) {
-    console.log('Error occured. ' + error );
-    return res.json({success: false, message: error})
+    console.log('Error occured. ' + error);
+    return res.json({ success: false, message: error });
   }
 }
 
 async function editVenue(req, res, next) {
-  const {
-    venueId,
-    venueName,
-    venueLocation,
-    description,
-    price,
-    imageUrl,
-  } = req.body;
+  const { venueId, venueName, venueLocation, description, price, imageUrl } =
+    req.body;
   const dbResult = await dbStandard.modifySingleRecordDb(
     venues,
     { id: venueId },
@@ -463,7 +452,7 @@ async function editVenue(req, res, next) {
       description,
       price: price,
       image_url: imageUrl,
-      }
+    }
   );
   return res.json(dbResult);
 }
@@ -522,5 +511,5 @@ module.exports = {
   addVenue,
   editVenue,
   deactivateVenue,
-  fetchVenues
+  fetchVenues,
 };

@@ -46,16 +46,16 @@ function List() {
           case 'room':
             return <ListRoom />;
 
-            case 'roomtypes':
-              return <ListRoomTypes />;
+          case 'roomtypes':
+            return <ListRoomTypes />;
 
-            case 'service':
+          case 'service':
             return <ListService />;
 
-            case 'venues':
+          case 'venues':
             return <ListVenues />;
 
-            default:
+          default:
             setTimeout(() => {
               return <div className="error-message">Something went wrong</div>;
             }, 1000);

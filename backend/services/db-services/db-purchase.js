@@ -14,6 +14,9 @@ async function listProductRequisitionsDb(status) {
   const res = await productrequisitions.findAll({
     where: {
       status: status,
+      updatedAt: {
+        [Op.gte]: new Date(new Date() - 60 * 60 * 24 * 1000 * 60),
+      },
     },
     include: [
       {
@@ -108,6 +111,9 @@ async function listProductPurchasesDb(status) {
   const res = await productpurchases.findAll({
     where: {
       status: status,
+      createdAt: {
+        [Op.gte]: new Date(new Date() - 60 * 60 * 24 * 1000 * 60),
+      },
     },
     include: [
       {
