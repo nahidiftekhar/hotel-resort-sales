@@ -52,7 +52,7 @@ const ReportsHome = () => {
             );
           }}
         >
-          Get Report
+          Select Date
         </button>
       </div>
 
