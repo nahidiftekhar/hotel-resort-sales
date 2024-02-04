@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
-import DataTable from 'react-data-table-component';
-import { Export, downloadCSV } from '@/components/_functions/table-export';
+import React, { useState, useEffect, useMemo } from "react";
+import axios from "axios";
+import DataTable from "react-data-table-component";
+import { Export, downloadCSV } from "@/components/_functions/table-export";
+import { numberToIndianFormat } from "../_functions/number-format";
 
 const ExpenseReport = ({ dateString, duration }) => {
   const [reportData, setReportData] = useState([]);
@@ -9,7 +10,7 @@ const ExpenseReport = ({ dateString, duration }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const apiData = await axios.post('/api/reports/daywise-expense-api', {
+      const apiData = await axios.post("/api/reports/daywise-expense-api", {
         dateString,
         duration,
       });
@@ -22,16 +23,17 @@ const ExpenseReport = ({ dateString, duration }) => {
 
   const headerResponsive = [
     {
-      name: 'Date',
+      name: "Date",
       selector: (row) => row.day,
       sortable: true,
       grow: 1,
     },
     {
-      name: 'Expense',
-      selector: (row) => row.totalExpense,
+      name: "Expense",
+      selector: (row) => numberToIndianFormat(row.totalExpense),
       sortable: true,
       grow: 1,
+      right: true,
     },
   ];
 
@@ -44,18 +46,28 @@ const ExpenseReport = ({ dateString, duration }) => {
 
   const actionsMemo = useMemo(
     () => (
-      <Export onExport={() => downloadCSV(exportFileArray, 'Expense_Report')} />
+      <Export onExport={() => downloadCSV(exportFileArray, "Expense_Report")} />
     ),
     [exportFileArray]
   );
 
+  const paginationComponentOptions = {
+    rowsPerPageText: "Rows per page",
+    rangeSeparatorText: "of",
+    selectAllRowsItem: true,
+    selectAllRowsItemText: "All",
+  };
+
   return (
-    <div>
+    <div className="w-md-50">
       <DataTable
         title="Expense Report"
         columns={headerResponsive}
         data={reportData}
         pagination
+        paginationComponentOptions={paginationComponentOptions}
+        paginationPerPage={30}
+        paginationRowsPerPageOptions={[30, 50, 100]}
         progressPending={isLoading}
         persistTableHead
         actions={actionsMemo}

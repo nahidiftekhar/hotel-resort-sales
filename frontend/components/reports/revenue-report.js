@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import { Export, downloadCSV } from '@/components/_functions/table-export';
+import { numberToIndianFormat } from '../_functions/number-format';
 
 const RevenueReport = ({ dateString, duration }) => {
   const [reportData, setReportData] = useState([]);
@@ -29,9 +30,10 @@ const RevenueReport = ({ dateString, duration }) => {
     },
     {
       name: 'Revenue',
-      selector: (row) => row.totalRevenue,
+      selector: (row) => numberToIndianFormat(row.totalRevenue),
       sortable: true,
       grow: 1,
+      right: true,
     },
   ];
 
@@ -49,7 +51,7 @@ const RevenueReport = ({ dateString, duration }) => {
   }, [exportFileArray]);
 
   return (
-    <div>
+    <div className='w-md-50'>
       <DataTable
         title="Revenue Report"
         columns={headerResponsive}

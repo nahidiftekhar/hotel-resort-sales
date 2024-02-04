@@ -14,3 +14,12 @@ export function roundUptoFixedDigits(numberToRound, decimalPlaces) {
     return (Math.ceil(numberToRound * 100) / 100).toFixed(decimalPlaces);
   else return false;
 }
+
+export function numberToIndianFormat(number) {
+  if (isNaN(number) || number === null) {
+    return null;
+  }
+
+  const indianFormattedString = new Intl.NumberFormat('en-IN').format(number);
+  return indianFormattedString;
+}

@@ -1,5 +1,23 @@
 @use 'variables' as v;
 
+$utilities: (
+  'width': (
+    property: width,
+    class: w,
+    responsive: true,
+    values: (
+      25: 25%,
+      33: 33%,
+      50: 50%,
+      66: 66%,
+      75: 75%,
+      100: 100%,
+      auto: auto,
+    ),
+  )
+);
+
+@import 'bootstrap/scss/bootstrap';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/mixins';

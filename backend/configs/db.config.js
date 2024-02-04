@@ -1,9 +1,9 @@
 const dbConfig = {
     host: "localhost",
     port: 5432,
-    user: "DB-USER-NAME",
-    password: "DB-PASSWORD",
-    database: "SCHEMA-NAME",
+    username: "emyl",
+    password: "0206097",
+    database: "todaroki",
 
     dialect: "postgres",
     pool: {
